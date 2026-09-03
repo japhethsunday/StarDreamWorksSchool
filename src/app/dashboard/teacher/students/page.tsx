@@ -385,7 +385,7 @@ export default function TeacherStudents() {
 
             <div>
               <h4 className="font-semibold text-school-dark mb-3 flex items-center gap-2">
-                <ClipboardList className="w-4 h-4 text-school-gold" />
+                <ClipboardList className="w-4 h-4 text-brand-red" />
                 Submissions
               </h4>
               {!selected.submissions || selected.submissions.length === 0 ? (

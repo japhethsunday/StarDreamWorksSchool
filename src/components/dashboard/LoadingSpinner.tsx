@@ -1,4 +1,5 @@
 import { Loader2 } from "lucide-react";
+import { Crest } from "@/components/public/Logo";
 
 interface LoadingSpinnerProps {
   text?: string;
@@ -8,8 +9,9 @@ interface LoadingSpinnerProps {
 export default function LoadingSpinner({ text = "Loading...", fullScreen = false }: LoadingSpinnerProps) {
   const content = (
     <div className="flex flex-col items-center justify-center gap-3 py-12">
-      <Loader2 className="w-8 h-8 text-school-blue animate-spin" />
-      <p className="text-sm text-gray-500 font-medium">{text}</p>
+      <Crest className="w-12 h-12" />
+      <Loader2 className="w-6 h-6 text-brand-red animate-spin" />
+      <p className="text-sm text-brand-muted font-medium">{text}</p>
     </div>
   );
 

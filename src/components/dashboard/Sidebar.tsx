@@ -15,7 +15,6 @@ import {
   Calendar,
   Image,
   Settings,
-  Star,
   X,
   ClipboardList,
   FolderOpen,
@@ -23,6 +22,7 @@ import {
   MessageSquare,
   Globe,
 } from "lucide-react";
+import { Crest } from "@/components/public/Logo";
 
 interface SidebarProps {
   role: string;
@@ -93,6 +93,13 @@ function getNavItems(role: string): NavItem[] {
   }
 }
 
+const roleLabel: Record<string, string> = {
+  ADMIN: "Admin Portal",
+  TEACHER: "Teacher Portal",
+  STUDENT: "Student Portal",
+  PARENT: "Parent Portal",
+};
+
 export default function Sidebar({ role, isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
   const navItems = getNavItems(role);
@@ -102,39 +109,38 @@ export default function Sidebar({ role, isOpen, onClose }: SidebarProps) {
     <>
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-sm"
+          className="fixed inset-0 bg-brand-navy-deep/50 z-40 lg:hidden animate-fade-in"
           onClick={onClose}
         />
       )}
 
       <aside
-        className={`fixed top-0 left-0 z-50 h-full w-72 bg-gradient-to-b from-school-dark via-[#0d1e36] to-primary flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+        className={`fixed top-0 left-0 z-50 h-full w-72 bg-brand-navy-deep flex flex-col transition-transform duration-200 ease-out lg:translate-x-0 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex items-center justify-between p-5 border-b border-white/10">
-          <Link href={homeHref} className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-school-gold to-secondary rounded-xl flex items-center justify-center shadow-glow-gold">
-              <Star className="w-5 h-5 text-white fill-white/30" />
-            </div>
-            <div>
-              <h1 className="font-[family-name:var(--font-poppins)] text-sm font-bold text-white leading-tight">
-                STAR DreamWorks
-              </h1>
-              <p className="text-[10px] text-white/50 uppercase tracking-wider">
-                {role} Portal
+        <div className="flex items-center justify-between px-5 h-[68px] border-b border-white/10 shrink-0">
+          <Link href={homeHref} className="flex items-center gap-2.5 min-w-0">
+            <Crest className="w-9 h-9 shrink-0" />
+            <div className="min-w-0 leading-none">
+              <p className="font-heading text-[15px] font-bold text-white truncate">
+                STAR <span className="text-brand-yellow">DreamWorks</span>
+              </p>
+              <p className="mt-1 text-[10px] font-semibold text-white/45 uppercase tracking-widest">
+                {roleLabel[role] || `${role} Portal`}
               </p>
             </div>
           </Link>
           <button
             onClick={onClose}
             className="p-2 rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition-colors lg:hidden"
+            aria-label="Close menu"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+        <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-0.5" aria-label="Dashboard">
           {navItems.map((item) => {
             const isActive =
               item.href === "/dashboard/admin"
@@ -146,37 +152,33 @@ export default function Sidebar({ role, isOpen, onClose }: SidebarProps) {
                 key={item.href}
                 href={item.href}
                 onClick={onClose}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
+                aria-current={isActive ? "page" : undefined}
+                className={`relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150 ${
                   isActive
-                    ? "bg-white/15 text-white shadow-inner-soft"
-                    : "text-white/60 hover:text-white hover:bg-white/8"
+                    ? "bg-white/10 text-white"
+                    : "text-white/60 hover:text-white hover:bg-white/5"
                 }`}
               >
-                <span
-                  className={`transition-colors ${
-                    isActive ? "text-school-gold" : "text-white/40 group-hover:text-white/70"
-                  }`}
-                >
+                {isActive && (
+                  <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r-full bg-brand-yellow" />
+                )}
+                <span className={isActive ? "text-brand-yellow" : "text-white/40"}>
                   {item.icon}
                 </span>
                 {item.label}
-                {isActive && (
-                  <span className="ml-auto w-1.5 h-1.5 bg-school-gold rounded-full" />
-                )}
               </Link>
             );
           })}
         </nav>
 
-        <div className="p-4 border-t border-white/10">
-          <div className="bg-white/5 rounded-xl p-3">
-            <p className="text-[10px] text-white/30 text-center">
-              STAR DreamWorks Schools
-            </p>
-            <p className="text-[10px] text-white/20 text-center mt-0.5">
-              Caring Nursery, Primary & JSS
-            </p>
-          </div>
+        <div className="p-4 border-t border-white/10 shrink-0">
+          <p className="text-[11px] leading-relaxed text-white/35 text-center">
+            STAR DreamWorks Schools
+            <br />
+            <span className="italic text-brand-yellow/70">
+              “Your Dream Is Your Signature”
+            </span>
+          </p>
         </div>
       </aside>
     </>

@@ -196,7 +196,7 @@ export default function TeacherAnnouncements() {
         </div>
         <button
           onClick={openCreate}
-          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-school-gold to-secondary text-white text-sm font-semibold rounded-xl shadow-glow-gold hover:shadow-lg hover:scale-[1.02] transition-all"
+          className="sd-btn sd-btn-apply px-5 py-2.5 text-sm"
         >
           <Plus className="w-4 h-4" />
           New Announcement
@@ -391,7 +391,7 @@ export default function TeacherAnnouncements() {
             <button
               type="submit"
               disabled={submitting}
-              className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-school-gold to-secondary rounded-xl hover:shadow-lg disabled:opacity-60 disabled:cursor-not-allowed transition-all"
+              className="sd-btn sd-btn-apply px-5 py-2.5 text-sm disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {submitting ? (
                 <>

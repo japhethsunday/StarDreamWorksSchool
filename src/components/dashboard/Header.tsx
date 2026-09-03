@@ -52,25 +52,26 @@ export default function Header({ title, onMenuToggle }: HeaderProps) {
   };
 
   return (
-    <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-gray-100">
+    <header className="sticky top-0 z-30 bg-white border-b border-brand-line">
       <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <button
             onClick={onMenuToggle}
-            className="p-2 rounded-xl text-gray-500 hover:text-primary hover:bg-gray-100 transition-colors lg:hidden"
+            className="p-2 rounded-lg text-brand-body hover:text-brand-navy hover:bg-brand-paper transition-colors lg:hidden"
+            aria-label="Open menu"
           >
             <Menu className="w-5 h-5" />
           </button>
-          <h1 className="font-[family-name:var(--font-poppins)] text-lg sm:text-xl font-bold text-school-dark">
+          <h1 className="font-heading text-lg sm:text-xl font-bold text-brand-ink tracking-tight">
             {title}
           </h1>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <div
-            className={`hidden sm:flex items-center gap-2 bg-gray-50 border rounded-xl px-3 py-2 transition-all duration-200 ${
+            className={`hidden sm:flex items-center gap-2 bg-gray-50 border rounded-lg px-3 py-2 transition-all duration-150 ${
               searchFocused
-                ? "border-school-blue ring-2 ring-school-blue/10 w-64"
+                ? "border-brand-navy ring-2 ring-brand-navy/10 w-64"
                 : "border-gray-200 w-56"
             }`}
           >
@@ -84,55 +85,59 @@ export default function Header({ title, onMenuToggle }: HeaderProps) {
             />
           </div>
 
-          <button className="relative p-2.5 rounded-xl text-gray-500 hover:text-primary hover:bg-gray-100 transition-colors">
+          <button
+            className="relative p-2.5 rounded-lg text-brand-muted hover:text-brand-navy hover:bg-brand-paper transition-colors"
+            aria-label="Notifications"
+          >
             <Bell className="w-5 h-5" />
-            <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white" />
+            <span className="absolute top-2 right-2 w-2 h-2 bg-brand-red rounded-full ring-2 ring-white" />
           </button>
 
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="flex items-center gap-2.5 pl-2 pr-3 py-1.5 rounded-xl hover:bg-gray-100 transition-colors"
+              className="flex items-center gap-2.5 pl-1.5 pr-2.5 py-1.5 rounded-lg hover:bg-brand-paper transition-colors"
+              aria-expanded={dropdownOpen}
             >
-              <div className="w-8 h-8 bg-gradient-to-br from-school-blue to-primary rounded-lg flex items-center justify-center shadow-sm">
+              <div className="w-8 h-8 bg-brand-navy rounded-lg flex items-center justify-center shrink-0">
                 <span className="text-xs font-bold text-white">{initials}</span>
               </div>
               <div className="hidden sm:block text-left">
-                <p className="text-sm font-medium text-gray-800 leading-tight">
+                <p className="text-sm font-semibold text-brand-ink leading-tight">
                   {user?.name || "User"}
                 </p>
-                <p className="text-[10px] text-gray-500">
+                <p className="text-[11px] text-brand-muted">
                   {roleBadge[user?.role] || user?.role}
                 </p>
               </div>
               <ChevronDown
-                className={`w-4 h-4 text-gray-400 transition-transform ${
+                className={`w-4 h-4 text-brand-muted transition-transform duration-150 ${
                   dropdownOpen ? "rotate-180" : ""
                 }`}
               />
             </button>
 
             {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-soft-lg border border-gray-100 py-2 animate-slide-down">
-                <div className="px-4 py-3 border-b border-gray-100">
-                  <p className="text-sm font-semibold text-gray-800">
+              <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-soft-lg border border-brand-line py-2 animate-slide-down">
+                <div className="px-4 py-3 border-b border-brand-line">
+                  <p className="text-sm font-bold text-brand-ink">
                     {user?.name || "User"}
                   </p>
-                  <p className="text-xs text-gray-500 mt-0.5">{user?.email}</p>
+                  <p className="text-xs text-brand-muted mt-0.5 truncate">{user?.email}</p>
                 </div>
                 <button
                   onClick={() => {
                     setDropdownOpen(false);
                     router.push("/dashboard/admin/settings");
                   }}
-                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-brand-body hover:bg-brand-paper hover:text-brand-navy transition-colors"
                 >
-                  <Settings className="w-4 h-4 text-gray-400" />
+                  <Settings className="w-4 h-4 text-brand-muted" />
                   Settings
                 </button>
                 <button
                   onClick={() => signOut({ callbackUrl: "/login" })}
-                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-brand-red hover:bg-brand-red/5 transition-colors"
                 >
                   <LogOut className="w-4 h-4" />
                   Sign Out

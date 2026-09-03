@@ -20,10 +20,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-brand-paper/60">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-8 h-8 text-school-blue animate-spin" />
-          <p className="text-sm text-gray-500">Loading dashboard...</p>
+          <Loader2 className="w-8 h-8 text-brand-navy animate-spin" />
+          <p className="text-sm text-brand-muted font-medium">Loading dashboard...</p>
         </div>
       </div>
     );
@@ -34,7 +34,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const role = (session.user as any)?.role || "ADMIN";
 
   return (
-    <div className="min-h-screen bg-gray-50/50">
+    <div className="min-h-screen bg-brand-paper/60">
       <Sidebar role={role} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <div className="lg:pl-72 min-h-screen flex flex-col">

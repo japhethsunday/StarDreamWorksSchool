@@ -108,10 +108,10 @@ export default function AdminDashboard() {
   ];
 
   const quickActions = [
-    { label: "Add Teacher", icon: <GraduationCap className="w-4 h-4" />, href: "/dashboard/admin/teachers", color: "from-school-blue to-primary" },
-    { label: "Add Student", icon: <Users className="w-4 h-4" />, href: "/dashboard/admin/students", color: "from-school-green to-accent" },
-    { label: "Create Class", icon: <BookOpen className="w-4 h-4" />, href: "/dashboard/admin/classes", color: "from-school-gold to-secondary" },
-    { label: "Post Announcement", icon: <Megaphone className="w-4 h-4" />, href: "/dashboard/admin/announcements", color: "from-purple-500 to-purple-600" },
+    { label: "Add Teacher", icon: <GraduationCap className="w-4 h-4" />, href: "/dashboard/admin/teachers", color: "bg-brand-navy hover:bg-brand-navy/90" },
+    { label: "Add Student", icon: <Users className="w-4 h-4" />, href: "/dashboard/admin/students", color: "bg-brand-navy hover:bg-brand-navy/90" },
+    { label: "Create Class", icon: <BookOpen className="w-4 h-4" />, href: "/dashboard/admin/classes", color: "bg-brand-navy hover:bg-brand-navy/90" },
+    { label: "Post Announcement", icon: <Megaphone className="w-4 h-4" />, href: "/dashboard/admin/announcements", color: "bg-brand-red hover:bg-brand-red-dark" },
   ];
 
   return (
@@ -159,7 +159,7 @@ export default function AdminDashboard() {
           <button
             key={action.label}
             onClick={() => router.push(action.href)}
-            className={`flex items-center gap-3 px-4 py-3 bg-gradient-to-r ${action.color} text-white text-sm font-semibold rounded-xl shadow-soft-sm hover:shadow-soft-md hover:scale-[1.02] transition-all duration-200`}
+            className={`flex items-center gap-3 px-4 py-3 ${action.color} text-white text-sm font-semibold rounded-lg transition-all duration-150 hover:-translate-y-0.5 hover:shadow-soft-md`}
           >
             <Plus className="w-4 h-4" />
             {action.label}
@@ -199,7 +199,7 @@ export default function AdminDashboard() {
                 />
                 <Bar
                   dataKey="students"
-                  fill="#0f4c81"
+                  fill="#1f2a5e"
                   radius={[6, 6, 0, 0]}
                 />
               </BarChart>
@@ -280,7 +280,7 @@ export default function AdminDashboard() {
           </div>
           <div className="flex items-center gap-4 p-4 bg-amber-50 rounded-xl">
             <div className="w-10 h-10 bg-school-gold/10 rounded-lg flex items-center justify-center">
-              <Calendar className="w-5 h-5 text-school-gold" />
+              <Calendar className="w-5 h-5 text-brand-red" />
             </div>
             <div>
               <p className="text-xs text-gray-500">Active Classes</p>

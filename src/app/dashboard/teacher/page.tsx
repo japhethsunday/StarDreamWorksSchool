@@ -107,19 +107,19 @@ export default function TeacherDashboard() {
       label: "Create Assignment",
       icon: <Plus className="w-4 h-4" />,
       href: "/dashboard/teacher/assignments",
-      color: "from-school-blue to-primary",
+      color: "bg-brand-navy hover:bg-brand-navy/90",
     },
     {
       label: "Post Announcement",
       icon: <Megaphone className="w-4 h-4" />,
       href: "/dashboard/teacher/announcements",
-      color: "from-school-gold to-secondary",
+      color: "bg-brand-red hover:bg-brand-red-dark",
     },
     {
       label: "Upload Material",
       icon: <FileText className="w-4 h-4" />,
       href: "/dashboard/teacher/materials",
-      color: "from-school-green to-accent",
+      color: "bg-brand-navy hover:bg-brand-navy/90",
     },
   ];
 
@@ -166,7 +166,7 @@ export default function TeacherDashboard() {
           <button
             key={action.label}
             onClick={() => router.push(action.href)}
-            className={`flex items-center gap-3 px-4 py-3 bg-gradient-to-r ${action.color} text-white text-sm font-semibold rounded-xl shadow-soft-sm hover:shadow-soft-md hover:scale-[1.02] transition-all duration-200`}
+            className={`flex items-center gap-3 px-4 py-3 ${action.color} text-white text-sm font-semibold rounded-lg transition-all duration-150 hover:-translate-y-0.5 hover:shadow-soft-md`}
           >
             {action.icon}
             {action.label}
@@ -206,7 +206,7 @@ export default function TeacherDashboard() {
                     boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
                   }}
                 />
-                <Bar dataKey="assignments" fill="#0f4c81" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="assignments" fill="#1f2a5e" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>

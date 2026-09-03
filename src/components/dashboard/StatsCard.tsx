@@ -8,39 +8,37 @@ interface StatsCardProps {
 
 export default function StatsCard({ title, value, icon, color, change }: StatsCardProps) {
   const colorMap: Record<string, string> = {
-    blue: "from-school-blue/10 to-primary/5 text-school-blue",
-    gold: "from-school-gold/10 to-secondary/5 text-school-gold",
-    green: "from-school-green/10 to-accent/5 text-school-green",
-    red: "from-red-500/10 to-red-400/5 text-red-500",
-    purple: "from-purple-500/10 to-purple-400/5 text-purple-500",
-    teal: "from-teal-500/10 to-teal-400/5 text-teal-500",
+    blue: "bg-brand-navy/[0.07] text-brand-navy",
+    gold: "bg-brand-yellow/20 text-[#8a6100]",
+    green: "bg-brand-green/[0.08] text-brand-green",
+    red: "bg-brand-red/[0.07] text-brand-red",
+    purple: "bg-purple-500/10 text-purple-600",
+    teal: "bg-teal-500/10 text-teal-600",
   };
 
-  const iconBg = colorMap[color] || colorMap.blue;
+  const iconTile = colorMap[color] || colorMap.blue;
   const isPositive = change && change.startsWith("+");
   const isNegative = change && change.startsWith("-");
 
   return (
-    <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-soft-sm border border-gray-100 hover:shadow-soft-md transition-shadow duration-300">
-      <div className="flex items-start justify-between">
+    <div className="bg-white rounded-xl p-5 border border-brand-line hover:shadow-soft-md hover:-translate-y-0.5 transition-all duration-200">
+      <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
-          <p className="text-sm text-gray-500 font-medium truncate">{title}</p>
-          <p className="mt-2 text-2xl sm:text-3xl font-bold text-school-dark font-[family-name:var(--font-poppins)]">
+          <p className="text-[13px] text-brand-muted font-semibold truncate">{title}</p>
+          <p className="mt-1.5 text-2xl sm:text-[1.7rem] font-bold text-brand-ink font-heading tracking-tight">
             {value}
           </p>
           {change && (
             <p
-              className={`mt-2 text-xs font-medium ${
-                isPositive ? "text-green-600" : isNegative ? "text-red-500" : "text-gray-500"
+              className={`mt-1.5 text-xs font-semibold ${
+                isPositive ? "text-brand-green" : isNegative ? "text-brand-red" : "text-brand-muted"
               }`}
             >
               {isPositive ? "↑" : isNegative ? "↓" : "•"} {change}
             </p>
           )}
         </div>
-        <div
-          className={`w-12 h-12 rounded-xl bg-gradient-to-br ${iconBg} flex items-center justify-center shrink-0`}
-        >
+        <div className={`w-11 h-11 rounded-lg ${iconTile} flex items-center justify-center shrink-0`}>
           {icon}
         </div>
       </div>

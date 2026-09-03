@@ -41,30 +41,30 @@ export default function ConfirmDialog({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm animate-fade-in" onClick={onClose} />
-      <div className="relative bg-white rounded-2xl shadow-soft-xl w-full max-w-md p-6 animate-modal-in">
+      <div className="relative bg-white rounded-xl shadow-soft-xl w-full max-w-md p-6 animate-modal-in">
         <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center shrink-0">
-            <AlertTriangle className="w-6 h-6 text-red-600" />
+          <div className="w-11 h-11 bg-brand-red/[0.07] rounded-xl flex items-center justify-center shrink-0">
+            <AlertTriangle className="w-5 h-5 text-brand-red" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-gray-900 font-[family-name:var(--font-poppins)]">
+            <h3 className="text-lg font-bold text-brand-ink font-heading tracking-tight">
               {title}
             </h3>
           </div>
         </div>
-        <p className="text-sm text-gray-600 mb-6 pl-16">{message}</p>
-        <div className="flex items-center justify-end gap-3">
+        <p className="text-sm text-brand-body leading-relaxed mb-6">{message}</p>
+        <div className="flex items-center justify-end gap-2.5">
           <button
             onClick={onClose}
             disabled={loading}
-            className="px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors disabled:opacity-50"
+            className="px-4 py-2.5 text-sm font-semibold text-brand-body bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
             disabled={loading}
-            className="px-4 py-2.5 text-sm font-medium text-white bg-red-600 rounded-xl hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+            className="sd-btn sd-btn-apply px-4 py-2.5 text-sm disabled:opacity-50"
           >
             {loading && (
               <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">

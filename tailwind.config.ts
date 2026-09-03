@@ -9,13 +9,16 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: "#1e3a5f",
-        secondary: "#f59e0b",
-        accent: "#10b981",
-        "school-blue": "#0f4c81",
-        "school-gold": "#d4a843",
-        "school-green": "#2d6a4f",
-        "school-dark": "#0a1628",
+        // Dashboard + legacy tokens, aligned to the STAR DreamWorks brand
+        // palette (navy / red / golden yellow / green). Values changed,
+        // names preserved so every existing usage upgrades consistently.
+        primary: "#1f2a5e",
+        secondary: "#c93720",
+        accent: "#1e7a4c",
+        "school-blue": "#1f2a5e",
+        "school-gold": "#f5b301",
+        "school-green": "#1e7a4c",
+        "school-dark": "#131a3e",
         // STAR DreamWorks brand palette, extracted from the school's
         // flyer/exercise-book cover and student uniform.
         // Primary navy (STAR masthead), secondary red (DreamWorks wordmark
@@ -57,9 +60,9 @@ const config: Config = {
         "soft-md": "0 6px 24px rgba(0, 0, 0, 0.1)",
         "soft-lg": "0 8px 32px rgba(0, 0, 0, 0.12)",
         "soft-xl": "0 12px 48px rgba(0, 0, 0, 0.15)",
-        "glow-blue": "0 0 20px rgba(15, 76, 129, 0.3)",
-        "glow-gold": "0 0 20px rgba(212, 168, 67, 0.3)",
-        "glow-green": "0 0 20px rgba(45, 106, 79, 0.3)",
+        "glow-blue": "0 4px 14px rgba(31, 42, 94, 0.18)",
+        "glow-gold": "0 4px 14px rgba(201, 55, 32, 0.16)",
+        "glow-green": "0 4px 14px rgba(30, 122, 76, 0.16)",
         "inner-soft": "inset 0 2px 8px rgba(0, 0, 0, 0.06)",
       },
     },

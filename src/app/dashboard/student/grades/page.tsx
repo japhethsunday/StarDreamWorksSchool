@@ -208,10 +208,10 @@ export default function StudentGrades() {
                   typeof g.subject === "string" ? g.subject : g.subject?.name;
                 const colorClass =
                   g.score >= 70
-                    ? "bg-school-green text-white"
+                    ? "bg-brand-green text-white"
                     : g.score >= 50
-                    ? "bg-school-gold text-white"
-                    : "bg-red-500 text-white";
+                    ? "bg-brand-yellow text-brand-navy-deep"
+                    : "bg-brand-red text-white";
                 return (
                   <div key={g.id} className="flex items-center justify-between p-3 rounded-xl bg-gray-50">
                     <div>

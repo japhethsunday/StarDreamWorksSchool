@@ -293,7 +293,7 @@ export default function ParentChildren() {
 
             <div>
               <h4 className="font-semibold text-school-dark mb-3 flex items-center gap-2">
-                <BookOpen className="w-4 h-4 text-school-gold" />
+                <BookOpen className="w-4 h-4 text-brand-red" />
                 Assignments
               </h4>
               {!selected.assignments || selected.assignments.length === 0 ? (

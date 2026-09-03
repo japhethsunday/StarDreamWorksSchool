@@ -41,16 +41,16 @@ export default function Modal({ isOpen, onClose, title, children, size = "md" }:
         onClick={onClose}
       />
       <div
-        className={`relative w-full ${sizeClasses[size]} bg-white rounded-2xl shadow-soft-xl animate-modal-in max-h-[90vh] flex flex-col`}
+        className={`relative w-full ${sizeClasses[size]} bg-white rounded-xl shadow-soft-xl animate-modal-in max-h-[90vh] flex flex-col`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="font-[family-name:var(--font-poppins)] text-lg font-bold text-school-dark">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-brand-line">
+          <h2 className="font-heading text-lg font-bold text-brand-ink tracking-tight">
             {title}
           </h2>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+            className="p-2 rounded-lg text-brand-muted hover:text-brand-navy hover:bg-brand-paper transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
