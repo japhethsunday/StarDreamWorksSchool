@@ -175,8 +175,8 @@ a.sd-card:hover,
     linear-gradient(
       115deg,
       transparent 62%,
-      rgba(201, 55, 32, 0.16) 62%,
-      rgba(201, 55, 32, 0.16) 68%,
+      rgba(201, 55, 32, 0.09) 62%,
+      rgba(201, 55, 32, 0.09) 68%,
       transparent 68%
     );
   background-size: 26px 26px, cover;

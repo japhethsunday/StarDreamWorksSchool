@@ -330,6 +330,29 @@ export default function HomePage() {
                   </Link>
                 </Reveal>
               ))}
+              <Reveal delay={180}>
+                <Link
+                  href="/contact"
+                  className="group flex flex-col justify-between p-7 h-full rounded-[0.9rem] bg-brand-navy-deep text-white hover:-translate-y-0.5 hover:shadow-soft-md transition-all duration-200"
+                >
+                  <div>
+                    <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center mb-5">
+                      <Phone className="w-6 h-6 text-brand-yellow" />
+                    </div>
+                    <h3 className="font-heading text-lg font-bold mb-2">
+                      Not sure which level?
+                    </h3>
+                    <p className="text-sm text-white/70 leading-relaxed">
+                      Talk to the school office — we will help you find the
+                      right place for your child.
+                    </p>
+                  </div>
+                  <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-brand-yellow">
+                    Contact us
+                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+                  </span>
+                </Link>
+              </Reveal>
             </div>
           )}
 
@@ -361,6 +384,29 @@ export default function HomePage() {
                   </Link>
                 </Reveal>
               ))}
+              <Reveal delay={180}>
+                <Link
+                  href="/contact"
+                  className="group flex flex-col justify-between p-7 h-full rounded-[0.9rem] bg-brand-navy-deep text-white hover:-translate-y-0.5 hover:shadow-soft-md transition-all duration-200"
+                >
+                  <div>
+                    <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center mb-5">
+                      <Phone className="w-6 h-6 text-brand-yellow" />
+                    </div>
+                    <h3 className="font-heading text-lg font-bold mb-2">
+                      Not sure which level?
+                    </h3>
+                    <p className="text-sm text-white/70 leading-relaxed">
+                      Talk to the school office — we will help you find the
+                      right place for your child.
+                    </p>
+                  </div>
+                  <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-brand-yellow">
+                    Contact us
+                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+                  </span>
+                </Link>
+              </Reveal>
             </div>
           )}
         </div>
@@ -442,7 +488,7 @@ export default function HomePage() {
       {/* ============ CONTACT / LOCATION ============ */}
       <section className="py-20 lg:py-24 bg-gray-50 border-t border-brand-line">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-10 items-start">
+          <div className="grid lg:grid-cols-2 gap-10 items-center">
             <Reveal>
               <p className="sd-eyebrow mb-3">Visit us</p>
               <h2 className="font-heading text-3xl sm:text-4xl font-bold text-brand-ink mb-7 tracking-tight">
