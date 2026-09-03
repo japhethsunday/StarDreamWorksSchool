@@ -7,10 +7,14 @@ interface LogoProps {
 
 /**
  * STAR DreamWorks Schools crest, drawn to match the embroidered uniform
- * emblem: a thin red-outline shield bearing the interlocked "DW" monogram
- * (a collegiate outer "D" with a "W" nested inside), all in school red.
+ * patch: an interlocked "DW" monogram in collegiate outline style. The
+ * curved outer "D" doubles as the shield-like frame, with the "W" nested
+ * inside it. Layered strokes mimic the patch's distinct outer border and
+ * raised satin-stitch edge, all in monochrome school red.
  */
 export function Crest({ className = "w-10 h-10" }: { className?: string }) {
+  const D = "M20 62 V16 C40 16 52 27 52 39.5 C52 52 40 62 20 62";
+  const W = "M26.5 35 L31 58.5 L35.5 43 L40 58.5 L44.5 35";
   return (
     <svg
       viewBox="0 0 64 78"
@@ -18,28 +22,30 @@ export function Crest({ className = "w-10 h-10" }: { className?: string }) {
       aria-label="STAR DreamWorks Schools crest"
       className={className}
     >
-      {/* Shield outline */}
-      <path
-        d="M32 5L55 13.5V39c0 15-10 25.5-23 31.5C19 64.5 9 54 9 39V13.5z"
-        fill="#FFFFFF"
-        stroke="#C93720"
-        strokeWidth="3.5"
-        strokeLinejoin="round"
-      />
-      {/* Interlocked DW monogram in collegiate outline style */}
-      <g
-        fill="none"
-        stroke="#C93720"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        {/* Outer D: stem + bowl */}
-        <path d="M23 22V58" strokeWidth="5" />
-        <path d="M23 22C39 22 49 31 49 40C49 49 39 58 23 58" strokeWidth="5" />
-        {/* Inner W nested in the D */}
+      <g fill="none" strokeLinecap="round" strokeLinejoin="round">
+        {/* Distinct outer border layer (darker red edge) */}
+        <path d={D} stroke="#A82A18" strokeWidth="10" />
+        <path d={W} stroke="#A82A18" strokeWidth="8" />
+        {/* Main satin face */}
+        <path d={D} stroke="#C93720" strokeWidth="7" />
+        <path d={W} stroke="#C93720" strokeWidth="5.4" />
+        {/* Hollow core between the stitched edges */}
+        <path d={D} stroke="#FFFFFF" strokeWidth="3.2" />
+        <path d={W} stroke="#FFFFFF" strokeWidth="2.2" />
+        {/* Stitch line down the middle of each stroke */}
         <path
-          d="M27.5 33L31.5 51L35.5 38.5L39.5 51L43.5 33"
-          strokeWidth="3.6"
+          d={D}
+          stroke="#C93720"
+          strokeWidth="1"
+          strokeDasharray="2.4 2"
+          opacity="0.55"
+        />
+        <path
+          d={W}
+          stroke="#C93720"
+          strokeWidth="0.9"
+          strokeDasharray="2.2 1.8"
+          opacity="0.55"
         />
       </g>
     </svg>
