@@ -7,7 +7,8 @@ interface LogoProps {
 
 /**
  * STAR DreamWorks Schools crest, drawn to match the embroidered uniform
- * emblem: a thin red-outline shield bearing a bold block "W".
+ * emblem: a thin red-outline shield bearing the interlocked "DW" monogram
+ * (a collegiate outer "D" with a "W" nested inside), all in school red.
  */
 export function Crest({ className = "w-10 h-10" }: { className?: string }) {
   return (
@@ -25,18 +26,22 @@ export function Crest({ className = "w-10 h-10" }: { className?: string }) {
         strokeWidth="3.5"
         strokeLinejoin="round"
       />
-      {/* Bold block W emblem */}
-      <text
-        x="32"
-        y="53"
-        textAnchor="middle"
-        fontFamily="Arial, Helvetica, sans-serif"
-        fontWeight="900"
-        fontSize="32"
-        fill="#C93720"
+      {/* Interlocked DW monogram in collegiate outline style */}
+      <g
+        fill="none"
+        stroke="#C93720"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       >
-        W
-      </text>
+        {/* Outer D: stem + bowl */}
+        <path d="M23 22V58" strokeWidth="5" />
+        <path d="M23 22C39 22 49 31 49 40C49 49 39 58 23 58" strokeWidth="5" />
+        {/* Inner W nested in the D */}
+        <path
+          d="M27.5 33L31.5 51L35.5 38.5L39.5 51L43.5 33"
+          strokeWidth="3.6"
+        />
+      </g>
     </svg>
   );
 }
