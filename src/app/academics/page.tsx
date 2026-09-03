@@ -5,6 +5,7 @@ import { GraduationCap, ArrowRight, Sparkles } from "lucide-react";
 import Navbar from "@/components/public/Navbar";
 import Footer from "@/components/public/Footer";
 import PageHero from "@/components/public/PageHero";
+import Reveal from "@/components/public/Reveal";
 import { useSiteContent } from "@/lib/use-site-content";
 
 function parseHighlights(raw: string | null): string[] {
@@ -30,18 +31,16 @@ export default function AcademicsPage() {
 
       <section className="py-20 lg:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-2xl mb-14">
-            <span className="inline-block text-sm font-semibold text-school-gold uppercase tracking-wider mb-3">
-              Educational levels
-            </span>
-            <h2 className="font-heading text-3xl sm:text-4xl font-bold text-school-dark mb-4">
+          <Reveal className="max-w-2xl mb-14">
+            <p className="sd-eyebrow mb-3">Educational levels</p>
+            <h2 className="font-heading text-3xl sm:text-4xl font-bold text-brand-ink tracking-tight mb-4">
               A stage for every child
             </h2>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-brand-body leading-relaxed">
               Each level is designed to care for children and build strong
               academic foundations and confidence as they grow.
             </p>
-          </div>
+          </Reveal>
 
           {loading && (
             <div className="space-y-8">
@@ -55,14 +54,15 @@ export default function AcademicsPage() {
             <div className="space-y-8">
               {ordered.map((lvl, index) => {
                 const highlights = parseHighlights(lvl.highlights);
+                const dark = index % 2 === 0;
                 return (
+                  <Reveal key={lvl.id}>
                   <div
-                    key={lvl.id}
                     id={lvl.slug}
-                    className={`scroll-mt-24 rounded-3xl border p-8 lg:p-12 ${
-                      index % 2 === 0
-                        ? "bg-school-dark border-school-dark text-white"
-                        : "bg-white border-gray-100 shadow-soft-sm"
+                    className={`scroll-mt-24 rounded-2xl border p-8 lg:p-12 ${
+                      dark
+                        ? "sd-hero-surface border-brand-navy-deep text-white"
+                        : "bg-white border-brand-line"
                     }`}
                   >
                     <div className="grid lg:grid-cols-[1fr_1.2fr] gap-10 items-start">
@@ -70,23 +70,23 @@ export default function AcademicsPage() {
                         <div className="flex items-center gap-4 mb-6">
                           <div
                             className={`w-14 h-14 rounded-xl flex items-center justify-center ${
-                              index % 2 === 0 ? "bg-school-gold" : "bg-school-blue/5"
+                              dark ? "bg-brand-yellow" : "bg-brand-red/5 border border-brand-red/10"
                             }`}
                           >
                             <GraduationCap
                               className={`w-7 h-7 ${
-                                index % 2 === 0 ? "text-school-dark" : "text-school-blue"
+                                dark ? "text-brand-navy-deep" : "text-brand-red"
                               }`}
                             />
                           </div>
                           <div>
-                            <h2 className="font-heading text-2xl sm:text-3xl font-bold">
+                            <h2 className={`font-heading text-2xl sm:text-3xl font-bold tracking-tight ${dark ? "text-white" : "text-brand-ink"}`}>
                               {lvl.name}
                             </h2>
                             {lvl.ageRange && (
                               <span
-                                className={`text-sm font-semibold ${
-                                  index % 2 === 0 ? "text-school-gold" : "text-school-gold"
+                                className={`text-sm font-bold ${
+                                  dark ? "text-brand-yellow" : "text-brand-red"
                                 }`}
                               >
                                 {lvl.ageRange}
@@ -96,16 +96,16 @@ export default function AcademicsPage() {
                         </div>
                         <p
                           className={`leading-relaxed mb-6 ${
-                            index % 2 === 0 ? "text-white/80" : "text-gray-600"
+                            dark ? "text-white/80" : "text-brand-body"
                           }`}
                         >
                           {lvl.description || "Programme details will be added by the school."}
                         </p>
                         <Link
                           href="/admissions"
-                          className={`inline-flex items-center gap-2 font-semibold text-sm ${
-                            index % 2 === 0 ? "text-school-gold" : "text-school-blue"
-                          }`}
+                          className={`inline-flex items-center gap-2 font-bold text-sm ${
+                            dark ? "text-brand-yellow hover:text-white" : "text-brand-red hover:text-brand-red-dark"
+                          } transition-colors`}
                         >
                           Enquire about this level
                           <ArrowRight className="w-4 h-4" />
@@ -115,12 +115,12 @@ export default function AcademicsPage() {
                       {highlights.length > 0 && (
                         <div
                           className={`rounded-2xl p-8 ${
-                            index % 2 === 0 ? "bg-white/5" : "bg-gray-50"
+                            dark ? "bg-white/5 border border-white/10" : "bg-brand-paper border border-brand-line"
                           }`}
                         >
                           <h3
-                            className={`font-heading font-semibold mb-5 ${
-                              index % 2 === 0 ? "text-white" : "text-school-dark"
+                            className={`font-heading font-bold mb-5 ${
+                              dark ? "text-white" : "text-brand-ink"
                             }`}
                           >
                             What we focus on
@@ -130,12 +130,12 @@ export default function AcademicsPage() {
                               <li key={h} className="flex items-start gap-3">
                                 <Sparkles
                                   className={`w-5 h-5 shrink-0 mt-0.5 ${
-                                    index % 2 === 0 ? "text-school-gold" : "text-school-blue"
+                                    dark ? "text-brand-yellow" : "text-brand-red"
                                   }`}
                                 />
                                 <span
                                   className={`text-sm leading-relaxed ${
-                                    index % 2 === 0 ? "text-white/80" : "text-gray-600"
+                                    dark ? "text-white/80" : "text-brand-body"
                                   }`}
                                 >
                                   {h}
@@ -147,6 +147,7 @@ export default function AcademicsPage() {
                       )}
                     </div>
                   </div>
+                  </Reveal>
                 );
               })}
             </div>

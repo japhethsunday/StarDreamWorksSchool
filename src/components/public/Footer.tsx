@@ -1,15 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { Star, MapPin, Phone, Mail, ArrowRight } from "lucide-react";
+import { MapPin, Phone, Mail, ArrowRight } from "lucide-react";
 import { useSiteContent } from "@/lib/use-site-content";
+import Logo from "@/components/public/Logo";
+import {
+  displayPhones,
+  displayAddress,
+  telHref,
+  formatPhone,
+  SCHOOL_SIGNATURE_LINE,
+} from "@/lib/school-contact";
 
 export default function Footer() {
   const { settings } = useSiteContent();
   const name = settings["school.name"] || "STAR DreamWorks Schools";
   const tagline = settings["school.tagline"] || "Caring Nursery, Primary & JSS";
-  const location = settings["school.location"] || "Ajah, Lagos, Nigeria";
-  const phone = settings["school.phone"];
+  const address = displayAddress(settings["school.location"]);
+  const phones = displayPhones(settings["school.phone"]);
   const email = settings["school.email"];
 
   const quickLinks = [
@@ -23,25 +31,38 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-school-dark text-white">
+    <footer className="bg-brand-navy-deep text-white">
       {/* Admissions CTA band */}
-      <div className="bg-school-blue/20 border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <p className="font-heading text-lg font-semibold">
-              Ready to enrol your child?
-            </p>
-            <p className="text-sm text-white/60 mt-1">
-              Learn about our admissions process and how to apply.
-            </p>
+      <div className="border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+          <div className="flex items-start gap-4">
+            <span className="sd-live-dot mt-1.5 inline-block h-2.5 w-2.5 rounded-full bg-brand-green shrink-0" />
+            <div>
+              <p className="font-heading text-lg font-bold">
+                Admission is open
+              </p>
+              <p className="text-sm text-white/60 mt-1">
+                Creche, Kindergarten, Nursery, Primary and Secondary School —
+                call or send an enquiry today.
+              </p>
+            </div>
           </div>
-          <Link
-            href="/admissions"
-            className="inline-flex shrink-0 items-center gap-2 px-6 py-3 bg-school-gold text-school-dark text-sm font-semibold rounded-lg hover:opacity-90 transition-opacity"
-          >
-            Apply Now
-            <ArrowRight className="w-4 h-4" />
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-3 shrink-0 w-full sm:w-auto">
+            <Link
+              href="/admissions"
+              className="sd-btn sd-btn-apply px-6 py-3 text-sm"
+            >
+              Apply for Admission
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <a
+              href={telHref(phones[0])}
+              className="sd-btn sd-btn-outline-light px-6 py-3 text-sm"
+            >
+              <Phone className="w-4 h-4" />
+              {formatPhone(phones[0])}
+            </a>
+          </div>
         </div>
       </div>
 
@@ -49,26 +70,21 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <Link href="/" className="flex items-center gap-3 mb-5">
-              <div className="flex items-center justify-center w-10 h-10 bg-school-gold rounded-lg">
-                <Star className="w-5 h-5 text-school-dark fill-school-dark/40" />
-              </div>
-              <div className="leading-tight">
-                <p className="font-heading font-bold text-lg">{name}</p>
-                <p className="text-[10px] text-white/50 tracking-wider uppercase">
-                  {tagline}
-                </p>
-              </div>
+            <Link href="/" className="inline-block mb-5" aria-label={`${name} — home`}>
+              <Logo variant="light" tagline={tagline} />
             </Link>
-            <p className="text-sm text-white/50 leading-relaxed max-w-xs">
+            <p className="text-sm text-white/55 leading-relaxed max-w-xs">
               A caring nursery, primary and junior secondary school in Ajah,
               Lagos — combining strong academics with good character.
+            </p>
+            <p className="mt-4 text-sm font-semibold italic text-brand-yellow">
+              “{SCHOOL_SIGNATURE_LINE}”
             </p>
           </div>
 
           {/* Quick Links */}
-          <div>
-            <h3 className="font-heading font-semibold text-sm uppercase tracking-wider mb-5 text-school-gold">
+          <nav aria-label="Footer">
+            <h3 className="font-heading font-bold text-xs uppercase tracking-widest mb-5 text-brand-yellow">
               Quick Links
             </h3>
             <ul className="space-y-3">
@@ -83,37 +99,38 @@ export default function Footer() {
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
 
           {/* Contact */}
           <div>
-            <h3 className="font-heading font-semibold text-sm uppercase tracking-wider mb-5 text-school-gold">
+            <h3 className="font-heading font-bold text-xs uppercase tracking-widest mb-5 text-brand-yellow">
               Contact Us
             </h3>
             <ul className="space-y-4 text-sm text-white/60">
               <li className="flex items-start gap-3">
-                <MapPin className="w-4 h-4 text-school-gold mt-0.5 shrink-0" />
-                <span>{location}</span>
+                <MapPin className="w-4 h-4 text-brand-yellow mt-0.5 shrink-0" />
+                <span>{address}</span>
               </li>
-              {phone ? (
-                <li className="flex items-start gap-3">
-                  <Phone className="w-4 h-4 text-school-gold mt-0.5 shrink-0" />
-                  <a href={`tel:${phone}`} className="hover:text-white transition-colors">
-                    {phone}
+              {phones.map((p) => (
+                <li key={p} className="flex items-start gap-3">
+                  <Phone className="w-4 h-4 text-brand-yellow mt-0.5 shrink-0" />
+                  <a
+                    href={telHref(p)}
+                    className="font-semibold text-white/80 hover:text-brand-yellow transition-colors"
+                  >
+                    {formatPhone(p)}
                   </a>
                 </li>
-              ) : null}
+              ))}
               {email ? (
                 <li className="flex items-start gap-3">
-                  <Mail className="w-4 h-4 text-school-gold mt-0.5 shrink-0" />
-                  <a href={`mailto:${email}`} className="hover:text-white transition-colors">
+                  <Mail className="w-4 h-4 text-brand-yellow mt-0.5 shrink-0" />
+                  <a
+                    href={`mailto:${email}`}
+                    className="hover:text-white transition-colors break-all"
+                  >
                     {email}
                   </a>
-                </li>
-              ) : null}
-              {!phone && !email ? (
-                <li className="text-white/40 italic">
-                  Contact details to be confirmed by the school.
                 </li>
               ) : null}
             </ul>
@@ -121,7 +138,7 @@ export default function Footer() {
 
           {/* Admissions */}
           <div>
-            <h3 className="font-heading font-semibold text-sm uppercase tracking-wider mb-5 text-school-gold">
+            <h3 className="font-heading font-bold text-xs uppercase tracking-widest mb-5 text-brand-yellow">
               Admissions
             </h3>
             <p className="text-sm text-white/60 leading-relaxed mb-4">
@@ -130,7 +147,7 @@ export default function Footer() {
             </p>
             <Link
               href="/admissions"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-school-gold hover:text-white transition-colors"
+              className="inline-flex items-center gap-2 text-sm font-bold text-brand-yellow hover:text-white transition-colors"
             >
               View Admissions
               <ArrowRight className="w-4 h-4" />
@@ -141,9 +158,13 @@ export default function Footer() {
 
       {/* Bottom bar */}
       <div className="border-t border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-          <p className="text-xs text-white/40 text-center sm:text-left">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-2">
+          <p className="text-xs text-white/40">
             &copy; {new Date().getFullYear()} {name}. All rights reserved.
+          </p>
+          <p className="text-xs text-white/40">
+            Education = Knowledge · Knowledge = Power · Power = Respect ·
+            Respect = Happiness
           </p>
         </div>
       </div>

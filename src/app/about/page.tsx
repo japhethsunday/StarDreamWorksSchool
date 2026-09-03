@@ -1,15 +1,23 @@
 "use client";
 
-import { Target, Eye, Heart, ShieldCheck, Sparkles, Star } from "lucide-react";
+import { Target, Eye, Heart, ShieldCheck, Sparkles, Star, Phone } from "lucide-react";
 import Navbar from "@/components/public/Navbar";
 import Footer from "@/components/public/Footer";
 import PageHero from "@/components/public/PageHero";
+import Reveal from "@/components/public/Reveal";
 import { useSiteContent } from "@/lib/use-site-content";
+import {
+  displayPhones,
+  displayAddress,
+  telHref,
+  formatPhone,
+} from "@/lib/school-contact";
 
 export default function AboutPage() {
   const { settings } = useSiteContent();
   const name = settings["school.name"] || "STAR DreamWorks Schools";
-  const location = settings["school.location"] || "Ajah, Lagos, Nigeria";
+  const location = displayAddress(settings["school.location"]);
+  const phones = displayPhones(settings["school.phone"]);
   const introBody =
     settings["homepage.introBody"] ||
     "STAR DreamWorks Schools is a caring nursery, primary and junior secondary school in Ajah, Lagos. We combine strong academics with good character, giving every child the foundation they need to thrive.";
@@ -62,94 +70,103 @@ export default function AboutPage() {
       {/* School intro */}
       <section className="py-20 lg:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
-            <span className="inline-block text-sm font-semibold text-school-gold uppercase tracking-wider mb-3">
-              Who we are
-            </span>
-            <h2 className="font-heading text-3xl sm:text-4xl font-bold text-school-dark mb-6 leading-tight">
+          <Reveal className="max-w-3xl">
+            <p className="sd-eyebrow mb-3">Who we are</p>
+            <h2 className="font-heading text-3xl sm:text-4xl font-bold text-brand-ink tracking-tight mb-6 leading-tight">
               A school built on care and strong learning
             </h2>
-            <p className="text-gray-600 text-lg leading-relaxed mb-5">{introBody}</p>
-            <p className="text-gray-600 leading-relaxed mb-5">
+            <p className="text-brand-body text-lg leading-relaxed mb-5">{introBody}</p>
+            <p className="text-brand-body leading-relaxed mb-5">
               We are proud to serve families in {location}. Our focus is the
               whole child: strong academics, good character, and the confidence
               to take on the next stage of their education.
             </p>
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* Mission & Vision */}
-      <section className="py-16 lg:py-20 bg-gray-50 border-y border-gray-100">
+      <section className="py-16 lg:py-20 bg-brand-paper border-y border-brand-line">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-6">
-            {foundations.map((f) => (
-              <div key={f.title} className="bg-white border border-gray-100 rounded-2xl p-8 shadow-soft-sm">
-                <div className="w-12 h-12 bg-school-dark rounded-xl flex items-center justify-center mb-5">
-                  <f.icon className="w-6 h-6 text-school-gold" />
+          <div className="grid md:grid-cols-2 gap-5">
+            {foundations.map((f, i) => (
+              <Reveal key={f.title} delay={i * 90}>
+              <div className="sd-card p-8 h-full">
+                <div className="w-12 h-12 bg-brand-navy rounded-xl flex items-center justify-center mb-5">
+                  <f.icon className="w-6 h-6 text-brand-yellow" />
                 </div>
-                <h3 className="font-heading text-xl font-bold text-school-dark mb-3 capitalize">
+                <h3 className="font-heading text-xl font-bold text-brand-ink mb-3 capitalize">
                   {f.title}
                 </h3>
-                <p className="text-gray-600 leading-relaxed">{f.text}</p>
+                <p className="text-brand-body leading-relaxed">{f.text}</p>
               </div>
+              </Reveal>
             ))}
           </div>
         </div>
       </section>
 
       {/* Values */}
-      <section className="py-20 lg:py-28">
+      <section className="py-20 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-2xl mb-12">
-            <span className="inline-block text-sm font-semibold text-school-gold uppercase tracking-wider mb-3">
-              What we value
-            </span>
-            <h2 className="font-heading text-3xl sm:text-4xl font-bold text-school-dark">
+          <Reveal className="max-w-2xl mb-12">
+            <p className="sd-eyebrow mb-3">What we value</p>
+            <h2 className="font-heading text-3xl sm:text-4xl font-bold text-brand-ink tracking-tight">
               The values we encourage in every child
             </h2>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {values.map((v) => (
-              <div key={v.title} className="bg-white border border-gray-100 rounded-2xl p-7 shadow-soft-sm">
-                <div className="w-11 h-11 bg-school-blue/5 rounded-xl flex items-center justify-center mb-4">
-                  <v.icon className="w-5 h-5 text-school-blue" />
+          </Reveal>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {values.map((v, i) => (
+              <Reveal key={v.title} delay={(i % 4) * 80}>
+              <div className="sd-card p-7 h-full">
+                <div className="w-11 h-11 bg-brand-red/5 border border-brand-red/10 rounded-xl flex items-center justify-center mb-4">
+                  <v.icon className="w-5 h-5 text-brand-red" />
                 </div>
-                <h3 className="font-heading font-semibold text-school-dark mb-2">{v.title}</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">{v.text}</p>
+                <h3 className="font-heading font-bold text-brand-ink mb-2">{v.title}</h3>
+                <p className="text-sm text-brand-muted leading-relaxed">{v.text}</p>
               </div>
+              </Reveal>
             ))}
           </div>
         </div>
       </section>
 
       {/* Note */}
-      <section className="pb-20 lg:pb-28">
+      <section className="pb-20 lg:pb-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-school-dark text-white rounded-3xl p-8 lg:p-12">
-            <h2 className="font-heading text-2xl sm:text-3xl font-bold mb-4">
+          <Reveal>
+          <div className="sd-hero-surface rounded-2xl p-8 lg:p-12">
+            <p className="sd-eyebrow sd-eyebrow-on-dark mb-3">Visit the school</p>
+            <h2 className="font-heading text-2xl sm:text-3xl font-bold text-white tracking-tight mb-4">
               Come and see the school for yourself
             </h2>
-            <p className="text-white/70 leading-relaxed max-w-2xl mb-8">
+            <p className="text-white/70 leading-relaxed max-w-2xl mb-6">
               The best way to learn about {name} is to visit. We&apos;re happy
               to show you around and answer your questions about our
               programmes and admissions.
             </p>
-            <div className="flex flex-wrap gap-4">
-              <a
-                href="/admissions"
-                className="inline-flex items-center justify-center px-7 py-3.5 bg-school-gold text-school-dark font-semibold rounded-lg hover:opacity-90 transition-opacity"
-              >
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mb-8">
+              {phones.map((p) => (
+                <a
+                  key={p}
+                  href={telHref(p)}
+                  className="inline-flex items-center gap-1.5 text-sm font-bold text-white hover:text-brand-yellow transition-colors"
+                >
+                  <Phone className="w-4 h-4 text-brand-yellow" />
+                  {formatPhone(p)}
+                </a>
+              ))}
+            </div>
+            <div className="flex flex-wrap gap-3.5">
+              <a href="/admissions" className="sd-btn sd-btn-apply px-7 py-3.5 text-[15px]">
                 Enquire about admissions
               </a>
-              <a
-                href="/contact"
-                className="inline-flex items-center justify-center px-7 py-3.5 bg-white/10 border border-white/20 text-white font-semibold rounded-lg hover:bg-white/15 transition-colors"
-              >
+              <a href="/contact" className="sd-btn sd-btn-outline-light px-7 py-3.5 text-[15px]">
                 Contact us
               </a>
             </div>
           </div>
+          </Reveal>
         </div>
       </section>
 

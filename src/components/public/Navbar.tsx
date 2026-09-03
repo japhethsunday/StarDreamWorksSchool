@@ -3,8 +3,15 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Star, Menu, X, LogIn, ChevronRight, MapPin } from "lucide-react";
+import { Menu, X, LogIn, ChevronRight, MapPin, Phone } from "lucide-react";
 import { useSiteContent } from "@/lib/use-site-content";
+import Logo from "@/components/public/Logo";
+import {
+  displayPhones,
+  displayAddress,
+  telHref,
+  formatPhone,
+} from "@/lib/school-contact";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -24,12 +31,14 @@ export default function Navbar() {
 
   const admissionOpen =
     (settings["admissions.status"] || "open").toLowerCase() === "open";
+  const phones = displayPhones(settings["school.phone"]);
+  const address = displayAddress(settings["school.location"]);
   const tagline = settings["school.tagline"] || "Caring Nursery, Primary & JSS";
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
     handleScroll();
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -37,50 +46,75 @@ export default function Navbar() {
     setIsOpen(false);
   }, [pathname]);
 
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+
   return (
     <>
+      {/* Contact topbar — verified school lines, tap-to-call on mobile */}
+      <div className="bg-brand-navy-deep text-white/85 text-xs">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-1.5 flex items-center justify-between gap-3">
+          <p className="hidden md:flex items-center gap-1.5 min-w-0">
+            <MapPin className="w-3.5 h-3.5 text-brand-yellow shrink-0" />
+            <span className="truncate">{address}</span>
+          </p>
+          <p className="md:hidden flex items-center gap-1.5 font-medium">
+            <MapPin className="w-3.5 h-3.5 text-brand-yellow shrink-0" />
+            Ajah, Lagos
+          </p>
+          <div className="flex items-center gap-1 shrink-0">
+            <Phone className="w-3.5 h-3.5 text-brand-yellow" />
+            {phones.map((p, i) => (
+              <span key={p} className="flex items-center">
+                {i > 0 && <span className="mx-1.5 text-white/30">|</span>}
+                <a
+                  href={telHref(p)}
+                  className="font-semibold tracking-wide hover:text-brand-yellow transition-colors"
+                >
+                  {formatPhone(p)}
+                </a>
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* Admission ribbon */}
-      <div className="bg-school-gold text-school-dark text-sm">
+      <div className="bg-brand-yellow text-brand-navy-deep text-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2 flex items-center justify-center gap-2 text-center">
-          <span className="inline-flex items-center gap-1.5 font-semibold tracking-wide">
-            <span className="relative flex h-2 w-2">
-              <span className={`animate-ping absolute inline-flex h-full w-full rounded-full bg-school-dark opacity-60`} />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-school-dark" />
-            </span>
+          <span className="inline-flex items-center gap-2 font-bold tracking-wide">
+            <span className="sd-live-dot inline-block h-2 w-2 rounded-full bg-brand-green" />
             {admissionOpen
-              ? "Admission is Open"
+              ? "Admission is Open — Creche to Secondary School"
               : "Admissions currently closed"}
           </span>
-          <Link href="/admissions" className="hidden sm:inline-flex items-center gap-1 font-semibold underline underline-offset-2 hover:opacity-80 transition-opacity">
-            Apply today
-            <ChevronRight className="w-4 h-4" />
-          </Link>
+          {admissionOpen && (
+            <Link
+              href="/admissions"
+              className="hidden sm:inline-flex items-center gap-0.5 font-bold text-brand-red underline underline-offset-2 hover:text-brand-red-dark transition-colors"
+            >
+              Apply today
+              <ChevronRight className="w-4 h-4" />
+            </Link>
+          )}
         </div>
       </div>
 
       {/* Main navbar */}
       <nav
-        className={`sticky top-0 z-50 transition-all duration-300 ${
-          scrolled
-            ? "bg-white/90 backdrop-blur-md shadow-soft border-b border-gray-100"
-            : "bg-white"
+        className={`sticky top-0 z-50 transition-shadow duration-300 bg-white ${
+          scrolled ? "shadow-soft-md border-b border-brand-line" : ""
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-between h-16 lg:h-[72px]">
+          <div className="flex items-center justify-between h-[76px] lg:h-20">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-3 group">
-              <div className="flex items-center justify-center w-10 h-10 lg:w-11 lg:h-11 bg-school-dark rounded-xl shadow-soft group-hover:shadow-soft-md transition-shadow">
-                <Star className="w-5 h-5 lg:w-[22px] lg:h-[22px] text-school-gold fill-school-gold/40" />
-              </div>
-              <div className="hidden sm:block leading-tight">
-                <p className="font-heading font-bold text-school-dark text-lg lg:text-xl">
-                  STAR <span className="text-school-blue">DreamWorks</span>
-                </p>
-                <p className="text-[10px] lg:text-xs text-gray-500 font-medium tracking-wider uppercase">
-                  {tagline}
-                </p>
-              </div>
+            <Link href="/" className="flex items-center" aria-label="STAR DreamWorks Schools — home">
+              <Logo tagline={tagline} />
             </Link>
 
             {/* Desktop nav */}
@@ -93,31 +127,32 @@ export default function Navbar() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`relative px-3.5 py-2 text-sm font-medium rounded-lg transition-colors ${
+                    aria-current={isActive ? "page" : undefined}
+                    className={`relative px-3.5 py-2 text-sm font-semibold rounded-lg transition-colors ${
                       isActive
-                        ? "text-school-blue bg-school-blue/5"
-                        : "text-gray-600 hover:text-school-dark hover:bg-gray-50"
+                        ? "text-brand-red"
+                        : "text-brand-body hover:text-brand-navy hover:bg-brand-navy/5"
                     }`}
                   >
                     {link.label}
+                    {isActive && (
+                      <span className="absolute left-3.5 right-3.5 -bottom-0.5 h-0.5 rounded-full bg-brand-yellow" />
+                    )}
                   </Link>
                 );
               })}
             </div>
 
             {/* Desktop CTA */}
-            <div className="hidden lg:flex items-center gap-3">
+            <div className="hidden lg:flex items-center gap-2">
               <Link
                 href="/login"
-                className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-700 hover:text-school-dark transition-colors"
+                className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-brand-body hover:text-brand-navy transition-colors"
               >
                 <LogIn className="w-4 h-4" />
                 Login
               </Link>
-              <Link
-                href="/admissions"
-                className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-school-dark rounded-lg hover:bg-school-blue transition-colors"
-              >
+              <Link href="/admissions" className="sd-btn sd-btn-apply px-5 py-2.5 text-sm">
                 Apply Now
                 <ChevronRight className="w-4 h-4" />
               </Link>
@@ -126,8 +161,9 @@ export default function Navbar() {
             {/* Mobile toggle */}
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="lg:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
-              aria-label="Toggle menu"
+              className="lg:hidden p-2.5 -mr-2 rounded-lg text-brand-navy hover:bg-brand-paper transition-colors"
+              aria-label={isOpen ? "Close menu" : "Open menu"}
+              aria-expanded={isOpen}
             >
               {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -138,82 +174,99 @@ export default function Navbar() {
       {/* Mobile overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden"
+          className="fixed inset-0 bg-brand-navy-deep/50 z-40 lg:hidden animate-fade-in"
           onClick={() => setIsOpen(false)}
         />
       )}
 
       {/* Mobile drawer */}
       <div
-        className={`fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white shadow-soft-xl z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${
+        className={`fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white shadow-soft-xl z-50 transform transition-transform duration-300 ease-out lg:hidden flex flex-col ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
+        aria-hidden={!isOpen}
       >
-        <div className="flex flex-col h-full">
-          <div className="flex items-center justify-between p-5 border-b border-gray-100">
-            <div className="flex items-center gap-2.5">
-              <div className="flex items-center justify-center w-9 h-9 bg-school-dark rounded-lg">
-                <Star className="w-5 h-5 text-school-gold fill-school-gold/40" />
-              </div>
-              <span className="font-heading font-bold text-school-dark">Menu</span>
-            </div>
-            <button
+        <div className="flex items-center justify-between p-5 border-b border-brand-line">
+          <Logo crestClassName="w-9 h-9" />
+          <button
+            onClick={() => setIsOpen(false)}
+            className="p-2 rounded-lg text-brand-muted hover:bg-brand-paper transition-colors"
+            aria-label="Close menu"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-4">
+          <nav className="space-y-1" aria-label="Mobile">
+            {navLinks.map((link, i) => {
+              const isActive =
+                pathname === link.href ||
+                (link.href !== "/" && pathname.startsWith(link.href));
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setIsOpen(false)}
+                  tabIndex={isOpen ? 0 : -1}
+                  style={{ "--enter-delay": `${60 + i * 40}ms` } as React.CSSProperties}
+                  className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${
+                    isOpen ? "sd-drawer-item" : "opacity-0"
+                  } ${
+                    isActive
+                      ? "bg-brand-red/5 text-brand-red"
+                      : "text-brand-body hover:bg-brand-paper hover:text-brand-navy"
+                  }`}
+                >
+                  {link.label}
+                  <ChevronRight className="w-4 h-4 opacity-40" />
+                </Link>
+              );
+            })}
+          </nav>
+
+          <div className="mt-6 space-y-3">
+            <Link
+              href="/login"
               onClick={() => setIsOpen(false)}
-              className="p-2 rounded-lg text-gray-400 hover:bg-gray-100 transition-colors"
-              aria-label="Close menu"
+              tabIndex={isOpen ? 0 : -1}
+              className="flex items-center justify-center gap-2 w-full px-4 py-3 text-sm font-semibold text-brand-navy border border-brand-line rounded-xl hover:bg-brand-paper transition-colors"
             >
-              <X className="w-5 h-5" />
-            </button>
+              <LogIn className="w-4 h-4" />
+              Login
+            </Link>
+            <Link
+              href="/admissions"
+              onClick={() => setIsOpen(false)}
+              tabIndex={isOpen ? 0 : -1}
+              className="sd-btn sd-btn-apply w-full px-4 py-3 text-sm"
+            >
+              Apply Now
+              <ChevronRight className="w-4 h-4" />
+            </Link>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4">
-            <div className="space-y-1">
-              {navLinks.map((link) => {
-                const isActive =
-                  pathname === link.href ||
-                  (link.href !== "/" && pathname.startsWith(link.href));
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setIsOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
-                      isActive
-                        ? "bg-school-blue/5 text-school-blue"
-                        : "text-gray-600 hover:bg-gray-50 hover:text-school-dark"
-                    }`}
-                  >
-                    {link.label}
-                  </Link>
-                );
-              })}
-            </div>
-
-            <div className="mt-6 space-y-3">
-              <Link
-                href="/login"
-                onClick={() => setIsOpen(false)}
-                className="flex items-center justify-center gap-2 w-full px-4 py-3 text-sm font-medium text-gray-700 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors"
+          <div className="mt-6 rounded-xl bg-brand-paper border border-brand-line p-4 space-y-2.5">
+            <p className="text-[11px] font-bold uppercase tracking-widest text-brand-muted">
+              Call the school
+            </p>
+            {phones.map((p) => (
+              <a
+                key={p}
+                href={telHref(p)}
+                className="flex items-center gap-2 text-sm font-bold text-brand-navy hover:text-brand-red transition-colors"
               >
-                <LogIn className="w-4 h-4" />
-                Login
-              </Link>
-              <Link
-                href="/admissions"
-                onClick={() => setIsOpen(false)}
-                className="flex items-center justify-center gap-2 w-full px-4 py-3 text-sm font-semibold text-white bg-school-dark rounded-xl"
-              >
-                Apply Now
-                <ChevronRight className="w-4 h-4" />
-              </Link>
-            </div>
+                <Phone className="w-4 h-4 text-brand-red" />
+                {formatPhone(p)}
+              </a>
+            ))}
           </div>
+        </div>
 
-          <div className="p-5 border-t border-gray-100">
-            <div className="flex items-center gap-2 text-sm text-gray-500">
-              <MapPin className="w-4 h-4 text-school-gold" />
-              {settings["school.location"] || "Ajah, Lagos, Nigeria"}
-            </div>
+        <div className="p-5 border-t border-brand-line">
+          <div className="flex items-start gap-2 text-xs text-brand-muted leading-relaxed">
+            <MapPin className="w-4 h-4 text-brand-yellow shrink-0 mt-0.5" />
+            {address}
           </div>
         </div>
       </div>

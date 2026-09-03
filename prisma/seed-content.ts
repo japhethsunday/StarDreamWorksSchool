@@ -58,8 +58,8 @@ const levels = [
 const settings: { key: string; value: string }[] = [
   { key: "school.name", value: "STAR DreamWorks Schools" },
   { key: "school.tagline", value: "Caring Nursery, Primary & JSS" },
-  { key: "school.location", value: "Ajah, Lagos, Nigeria" },
-  { key: "school.phone", value: "" },
+  { key: "school.location", value: "2, Sanmi Arewa Ara Street, Off Mobil Road, Oniseke Ilaje Bus-Stop, Ajah, Lagos." },
+  { key: "school.phone", value: "08038330066, 08023913673, 08080693316" },
   { key: "school.email", value: "" },
   { key: "admissions.status", value: "open" },
   {

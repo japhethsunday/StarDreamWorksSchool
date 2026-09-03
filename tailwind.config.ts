@@ -16,6 +16,24 @@ const config: Config = {
         "school-gold": "#d4a843",
         "school-green": "#2d6a4f",
         "school-dark": "#0a1628",
+        // STAR DreamWorks brand palette, extracted from the school's
+        // flyer/exercise-book cover and student uniform.
+        // Primary navy (STAR masthead), secondary red (DreamWorks wordmark
+        // + tie), golden yellow (flyer background), white + deep blue
+        // (uniform shirt + trousers), green (cover accents).
+        "brand-navy": "#1f2a5e",
+        "brand-navy-deep": "#131a3e",
+        "brand-ink": "#1b2340",
+        "brand-body": "#3f4756",
+        "brand-muted": "#6b7280",
+        "brand-red": "#c93720",
+        "brand-red-dark": "#a82a18",
+        "brand-yellow": "#f5b301",
+        "brand-yellow-soft": "#fce9b8",
+        "brand-paper": "#fff9ec",
+        "brand-cream": "#fdf3d7",
+        "brand-green": "#1e7a4c",
+        "brand-line": "#e9e2cf",
       },
       fontFamily: {
         heading: ["Poppins", "sans-serif"],

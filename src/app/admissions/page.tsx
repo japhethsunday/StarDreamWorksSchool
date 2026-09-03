@@ -14,7 +14,14 @@ import {
 import Navbar from "@/components/public/Navbar";
 import Footer from "@/components/public/Footer";
 import PageHero from "@/components/public/PageHero";
+import Reveal from "@/components/public/Reveal";
 import { useSiteContent } from "@/lib/use-site-content";
+import {
+  displayPhones,
+  displayAddress,
+  telHref,
+  formatPhone,
+} from "@/lib/school-contact";
 
 interface FormState {
   childFirstName: string;
@@ -48,8 +55,8 @@ export default function AdmissionsPage() {
   const message =
     settings["admissions.message"] ||
     "Applications are open for Creche, Kindergarten, Nursery, Primary and Secondary School.";
-  const location = settings["school.location"] || "Ajah, Lagos, Nigeria";
-  const phone = settings["school.phone"];
+  const location = displayAddress(settings["school.location"]);
+  const phones = displayPhones(settings["school.phone"]);
   const email = settings["school.email"];
 
   const ordered = [...levels].sort((a, b) => a.sortOrder - b.sortOrder);
@@ -85,7 +92,7 @@ export default function AdmissionsPage() {
   };
 
   const inputCls =
-    "w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-school-blue/20 focus:border-school-blue transition-all";
+    "w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red/20 focus:border-brand-red transition-all";
 
   return (
     <div className="min-h-screen">
@@ -97,44 +104,44 @@ export default function AdmissionsPage() {
       />
 
       {/* Status strip */}
-      <section className="border-b border-gray-100 bg-white">
+      <section className="border-b border-brand-line bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="flex items-start gap-4">
-            <div className="w-11 h-11 bg-school-green/10 rounded-xl flex items-center justify-center shrink-0">
-              <CheckCircle2 className="w-6 h-6 text-school-green" />
+          <Reveal className="flex items-start gap-4">
+            <div className="w-11 h-11 bg-brand-green/10 rounded-xl flex items-center justify-center shrink-0">
+              <CheckCircle2 className="w-6 h-6 text-brand-green" />
             </div>
             <div>
-              <p className="font-heading font-semibold text-school-dark mb-1">
+              <p className="font-heading font-bold text-brand-ink mb-1">
                 {admissionOpen ? "We are currently accepting applications" : "Admissions status"}
               </p>
-              <p className="text-gray-600 leading-relaxed max-w-2xl">{message}</p>
+              <p className="text-brand-body leading-relaxed max-w-2xl">{message}</p>
             </div>
-          </div>
-          <a
-            href="#enquiry"
-            className="shrink-0 inline-flex items-center gap-2 px-7 py-3.5 bg-school-dark text-white font-semibold rounded-lg hover:bg-school-blue transition-colors"
-          >
-            Start an enquiry
-            <ArrowRight className="w-4 h-4" />
-          </a>
+          </Reveal>
+          <Reveal delay={120} className="shrink-0">
+            <a
+              href="#enquiry"
+              className="sd-btn sd-btn-navy px-7 py-3.5 text-[15px]"
+            >
+              Start an enquiry
+              <ArrowRight className="w-4 h-4" />
+            </a>
+          </Reveal>
         </div>
       </section>
 
       {/* Levels */}
       <section className="py-20 lg:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-2xl mb-12">
-            <span className="inline-block text-sm font-semibold text-school-gold uppercase tracking-wider mb-3">
-              Choose a level
-            </span>
-            <h2 className="font-heading text-3xl sm:text-4xl font-bold text-school-dark mb-4">
+          <Reveal className="max-w-2xl mb-12">
+            <p className="sd-eyebrow mb-3">Choose a level</p>
+            <h2 className="font-heading text-3xl sm:text-4xl font-bold text-brand-ink tracking-tight mb-4">
               We welcome children at every stage
             </h2>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-brand-body leading-relaxed">
               Select the level you&apos;re applying for and we&apos;ll guide you
               through the enquiry and application process.
             </p>
-          </div>
+          </Reveal>
 
           {loading && (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -145,44 +152,45 @@ export default function AdmissionsPage() {
           )}
 
           {!loading && (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {ordered.map((lvl) => {
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {ordered.map((lvl, i) => {
                 const active = form.level === lvl.slug;
                 return (
+                  <Reveal key={lvl.id} delay={(i % 3) * 80}>
                   <button
-                    key={lvl.id}
                     type="button"
                     onClick={() => {
                       update("level", lvl.slug);
                       document.getElementById("enquiry")?.scrollIntoView({ behavior: "smooth" });
                     }}
-                    className={`group text-left bg-white border rounded-2xl p-7 transition-all ${
+                    className={`group text-left bg-white border rounded-2xl p-7 transition-all w-full h-full ${
                       active
-                        ? "border-school-blue ring-2 ring-school-blue/15"
-                        : "border-gray-100 hover:border-school-blue/40 shadow-soft-sm"
+                        ? "border-brand-red ring-2 ring-brand-red/15"
+                        : "border-brand-line hover:border-brand-red/40 shadow-soft-sm"
                     }`}
                   >
                     <div className="flex items-center justify-between mb-4">
-                      <div className="w-12 h-12 bg-school-blue/5 rounded-xl flex items-center justify-center group-hover:bg-school-blue/10 transition-colors">
-                        <GraduationCap className="w-6 h-6 text-school-blue" />
+                      <div className="w-12 h-12 bg-brand-red/5 rounded-xl flex items-center justify-center group-hover:bg-brand-red/10 transition-colors">
+                        <GraduationCap className="w-6 h-6 text-brand-red" />
                       </div>
                       {lvl.ageRange && (
-                        <span className="text-xs font-semibold text-school-gold">
+                        <span className="text-xs font-bold text-brand-navy bg-brand-yellow/25 px-2.5 py-1 rounded-full">
                           {lvl.ageRange}
                         </span>
                       )}
                     </div>
-                    <h3 className="font-heading text-lg font-semibold text-school-dark mb-2">
+                    <h3 className="font-heading text-lg font-bold text-brand-ink mb-2">
                       {lvl.name}
                     </h3>
-                    <p className="text-sm text-gray-500 leading-relaxed line-clamp-2">
+                    <p className="text-sm text-brand-muted leading-relaxed line-clamp-2">
                       {lvl.description}
                     </p>
-                    <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-school-blue">
+                    <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-bold text-brand-red">
                       Select level
                       <ChevronRight className="w-4 h-4" />
                     </span>
                   </button>
+                  </Reveal>
                 );
               })}
             </div>
@@ -206,14 +214,14 @@ export default function AdmissionsPage() {
                 in touch with you shortly. If you have any urgent questions,
                 please contact the school directly.
               </p>
-              <div className="space-y-3 max-w-xs mx-auto">
-                {phone && (
-                  <a href={`tel:${phone}`} className="block font-semibold text-school-blue">
-                    {phone}
+              <div className="space-y-2 max-w-xs mx-auto">
+                {phones.map((p) => (
+                  <a key={p} href={telHref(p)} className="block font-bold text-brand-red hover:text-brand-red-dark transition-colors">
+                    {formatPhone(p)}
                   </a>
-                )}
+                ))}
                 {email && (
-                  <a href={`mailto:${email}`} className="block font-semibold text-school-blue">
+                  <a href={`mailto:${email}`} className="block font-semibold text-brand-navy">
                     {email}
                   </a>
                 )}
@@ -392,7 +400,7 @@ export default function AdmissionsPage() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-school-dark text-white font-semibold rounded-xl hover:bg-school-blue transition-colors disabled:opacity-60"
+                  className="sd-btn sd-btn-apply w-full px-6 py-4 text-[15px] disabled:opacity-60"
                 >
                   {submitting ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -410,29 +418,39 @@ export default function AdmissionsPage() {
       {/* Contact */}
       <section className="py-16 lg:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="bg-white border border-gray-100 rounded-2xl p-7 shadow-soft-sm">
-              <MapPin className="w-6 h-6 text-school-blue mb-3" />
-              <p className="font-semibold text-school-dark mb-1">Location</p>
-              <p className="text-sm text-gray-600">{location}</p>
-            </div>
-            {phone && (
-              <div className="bg-white border border-gray-100 rounded-2xl p-7 shadow-soft-sm">
-                <Phone className="w-6 h-6 text-school-blue mb-3" />
-                <p className="font-semibold text-school-dark mb-1">Phone</p>
-                <a href={`tel:${phone}`} className="text-sm text-gray-600 hover:text-school-blue">
-                  {phone}
-                </a>
+          <div className="grid md:grid-cols-3 gap-5">
+            <Reveal>
+              <div className="sd-card p-7 h-full">
+                <MapPin className="w-6 h-6 text-brand-red mb-3" />
+                <p className="font-bold text-brand-ink mb-1">Location</p>
+                <p className="text-sm text-brand-body leading-relaxed">{location}</p>
               </div>
-            )}
+            </Reveal>
+            <Reveal delay={90}>
+              <div className="sd-card p-7 h-full">
+                <Phone className="w-6 h-6 text-brand-red mb-3" />
+                <p className="font-bold text-brand-ink mb-1">Phone</p>
+                <div className="space-y-1">
+                  {phones.map((p) => (
+                    <p key={p}>
+                      <a href={telHref(p)} className="text-sm font-bold text-brand-body hover:text-brand-red transition-colors">
+                        {formatPhone(p)}
+                      </a>
+                    </p>
+                  ))}
+                </div>
+              </div>
+            </Reveal>
             {email && (
-              <div className="bg-white border border-gray-100 rounded-2xl p-7 shadow-soft-sm">
-                <Mail className="w-6 h-6 text-school-blue mb-3" />
-                <p className="font-semibold text-school-dark mb-1">Email</p>
-                <a href={`mailto:${email}`} className="text-sm text-gray-600 hover:text-school-blue">
-                  {email}
-                </a>
-              </div>
+              <Reveal delay={180}>
+                <div className="sd-card p-7 h-full">
+                  <Mail className="w-6 h-6 text-brand-red mb-3" />
+                  <p className="font-bold text-brand-ink mb-1">Email</p>
+                  <a href={`mailto:${email}`} className="text-sm text-brand-body hover:text-brand-red transition-colors break-all">
+                    {email}
+                  </a>
+                </div>
+              </Reveal>
             )}
           </div>
         </div>
