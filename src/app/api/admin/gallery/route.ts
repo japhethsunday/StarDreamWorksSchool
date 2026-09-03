@@ -1,0 +1,91 @@
+import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-options";
+import { prisma } from "@/lib/prisma";
+
+export async function GET() {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized. Please login." },
+        { status: 401 }
+      );
+    }
+
+    if ((session.user as any).role !== "ADMIN") {
+      return NextResponse.json(
+        { success: false, error: "Forbidden. Admin access required." },
+        { status: 403 }
+      );
+    }
+
+    const galleryItems = await prisma.galleryItem.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+
+    return NextResponse.json({ success: true, data: galleryItems });
+  } catch (error) {
+    console.error("Error listing gallery items:", error);
+    return NextResponse.json(
+      { success: false, error: "Failed to fetch gallery items. Please try again." },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(req: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized. Please login." },
+        { status: 401 }
+      );
+    }
+
+    if ((session.user as any).role !== "ADMIN") {
+      return NextResponse.json(
+        { success: false, error: "Forbidden. Admin access required." },
+        { status: 403 }
+      );
+    }
+
+    const body = await req.json();
+    const { title, description, imageUrl, category, isPublished } = body;
+
+    if (!title || !title.trim()) {
+      return NextResponse.json(
+        { success: false, error: "Title is required." },
+        { status: 400 }
+      );
+    }
+
+    if (!imageUrl || !imageUrl.trim()) {
+      return NextResponse.json(
+        { success: false, error: "Image URL is required." },
+        { status: 400 }
+      );
+    }
+
+    const galleryItem = await prisma.galleryItem.create({
+      data: {
+        title,
+        description,
+        imageUrl,
+        category,
+        isPublished: typeof isPublished === "boolean" ? isPublished : false,
+      },
+    });
+
+    return NextResponse.json({ success: true, data: galleryItem }, { status: 201 });
+  } catch (error) {
+    console.error("Error adding gallery item:", error);
+    return NextResponse.json(
+      { success: false, error: "Failed to add gallery item. Please try again." },
+      { status: 500 }
+    );
+  }
+}
