@@ -1,176 +1,180 @@
 "use client";
 
-import Link from "next/link";
-import {
-  Calendar,
-  ArrowRight,
-  Clock,
-  Tag,
-  User,
-  ChevronRight,
-} from "lucide-react";
+import { useEffect, useState } from "react";
+import { Calendar, Clock, User, Newspaper, MapPin } from "lucide-react";
 import Navbar from "@/components/public/Navbar";
 import Footer from "@/components/public/Footer";
+import PageHero from "@/components/public/PageHero";
+import { formatDate, formatDateTime } from "@/lib/utils";
 
-const newsArticles = [
-  {
-    id: 1,
-    title: "New Academic Session Resumption Date Announced",
-    excerpt:
-      "STAR DreamWorks Schools is pleased to announce the resumption date for the new academic session. All students are expected to resume on Monday, September 16th, 2024.",
-    category: "School News",
-    date: "August 28, 2024",
-    readTime: "3 min read",
-    author: "School Administration",
-    featured: true,
-  },
-  {
-    id: 2,
-    title: "Science Fair 2024: Students Showcase Innovation",
-    excerpt:
-      "Our annual science fair was a tremendous success with over 50 projects exhibited. Students from Primary and JSS demonstrated remarkable creativity and scientific thinking.",
-    category: "Events",
-    date: "July 15, 2024",
-    readTime: "5 min read",
-    author: "Science Department",
-    featured: false,
-  },
-  {
-    id: 3,
-    title: "Inter-School Sports Competition Results",
-    excerpt:
-      "STAR DreamWorks Schools athletes performed outstandingly at the Ajah District Inter-School Sports Competition, winning gold medals in three categories.",
-    category: "Sports",
-    date: "June 20, 2024",
-    readTime: "4 min read",
-    author: "Sports Department",
-    featured: false,
-  },
-  {
-    id: 4,
-    title: "PTA Meeting: Building Stronger Partnerships",
-    excerpt:
-      "Our recent PTA meeting was well-attended by parents and guardians. Key topics discussed include curriculum updates, school events, and parent involvement initiatives.",
-    category: "Community",
-    date: "May 10, 2024",
-    readTime: "3 min read",
-    author: "School Administration",
-    featured: false,
-  },
-];
+interface Article {
+  id: string;
+  title: string;
+  content: string;
+  excerpt: string | null;
+  image: string | null;
+  publishedAt: string | null;
+  author: { name: string } | null;
+}
+
+interface SchoolEvent {
+  id: string;
+  title: string;
+  description: string | null;
+  startDate: string;
+  endDate: string;
+  location: string | null;
+}
 
 export default function NewsPage() {
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [events, setEvents] = useState<SchoolEvent[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      fetch("/api/public/news").then((r) => r.json()),
+      fetch("/api/public/events").then((r) => r.json()),
+    ])
+      .then(([n, e]) => {
+        if (n?.success) setArticles(n.data || []);
+        if (e?.success) setEvents(e.data || []);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  const hasContent = !loading && (articles.length > 0 || events.length > 0);
+
   return (
     <div className="min-h-screen">
       <Navbar />
+      <PageHero
+        eyebrow="News & Events"
+        title="School updates"
+        description="News, events and announcements from STAR DreamWorks Schools."
+      />
 
-      {/* Hero Banner */}
-      <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-28 bg-gradient-to-br from-school-dark via-school-blue to-primary overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
-        <div className="absolute top-10 right-10 w-72 h-72 bg-school-gold/10 rounded-full blur-3xl" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <span className="inline-block text-sm font-semibold text-school-gold uppercase tracking-wider mb-3">
-            News & Events
-          </span>
-          <h1 className="font-[family-name:var(--font-poppins)] text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
-            Latest Updates
-          </h1>
-          <p className="text-lg text-white/70 max-w-2xl">
-            Stay informed about the latest happenings, events, and
-            achievements at STAR DreamWorks Schools.
-          </p>
-        </div>
-      </section>
-
-      {/* News Articles */}
       <section className="py-20 lg:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Featured Article */}
-          <div className="mb-12">
-            {newsArticles
-              .filter((a) => a.featured)
-              .map((article) => (
-                <div
-                  key={article.id}
-                  className="bg-gradient-to-br from-school-blue to-school-dark rounded-3xl p-8 sm:p-12 text-white hover:shadow-soft-xl transition-shadow duration-300"
-                >
-                  <div className="flex flex-wrap items-center gap-3 mb-6">
-                    <span className="px-3 py-1 bg-school-gold text-white text-xs font-semibold rounded-full">
-                      Featured
-                    </span>
-                    <span className="px-3 py-1 bg-white/10 text-white/80 text-xs font-medium rounded-full">
-                      {article.category}
-                    </span>
-                  </div>
-                  <h2 className="font-[family-name:var(--font-poppins)] text-2xl sm:text-3xl font-bold mb-4">
-                    {article.title}
-                  </h2>
-                  <p className="text-white/70 leading-relaxed max-w-3xl mb-6">
-                    {article.excerpt}
-                  </p>
-                  <div className="flex flex-wrap items-center gap-5 text-sm text-white/50">
-                    <span className="flex items-center gap-1.5">
-                      <Calendar className="w-4 h-4" />
-                      {article.date}
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <Clock className="w-4 h-4" />
-                      {article.readTime}
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <User className="w-4 h-4" />
-                      {article.author}
-                    </span>
-                  </div>
-                </div>
+          {loading && (
+            <div className="md:grid md:grid-cols-3 gap-8">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-64 bg-gray-200/60 rounded-2xl animate-pulse" />
               ))}
-          </div>
+            </div>
+          )}
 
-          {/* Other Articles */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {newsArticles
-              .filter((a) => !a.featured)
-              .map((article) => (
-                <article
-                  key={article.id}
-                  className="group bg-white rounded-2xl shadow-soft border border-gray-100 overflow-hidden hover:shadow-soft-lg hover:-translate-y-1 transition-all duration-300"
-                >
-                  {/* Image placeholder */}
-                  <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                    <div className="text-center">
-                      <Calendar className="w-10 h-10 text-gray-300 mx-auto mb-2" />
-                      <p className="text-xs text-gray-400">Article Image</p>
-                    </div>
-                  </div>
+          {!hasContent && !loading && (
+            <div className="text-center py-20 bg-gray-50 border border-gray-100 rounded-3xl">
+              <div className="w-16 h-16 bg-white border border-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
+                <Newspaper className="w-8 h-8 text-gray-300" />
+              </div>
+              <h2 className="font-heading text-xl font-bold text-school-dark mb-2">
+                No school updates yet
+              </h2>
+              <p className="text-gray-500 max-w-md mx-auto leading-relaxed">
+                No news or events have been published yet. Please check back
+                soon — updates from the school will appear here.
+              </p>
+            </div>
+          )}
 
-                  <div className="p-6">
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="px-2.5 py-0.5 bg-school-blue/5 text-school-blue text-xs font-semibold rounded-full">
-                        {article.category}
-                      </span>
-                    </div>
-                    <h3 className="font-[family-name:var(--font-poppins)] text-lg font-bold text-school-dark mb-3 group-hover:text-school-blue transition-colors">
-                      {article.title}
-                    </h3>
-                    <p className="text-sm text-gray-500 leading-relaxed mb-4">
-                      {article.excerpt}
-                    </p>
-                    <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                      <div className="flex items-center gap-3 text-xs text-gray-400">
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-3.5 h-3.5" />
-                          {article.date}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-3.5 h-3.5" />
-                          {article.readTime}
-                        </span>
+          {articles.length > 0 && (
+            <div className="mb-16">
+              <h2 className="font-heading text-2xl font-bold text-school-dark mb-8">
+                News
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {articles.map((a) => (
+                  <article
+                    key={a.id}
+                    className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-soft-sm flex flex-col"
+                  >
+                    {a.image ? (
+                      <div className="h-44 overflow-hidden">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={a.image}
+                          alt={a.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="h-44 bg-school-dark flex items-center justify-center">
+                        <Newspaper className="w-10 h-10 text-school-gold/40" />
+                      </div>
+                    )}
+                    <div className="p-6 flex flex-col flex-1">
+                      <h3 className="font-heading text-lg font-bold text-school-dark mb-3 leading-snug">
+                        {a.title}
+                      </h3>
+                      <p className="text-sm text-gray-500 leading-relaxed mb-4 flex-1">
+                        {a.excerpt || a.content}
+                      </p>
+                      <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-gray-100 text-xs text-gray-400">
+                        {a.publishedAt && (
+                          <span className="flex items-center gap-1">
+                            <Calendar className="w-3.5 h-3.5" />
+                            {formatDate(a.publishedAt)}
+                          </span>
+                        )}
+                        {a.author?.name && (
+                          <span className="flex items-center gap-1">
+                            <User className="w-3.5 h-3.5" />
+                            {a.author.name}
+                          </span>
+                        )}
                       </div>
                     </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {events.length > 0 && (
+            <div>
+              <h2 className="font-heading text-2xl font-bold text-school-dark mb-8">
+                Upcoming events
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {events.map((ev) => (
+                  <div
+                    key={ev.id}
+                    className="bg-white border border-gray-100 rounded-2xl p-6 shadow-soft-sm"
+                  >
+                    <div className="flex items-center gap-3 text-school-gold mb-3">
+                      <Calendar className="w-5 h-5" />
+                      <span className="text-sm font-semibold">
+                        {formatDateTime(ev.startDate)}
+                      </span>
+                    </div>
+                    <h3 className="font-heading text-lg font-bold text-school-dark mb-2">
+                      {ev.title}
+                    </h3>
+                    {ev.description && (
+                      <p className="text-sm text-gray-500 leading-relaxed mb-4">
+                        {ev.description}
+                      </p>
+                    )}
+                    {ev.location && (
+                      <p className="flex items-center gap-1.5 text-xs text-gray-400">
+                        <MapPin className="w-3.5 h-3.5" />
+                        {ev.location}
+                      </p>
+                    )}
+                    {ev.endDate !== ev.startDate && (
+                      <p className="flex items-center gap-1.5 text-xs text-gray-400 mt-1">
+                        <Clock className="w-3.5 h-3.5" />
+                        {formatDateTime(ev.endDate)}
+                      </p>
+                    )}
                   </div>
-                </article>
-              ))}
-          </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </section>
 

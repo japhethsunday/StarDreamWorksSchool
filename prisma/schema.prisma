@@ -368,3 +368,55 @@ model ActivityLog {
   @@index([createdAt])
   @@map("activity_logs")
 }
+
+// Educational levels (Creche, Kindergarten, Nursery, Primary, Secondary)
+// Descriptions are admin-managed so the school can update them without a developer.
+model EducationalLevel {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  sortOrder   Int      @default(0)
+  ageRange    String?
+  tagline     String?
+  description String?
+  highlights  String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([sortOrder])
+  @@map("educational_levels")
+}
+
+// Key/value store for admin-editable website content and school information.
+model SiteSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String?
+  isPublic  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("site_settings")
+}
+
+// Public admission enquiries submitted from the website. Admin can review them.
+model AdmissionEnquiry {
+  id            String   @id @default(cuid())
+  childFirstName String
+  childLastName  String?
+  dateOfBirth   String?
+  level         String
+  studentClass  String?
+  parentName    String
+  phone         String
+  email         String   @default("")
+  address       String?
+  message       String?
+  status        String   @default("NEW")
+  createdAt     DateTime @default(now())
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("admission_enquiries")
+}

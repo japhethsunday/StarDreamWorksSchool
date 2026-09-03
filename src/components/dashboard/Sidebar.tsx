@@ -19,6 +19,9 @@ import {
   X,
   ClipboardList,
   FolderOpen,
+  Layers,
+  MessageSquare,
+  Globe,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -45,6 +48,9 @@ const adminNav: NavItem[] = [
   { label: "News", href: "/dashboard/admin/news", icon: <Newspaper className="w-5 h-5" /> },
   { label: "Events", href: "/dashboard/admin/events", icon: <Calendar className="w-5 h-5" /> },
   { label: "Gallery", href: "/dashboard/admin/gallery", icon: <Image className="w-5 h-5" /> },
+  { label: "Admissions", href: "/dashboard/admin/admissions", icon: <MessageSquare className="w-5 h-5" /> },
+  { label: "Educational Levels", href: "/dashboard/admin/educational-levels", icon: <Layers className="w-5 h-5" /> },
+  { label: "Site Content", href: "/dashboard/admin/site-content", icon: <Globe className="w-5 h-5" /> },
   { label: "Settings", href: "/dashboard/admin/settings", icon: <Settings className="w-5 h-5" /> },
 ];
 
@@ -59,7 +65,6 @@ const teacherNav: NavItem[] = [
 
 const studentNav: NavItem[] = [
   { label: "Dashboard", href: "/dashboard/student", icon: <LayoutDashboard className="w-5 h-5" /> },
-  { label: "My Classes", href: "/dashboard/student/classes", icon: <BookOpen className="w-5 h-5" /> },
   { label: "Assignments", href: "/dashboard/student/assignments", icon: <ClipboardList className="w-5 h-5" /> },
   { label: "Grades", href: "/dashboard/student/grades", icon: <FileText className="w-5 h-5" /> },
   { label: "Materials", href: "/dashboard/student/materials", icon: <FolderOpen className="w-5 h-5" /> },
@@ -70,7 +75,6 @@ const parentNav: NavItem[] = [
   { label: "Dashboard", href: "/dashboard/parent", icon: <LayoutDashboard className="w-5 h-5" /> },
   { label: "My Children", href: "/dashboard/parent/children", icon: <Baby className="w-5 h-5" /> },
   { label: "Grades", href: "/dashboard/parent/grades", icon: <FileText className="w-5 h-5" /> },
-  { label: "Assignments", href: "/dashboard/parent/assignments", icon: <ClipboardList className="w-5 h-5" /> },
   { label: "Announcements", href: "/dashboard/parent/announcements", icon: <Megaphone className="w-5 h-5" /> },
 ];
 
@@ -92,6 +96,7 @@ function getNavItems(role: string): NavItem[] {
 export default function Sidebar({ role, isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
   const navItems = getNavItems(role);
+  const homeHref = `/dashboard/${role.toLowerCase()}`;
 
   return (
     <>
@@ -108,7 +113,7 @@ export default function Sidebar({ role, isOpen, onClose }: SidebarProps) {
         }`}
       >
         <div className="flex items-center justify-between p-5 border-b border-white/10">
-          <Link href="/dashboard/admin" className="flex items-center gap-3">
+          <Link href={homeHref} className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-br from-school-gold to-secondary rounded-xl flex items-center justify-center shadow-glow-gold">
               <Star className="w-5 h-5 text-white fill-white/30" />
             </div>

@@ -386,118 +386,7 @@ async function main() {
   });
   console.log("✅ Linked parents to students");
 
-  // ---------- ANNOUNCEMENTS ----------
-  await prisma.announcement.createMany({
-    data: [
-      {
-        title: "Welcome to the New Academic Session",
-        content:
-          "We are excited to welcome all students, parents and staff to a new academic session. Wishing everyone a productive and successful year ahead.",
-        authorId: admin.id,
-        targetType: "SCHOOL",
-        priority: "IMPORTANT",
-        isPublished: true,
-      },
-      {
-        title: "Inter-House Sports Competition",
-        content:
-          "Please be informed that the annual inter-house sports competition will be held next month. All students are expected to participate.",
-        authorId: admin.id,
-        targetType: "SCHOOL",
-        priority: "NORMAL",
-        isPublished: true,
-      },
-      {
-        title: "Parent-Teacher Conference",
-        content:
-          "A parent-teacher conference is scheduled for the end of this term. Details regarding time and venue will be communicated soon.",
-        authorId: admin.id,
-        targetType: "SCHOOL",
-        priority: "URGENT",
-        isPublished: true,
-      },
-      {
-        title: "Mid-Term Test Schedule",
-        content:
-          "Mid-term tests begin next week. Students should prepare adequately and revise all topics covered so far.",
-        authorId: teachers["Grace1"].userId,
-        targetType: "CLASS",
-        classId: createdClasses["Primary 3"].id,
-        priority: "IMPORTANT",
-        isPublished: true,
-      },
-    ],
-  });
-  console.log("✅ Created sample announcements");
-
-  // ---------- NEWS ----------
-  await prisma.news.createMany({
-    data: [
-      {
-        title: "STAR DreamWorks Wins Regional Quiz Championship",
-        content:
-          "Our students excelled at the regional inter-school quiz championship, bringing home the first-place trophy. We are incredibly proud of their hard work and dedication.",
-        excerpt: "Our students won the regional quiz championship.",
-        authorId: admin.id,
-        isPublished: true,
-        publishedAt: new Date(),
-      },
-      {
-        title: "New Science Laboratory Commissioned",
-        content:
-          "STAR DreamWorks Schools has commissioned a state-of-the-art science laboratory to enhance practical learning for our secondary students.",
-        excerpt: "A new science laboratory is now operational.",
-        authorId: admin.id,
-        isPublished: true,
-        publishedAt: new Date(),
-      },
-      {
-        title: "Enrollment Open for Next Session",
-        content:
-          "Admissions are now open for the upcoming academic session across all our campuses. Limited spaces are available in each class. Contact our admissions office for more details.",
-        excerpt: "Admissions open for next session.",
-        authorId: admin.id,
-        isPublished: true,
-        publishedAt: new Date(),
-      },
-    ],
-  });
-  console.log("✅ Created sample news articles");
-
-  // ---------- EVENTS ----------
   const now = new Date();
-  await prisma.event.createMany({
-    data: [
-      {
-        title: "Cultural Day Celebration",
-        description:
-          "An exciting day of cultural displays, traditional performances and food from diverse cultures.",
-        startDate: new Date(now.getFullYear(), now.getMonth() + 1, 15, 9, 0),
-        endDate: new Date(now.getFullYear(), now.getMonth() + 1, 15, 16, 0),
-        location: "Main School Auditorium",
-        isPublished: true,
-      },
-      {
-        title: "Inter-House Sports Competition",
-        description:
-          "The annual athletics competition featuring races, relays and field events across all houses.",
-        startDate: new Date(now.getFullYear(), now.getMonth() + 2, 5, 8, 0),
-        endDate: new Date(now.getFullYear(), now.getMonth() + 2, 5, 17, 0),
-        location: "School Sports Field",
-        isPublished: true,
-      },
-      {
-        title: "Graduation Ceremony",
-        description:
-          "Award ceremony for graduating students of the current academic session.",
-        startDate: new Date(now.getFullYear() + 1, 6, 20, 10, 0),
-        endDate: new Date(now.getFullYear() + 1, 6, 20, 14, 0),
-        location: "Main School Auditorium",
-        isPublished: false,
-      },
-    ],
-  });
-  console.log("✅ Created sample events");
 
   // ---------- ASSIGNMENTS ----------
   const assignmentCreateData = [
@@ -621,40 +510,8 @@ async function main() {
   }
   console.log("✅ Created sample grades");
 
-  // ---------- GALLERY ----------
-  await prisma.galleryItem.createMany({
-    data: [
-      {
-        title: "Science Fair 2025",
-        description: "Students presenting their projects at the annual science fair.",
-        imageUrl: "/images/gallery/science-fair.jpg",
-        category: "ACADEMIC",
-        isPublished: true,
-      },
-      {
-        title: "Cultural Day",
-        description: "Students in colourful traditional attire during cultural day.",
-        imageUrl: "/images/gallery/cultural-day.jpg",
-        category: "EVENT",
-        isPublished: true,
-      },
-      {
-        title: "Sports Day Parade",
-        description: "The colorful opening parade at the inter-house sports competition.",
-        imageUrl: "/images/gallery/sports-day.jpg",
-        category: "SPORTS",
-        isPublished: true,
-      },
-      {
-        title: "Classroom Activity",
-        description: "A glimpse of our students engaged in an interactive classroom session.",
-        imageUrl: "/images/gallery/classroom.jpg",
-        category: "ACADEMIC",
-        isPublished: true,
-      },
-    ],
-  });
-  console.log("✅ Created sample gallery items");
+  // ---------- GALLERY (none seeded - real photos to be added by the school) ----------
+  console.log("🗑️  Gallery left empty - no fabricated images seeded");
 
   console.log("\n🎉 Seed completed successfully!");
   console.log("------------------------------");
