@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
-import { Star, Eye, EyeOff, LogIn, ArrowLeft, Loader2, AlertCircle } from "lucide-react";
+import { Eye, EyeOff, LogIn, ArrowLeft, Loader2, AlertCircle } from "lucide-react";
+import { Crest } from "@/components/public/Logo";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -50,8 +51,8 @@ export default function LoginPage() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-school-dark via-school-blue to-primary">
-        <Loader2 className="w-8 h-8 text-school-gold animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-brand-navy-deep">
+        <Loader2 className="w-8 h-8 text-brand-yellow animate-spin" />
       </div>
     );
   }
@@ -61,12 +62,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-school-dark via-school-blue to-primary flex items-center justify-center p-4">
-      {/* Background decoration */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-20 w-96 h-96 bg-school-gold/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-20 w-80 h-80 bg-school-blue/20 rounded-full blur-3xl" />
-      </div>
+    <div className="min-h-screen sd-hero-surface flex items-center justify-center p-4">
 
       <div className="relative w-full max-w-md">
         {/* Back to home */}
@@ -79,17 +75,20 @@ export default function LoginPage() {
         </Link>
 
         {/* Login Card */}
-        <div className="bg-white rounded-3xl shadow-soft-xl p-8 sm:p-10">
+        <div className="bg-white rounded-2xl shadow-soft-xl p-8 sm:p-10">
           {/* Branding */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-school-blue to-school-dark rounded-2xl shadow-glow-blue mb-5">
-              <Star className="w-8 h-8 text-school-gold fill-school-gold/30" />
+            <div className="flex justify-center mb-4">
+              <Crest className="w-16 h-16" />
             </div>
-            <h1 className="font-[family-name:var(--font-poppins)] text-2xl font-bold text-school-dark">
-              Welcome Back
-            </h1>
-            <p className="text-sm text-gray-500 mt-1">
-              Sign in to access your dashboard
+            <p className="text-[11px] font-bold uppercase text-brand-navy" style={{ letterSpacing: "0.32em" }}>
+              Star
+            </p>
+            <p className="font-heading text-xl font-bold text-brand-red">
+              DreamWorks Schools
+            </p>
+            <p className="text-sm text-brand-muted mt-2">
+              Sign in to access your portal
             </p>
           </div>
 
@@ -112,7 +111,7 @@ export default function LoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-school-blue/20 focus:border-school-blue transition-all"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-navy/20 focus:border-brand-navy transition-all"
                 placeholder="you@example.com"
                 autoComplete="email"
               />
@@ -128,7 +127,7 @@ export default function LoginPage() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-school-blue/20 focus:border-school-blue transition-all pr-12"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-navy/20 focus:border-brand-navy transition-all pr-12"
                   placeholder="Enter your password"
                   autoComplete="current-password"
                 />
@@ -150,7 +149,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-school-blue to-primary text-white font-semibold rounded-xl shadow-glow-blue hover:shadow-lg hover:scale-[1.01] transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="sd-btn sd-btn-apply w-full px-6 py-3.5 text-[15px] disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>

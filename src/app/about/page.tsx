@@ -11,6 +11,8 @@ import {
   displayAddress,
   telHref,
   formatPhone,
+  SCHOOL_MOTTO_LINES,
+  SCHOOL_SIGNATURE_LINE,
 } from "@/lib/school-contact";
 
 export default function AboutPage() {
@@ -68,8 +70,9 @@ export default function AboutPage() {
       />
 
       {/* School intro */}
-      <section className="py-20 lg:py-28">
+      <section className="py-20 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-12 lg:gap-16 items-center">
           <Reveal className="max-w-3xl">
             <p className="sd-eyebrow mb-3">Who we are</p>
             <h2 className="font-heading text-3xl sm:text-4xl font-bold text-brand-ink tracking-tight mb-6 leading-tight">
@@ -82,6 +85,33 @@ export default function AboutPage() {
               to take on the next stage of their education.
             </p>
           </Reveal>
+          <Reveal delay={140}>
+            <div className="relative bg-brand-paper border border-brand-line rounded-2xl overflow-hidden max-w-md mx-auto lg:ml-auto w-full">
+              <div className="bg-brand-red text-white text-center text-[11px] font-bold uppercase py-2 px-4" style={{ letterSpacing: "0.18em" }}>
+                Creche, Nursery & Primary Schools
+              </div>
+              <div className="p-7">
+                <dl className="space-y-2 text-center">
+                  {SCHOOL_MOTTO_LINES.map((m) => (
+                    <div
+                      key={m.left}
+                      className="flex items-center justify-center gap-3 font-heading text-sm font-bold tracking-wide text-brand-navy"
+                    >
+                      <dt>{m.left}</dt>
+                      <dd aria-hidden="true" className="text-brand-red">=</dd>
+                      <dd>{m.right}</dd>
+                    </div>
+                  ))}
+                </dl>
+                <div className="mt-5 pt-4 border-t border-brand-line text-center">
+                  <p className="font-heading text-sm font-bold italic text-brand-red">
+                    “{SCHOOL_SIGNATURE_LINE}”
+                  </p>
+                </div>
+              </div>
+            </div>
+          </Reveal>
+          </div>
         </div>
       </section>
 

@@ -418,7 +418,7 @@ export default function AdmissionsPage() {
       {/* Contact */}
       <section className="py-16 lg:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-3 gap-5">
+          <div className={`grid gap-5 ${email ? "md:grid-cols-3" : "md:grid-cols-2"}`}>
             <Reveal>
               <div className="sd-card p-7 h-full">
                 <MapPin className="w-6 h-6 text-brand-red mb-3" />

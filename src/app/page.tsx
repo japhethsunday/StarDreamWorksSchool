@@ -298,6 +298,41 @@ export default function HomePage() {
             </div>
           )}
 
+          {!loading && !displayLevels && (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {[
+                { name: "Creche", ageRange: "0 – 2 years" },
+                { name: "Kindergarten", ageRange: "Age 3" },
+                { name: "Nursery", ageRange: "Ages 4 – 5" },
+                { name: "Primary", ageRange: "Ages 6 – 11" },
+                { name: "Secondary School", ageRange: "Ages 12+" },
+              ].map((lvl, i) => (
+                <Reveal key={lvl.name} delay={(i % 3) * 90}>
+                  <Link href="/admissions" className="sd-card group block p-7 h-full">
+                    <div className="flex items-start justify-between mb-5">
+                      <div className="w-12 h-12 bg-brand-navy/5 border border-brand-line rounded-xl flex items-center justify-center group-hover:bg-brand-red/5 group-hover:border-brand-red/20 transition-colors">
+                        <GraduationCap className="w-6 h-6 text-brand-red" />
+                      </div>
+                      <span className="text-xs font-bold text-brand-navy bg-brand-yellow/25 px-2.5 py-1 rounded-full">
+                        {lvl.ageRange}
+                      </span>
+                    </div>
+                    <h3 className="font-heading text-lg font-bold text-brand-ink mb-2">
+                      {lvl.name}
+                    </h3>
+                    <p className="text-sm text-brand-muted leading-relaxed">
+                      Contact the school office to learn more about {lvl.name.toLowerCase()} places.
+                    </p>
+                    <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-brand-red">
+                      Enquire now
+                      <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+                    </span>
+                  </Link>
+                </Reveal>
+              ))}
+            </div>
+          )}
+
           {!loading && displayLevels && (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {displayLevels.map((lvl, i) => (

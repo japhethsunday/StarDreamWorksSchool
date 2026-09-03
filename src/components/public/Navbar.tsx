@@ -62,11 +62,13 @@ export default function Navbar() {
             <MapPin className="w-3.5 h-3.5 text-brand-yellow shrink-0" />
             <span className="truncate">{address}</span>
           </p>
-          <p className="md:hidden flex items-center gap-1.5 font-medium">
-            <MapPin className="w-3.5 h-3.5 text-brand-yellow shrink-0" />
-            Ajah, Lagos
+          <p className="md:hidden flex items-center gap-1.5 font-medium shrink-0">
+            <Phone className="w-3.5 h-3.5 text-brand-yellow shrink-0" />
+            <a href={telHref(phones[0])} className="font-semibold tracking-wide hover:text-brand-yellow transition-colors">
+              {formatPhone(phones[0])}
+            </a>
           </p>
-          <div className="flex items-center gap-1 shrink-0">
+          <div className="hidden md:flex items-center gap-1 shrink-0">
             <Phone className="w-3.5 h-3.5 text-brand-yellow" />
             {phones.map((p, i) => (
               <span key={p} className="flex items-center">

@@ -48,7 +48,7 @@ export default function GalleryPage() {
         description="Photos from around STAR DreamWorks Schools."
       />
 
-      <section className="py-20 lg:py-28">
+      <section className="py-20 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {loading && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
