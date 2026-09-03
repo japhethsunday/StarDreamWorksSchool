@@ -46,8 +46,8 @@ export default function UniformIllustration({
         <path d="M170 214l-11 10 6 44h10l6-44z" fill="#C93720" />
         <path d="M159 212l11 8 11-8 4 6-15 10-15-10z" fill="#EDE8D6" />
         {/* crest */}
-        <rect x="188" y="238" width="12" height="14" rx="3" fill="none" stroke="#1F2A5E" strokeWidth="1.6" />
-        <text x="194" y="249" textAnchor="middle" fontSize="9" fontWeight="700" fill="#C93720" fontFamily="Georgia, serif">W</text>
+        <rect x="188" y="238" width="12" height="14" rx="3" fill="none" stroke="#C93720" strokeWidth="1.6" />
+        <text x="194" y="249" textAnchor="middle" fontSize="9" fontWeight="900" fill="#C93720" fontFamily="Arial, Helvetica, sans-serif">W</text>
         {/* arm to book */}
         <rect x="200" y="252" width="52" height="20" rx="10" fill="#fff" stroke="#D8D2BD" strokeWidth="2" />
         <circle cx="254" cy="262" r="11" fill="#8D5524" opacity="0.85" />
@@ -60,8 +60,8 @@ export default function UniformIllustration({
         <rect x="250" y="184" width="80" height="104" rx="14" fill="#FFFFFF" stroke="#D8D2BD" strokeWidth="2" />
         <path d="M290 186l-12 11 6 48h12l6-48z" fill="#C93720" />
         <path d="M278 184l12 9 12-9 4 6-16 11-16-11z" fill="#EDE8D6" />
-        <rect x="308" y="212" width="13" height="15" rx="3" fill="none" stroke="#1F2A5E" strokeWidth="1.6" />
-        <text x="314.5" y="224" textAnchor="middle" fontSize="10" fontWeight="700" fill="#C93720" fontFamily="Georgia, serif">W</text>
+        <rect x="308" y="212" width="13" height="15" rx="3" fill="none" stroke="#C93720" strokeWidth="1.6" />
+        <text x="314.5" y="224" textAnchor="middle" fontSize="10" fontWeight="900" fill="#C93720" fontFamily="Arial, Helvetica, sans-serif">W</text>
         {/* open book */}
         <path d="M228 300c20-10 42-10 62 0 20-10 42-10 62 0v34c-20-10-42-10-62 0-20-10-42-10-62 0z" fill="#fff" stroke="#1F2A5E" strokeWidth="2.5" />
         <line x1="290" y1="300" x2="290" y2="334" stroke="#1F2A5E" strokeWidth="2.5" />
@@ -85,8 +85,8 @@ export default function UniformIllustration({
         <rect x="371" y="213" width="74" height="90" rx="14" fill="#FFFFFF" stroke="#D8D2BD" strokeWidth="2" />
         <path d="M408 215l-11 10 6 42h10l6-42z" fill="#C93720" />
         <path d="M397 213l11 8 11-8 4 6-15 10-15-10z" fill="#EDE8D6" />
-        <rect x="382" y="239" width="12" height="14" rx="3" fill="none" stroke="#1F2A5E" strokeWidth="1.6" />
-        <text x="388" y="250" textAnchor="middle" fontSize="9" fontWeight="700" fill="#C93720" fontFamily="Georgia, serif">W</text>
+        <rect x="382" y="239" width="12" height="14" rx="3" fill="none" stroke="#C93720" strokeWidth="1.6" />
+        <text x="388" y="250" textAnchor="middle" fontSize="9" fontWeight="900" fill="#C93720" fontFamily="Arial, Helvetica, sans-serif">W</text>
         <rect x="330" y="252" width="50" height="20" rx="10" fill="#fff" stroke="#D8D2BD" strokeWidth="2" />
         <circle cx="328" cy="262" r="11" fill="#7A4E2D" opacity="0.88" />
       </g>
