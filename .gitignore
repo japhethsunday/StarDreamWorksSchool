@@ -70,3 +70,11 @@ node_modules/.prisma/
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# env files (secrets)
+.env*
+!.env.example
+
+# local tooling
+.agents/
+skills-lock.json
