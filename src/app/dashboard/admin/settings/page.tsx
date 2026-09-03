@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { Settings, Save, Loader2, User, Shield } from "lucide-react";
 import LoadingSpinner from "@/components/dashboard/LoadingSpinner";
@@ -16,19 +16,31 @@ export default function SettingsPage() {
 
   const user = session?.user as any;
 
+  useEffect(() => {
+    if (user) {
+      if (!name) setName(user.name || "");
+      if (!email) setEmail(user.email || "");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.name, user?.email]);
+
   const handleProfileSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     try {
-      await fetch("/api/admin/settings/profile", {
+      const res = await fetch("/api/admin/settings/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email }),
       });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || "Failed to update profile");
+      }
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
-    } catch {
-      alert("Failed to update profile");
+    } catch (err: any) {
+      alert(err.message || "Failed to update profile");
     } finally {
       setSaving(false);
     }

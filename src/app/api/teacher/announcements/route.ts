@@ -105,7 +105,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { title, content, classId, priority, isPublished } = body;
+    const { title, content, classId, priority, isPublished, targetType } = body;
 
     if (!title || !title.trim()) {
       return NextResponse.json(
@@ -121,24 +121,28 @@ export async function POST(req: Request) {
       );
     }
 
-    if (!classId) {
+    const target = targetType === "SCHOOL" ? "SCHOOL" : "CLASS";
+
+    if (target === "CLASS" && !classId) {
       return NextResponse.json(
         { success: false, error: "classId is required for class announcements." },
         { status: 400 }
       );
     }
 
-    const classExists = await prisma.teacherClass.findUnique({
-      where: {
-        teacherId_classId: { teacherId: teacher.id, classId },
-      },
-    });
+    if (target === "CLASS") {
+      const classExists = await prisma.teacherClass.findUnique({
+        where: {
+          teacherId_classId: { teacherId: teacher.id, classId },
+        },
+      });
 
-    if (!classExists) {
-      return NextResponse.json(
-        { success: false, error: "You do not teach this class." },
-        { status: 403 }
-      );
+      if (!classExists) {
+        return NextResponse.json(
+          { success: false, error: "You do not teach this class." },
+          { status: 403 }
+        );
+      }
     }
 
     const validPriorities = ["NORMAL", "IMPORTANT", "URGENT"];
@@ -154,8 +158,8 @@ export async function POST(req: Request) {
         title,
         content,
         authorId: (session.user as any).id,
-        targetType: "CLASS",
-        classId,
+        targetType: target,
+        classId: target === "CLASS" ? classId : null,
         priority: priority || "NORMAL",
         isPublished: typeof isPublished === "boolean" ? isPublished : true,
       },

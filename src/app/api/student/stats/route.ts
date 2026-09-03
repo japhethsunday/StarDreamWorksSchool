@@ -137,6 +137,53 @@ export async function GET() {
       _avg: { score: true },
     });
 
+    const subjectCount = student.classId
+      ? await prisma.classSubject.count({ where: { classId: student.classId } })
+      : 0;
+
+    const mySubmissions = await prisma.submission.findMany({
+      where: { studentId: student.id },
+      select: {
+        assignmentId: true,
+        status: true,
+        grade: true,
+      },
+    });
+    const submissionMap: Record<
+      string,
+      { status: string; grade: number | null }
+    > = {};
+    for (const s of mySubmissions) {
+      submissionMap[s.assignmentId] = { status: s.status, grade: s.grade };
+    }
+
+    const assignments = recentAssignments.map((a) => ({
+      id: a.id,
+      title: a.title,
+      subject: a.subject,
+      dueDate: a.dueDate,
+      maxScore: a.maxScore,
+      status: submissionMap[a.id]?.status ?? "PENDING",
+      grade: submissionMap[a.id]?.grade ?? null,
+    }));
+
+    const grades = recentGrades.map((g) => ({
+      id: g.id,
+      subject: g.subject,
+      score: g.score,
+      grade: g.grade,
+      term: g.term,
+    }));
+
+    const announcements = recentAnnouncements.map((a) => ({
+      id: a.id,
+      title: a.title,
+      content: a.content,
+      priority: a.priority,
+      createdAt: a.createdAt,
+      targetType: a.targetType,
+    }));
+
     return NextResponse.json({
       success: true,
       data: {
@@ -148,10 +195,19 @@ export async function GET() {
         pendingSubmissionCount,
         overdueAssignmentCount,
         averageScore: averageScore._avg.score,
+        averageGrade:
+          averageScore._avg.score != null
+            ? Number(averageScore._avg.score.toFixed(1))
+            : "—",
+        subjectCount,
+        subjects: subjectCount,
         recentGrades,
         recentAssignments,
         recentAnnouncements,
         upcomingAssignments,
+        assignments,
+        grades,
+        announcements,
       },
     });
   } catch (error) {

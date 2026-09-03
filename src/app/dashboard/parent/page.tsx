@@ -20,6 +20,9 @@ import EmptyState from "@/components/dashboard/EmptyState";
 
 interface Stats {
   children: number;
+  childCount?: number;
+  childrenCount?: number;
+  totalGrades?: number;
   activeAssignments: number;
   recentGrades: number;
   childrenData?: {
@@ -105,7 +108,7 @@ export default function ParentDashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
         <StatsCard
           title="My Children"
-          value={stats?.children ?? 0}
+          value={stats?.childCount ?? stats?.childrenCount ?? 0}
           icon={<Baby className="w-5 h-5" />}
           color="blue"
         />
@@ -117,7 +120,7 @@ export default function ParentDashboard() {
         />
         <StatsCard
           title="Grades Recorded"
-          value={stats?.recentGrades ?? 0}
+          value={stats?.totalGrades ?? 0}
           icon={<FileText className="w-5 h-5" />}
           color="green"
         />

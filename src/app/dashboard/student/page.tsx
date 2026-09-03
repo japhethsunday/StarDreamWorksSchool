@@ -20,10 +20,12 @@ import LoadingSpinner from "@/components/dashboard/LoadingSpinner";
 import EmptyState from "@/components/dashboard/EmptyState";
 
 interface Stats {
-  myClass: string;
-  subjects: number;
-  pendingAssignments: number;
-  averageGrade: string | number;
+  myClass?: string;
+  student?: { class?: { name: string } | null } | null;
+  subjects?: number;
+  pendingAssignments?: number;
+  pendingSubmissionCount?: number;
+  averageGrade?: string | number;
   assignments?: {
     id: string;
     title: string;
@@ -112,6 +114,8 @@ export default function StudentDashboard() {
   }
 
   const firstName = (session?.user as any)?.name?.split(" ")[0] || "Student";
+  const className =
+    stats?.myClass || stats?.student?.class?.name || "—";
   const avg =
     stats?.averageGrade != null && stats.averageGrade !== "—"
       ? stats.averageGrade
@@ -124,8 +128,8 @@ export default function StudentDashboard() {
           Welcome back, {firstName}
         </h2>
         <p className="text-sm text-gray-500 mt-1">
-          {stats?.myClass
-            ? `You're in ${stats.myClass}. Here's your learning overview.`
+          {className !== "—"
+            ? `You're in ${className}. Here's your learning overview.`
             : "Here's your learning overview."}
         </p>
       </div>
@@ -133,7 +137,7 @@ export default function StudentDashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         <StatsCard
           title="My Class"
-          value={stats?.myClass || "—"}
+          value={className}
           icon={<BookOpen className="w-5 h-5" />}
           color="blue"
         />
@@ -145,7 +149,7 @@ export default function StudentDashboard() {
         />
         <StatsCard
           title="Pending Assignments"
-          value={stats?.pendingAssignments ?? 0}
+          value={stats?.pendingSubmissionCount ?? stats?.pendingAssignments ?? 0}
           icon={<ClipboardList className="w-5 h-5" />}
           color="gold"
         />

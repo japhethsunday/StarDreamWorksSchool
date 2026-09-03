@@ -10,21 +10,39 @@ import {
 import LoadingSpinner from "@/components/dashboard/LoadingSpinner";
 import EmptyState from "@/components/dashboard/EmptyState";
 
+interface ChildGradeRow {
+  id: string;
+  student?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    studentId?: string;
+  };
+  class?: { name: string } | null;
+  subject: { name: string } | string;
+  score: number;
+  grade: string;
+  term: string;
+}
+
+interface GradeSummary {
+  studentId: string;
+  studentName: string;
+  averageScore: number | null;
+  totalGrades: number;
+  bestScore: number | null;
+}
+
+interface GradesData {
+  grades?: ChildGradeRow[];
+  summary?: GradeSummary[];
+}
+
 interface ChildGrades {
   childId: string;
   childName: string;
   className?: string;
-  grades: {
-    id: string;
-    subject: { name: string } | string;
-    score: number;
-    grade: string;
-    term: string;
-  }[];
-}
-
-interface GradesData {
-  children?: ChildGrades[];
+  grades: ChildGradeRow[];
 }
 
 export default function ParentGrades() {
@@ -73,7 +91,42 @@ export default function ParentGrades() {
     );
   }
 
-  const children = data?.children || [];
+  const rows: ChildGradeRow[] = data?.grades || [];
+  const summary = data?.summary || [];
+
+  const children: ChildGrades[] = summary.map((s) => {
+    const childRows = rows.filter((r) => r.student?.id === s.studentId);
+    const firstRow = childRows[0];
+    return {
+      childId: s.studentId,
+      childName: s.studentName || firstRow?.student ? `${firstRow?.student?.firstName} ${firstRow?.student?.lastName}` : "Student",
+      className: firstRow?.class?.name,
+      grades: childRows,
+    };
+  });
+
+  const fallbackRows = rows.filter(
+    (r) => !summary.some((s) => s.studentId === r.student?.id)
+  );
+  if (fallbackRows.length) {
+    const byStudent: Record<string, ChildGrades> = {};
+    fallbackRows.forEach((r) => {
+      const id = r.student?.id ?? "unknown";
+      if (!byStudent[id]) {
+        byStudent[id] = {
+          childId: id,
+          childName:
+            r.student?.firstName && r.student?.lastName
+              ? `${r.student.firstName} ${r.student.lastName}`
+              : "Student",
+          className: r.class?.name,
+          grades: [],
+        };
+      }
+      byStudent[id].grades.push(r);
+    });
+    Object.values(byStudent).forEach((c) => children.push(c));
+  }
 
   return (
     <div className="space-y-6">

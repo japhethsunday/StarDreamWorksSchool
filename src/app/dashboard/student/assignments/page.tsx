@@ -26,7 +26,7 @@ interface Assignment {
   subject?: { id: string; name: string } | null;
   subjectName?: string;
   submissionStatus?: string;
-  submission?: {
+  mySubmission?: {
     id: string;
     content?: string;
     files?: string;
@@ -77,14 +77,14 @@ export default function StudentAssignments() {
   }, [fetchAssignments]);
 
   const getStatus = (a: Assignment) => {
-    if (a.submission?.status) return a.submission.status;
-    if (a.submission) return "SUBMITTED";
+    if (a.mySubmission?.status) return a.mySubmission.status;
+    if (a.mySubmission) return "SUBMITTED";
     if (a.locked) return "CLOSED";
     return "PENDING";
   };
 
   const isOverdue = (a: Assignment) => {
-    return !a.submission && new Date(a.dueDate) < new Date();
+    return !a.mySubmission && new Date(a.dueDate) < new Date();
   };
 
   const filtered = assignments.filter((a) => {
@@ -145,8 +145,8 @@ export default function StudentAssignments() {
       CLOSED: "bg-gray-100 text-gray-500",
     };
     const label =
-      status === "GRADED" && a.submission?.grade != null
-        ? `${a.submission.grade}%`
+      status === "GRADED" && a.mySubmission?.grade != null
+        ? `${a.mySubmission.grade}%`
         : status.toLowerCase();
     return (
       <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${map[status] || map.PENDING}`}>
@@ -322,7 +322,7 @@ export default function StudentAssignments() {
               </div>
             )}
 
-            {selected.submission && (
+            {selected.mySubmission && (
               <div className="bg-green-50 border border-green-200 rounded-xl p-4">
                 <div className="flex items-center justify-between mb-2">
                   <h4 className="text-sm font-semibold text-green-800 flex items-center gap-1.5">
@@ -331,22 +331,22 @@ export default function StudentAssignments() {
                   </h4>
                   <span
                     className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${
-                      selected.submission.status === "GRADED"
+                      selected.mySubmission.status === "GRADED"
                         ? "bg-green-100 text-green-700"
                         : "bg-blue-100 text-blue-700"
                     }`}
                   >
-                    {selected.submission.status.toLowerCase()}
+                    {selected.mySubmission.status.toLowerCase()}
                   </span>
                 </div>
-                {selected.submission.content && (
+                {selected.mySubmission.content && (
                   <p className="text-sm text-gray-700 whitespace-pre-wrap bg-white rounded-lg p-3 border border-green-100">
-                    {selected.submission.content}
+                    {selected.mySubmission.content}
                   </p>
                 )}
-                {selected.submission.files && (
+                {selected.mySubmission.files && (
                   <a
-                    href={selected.submission.files}
+                    href={selected.mySubmission.files}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-sm font-medium text-school-blue hover:underline inline-flex items-center gap-1 mt-2"
@@ -356,24 +356,24 @@ export default function StudentAssignments() {
                   </a>
                 )}
                 <p className="text-xs text-gray-500 mt-2">
-                  Submitted {new Date(selected.submission.submittedAt).toLocaleDateString("en-NG", {
+                  Submitted {new Date(selected.mySubmission.submittedAt).toLocaleDateString("en-NG", {
                     day: "numeric",
                     month: "long",
                     year: "numeric",
                   })}
                 </p>
-                {selected.submission.grade != null && (
+                {selected.mySubmission.grade != null && (
                   <div className="mt-3 flex items-center gap-3 pt-3 border-t border-green-200">
                     <div className="flex items-center gap-2">
                       <span className="text-2xl font-bold text-school-green">
-                        {selected.submission.grade}
+                        {selected.mySubmission.grade}
                       </span>
                       <span className="text-xs text-gray-500">/{selected.maxScore}</span>
                     </div>
-                    {selected.submission.feedback && (
+                    {selected.mySubmission.feedback && (
                       <p className="text-sm text-gray-600 flex-1 bg-white rounded-lg p-2 border border-green-100">
                         <span className="font-semibold">Feedback: </span>
-                        {selected.submission.feedback}
+                        {selected.mySubmission.feedback}
                       </p>
                     )}
                   </div>

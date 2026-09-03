@@ -62,6 +62,8 @@ export async function GET() {
             grade: true,
             feedback: true,
             submittedAt: true,
+            content: true,
+            files: true,
           },
         },
       },

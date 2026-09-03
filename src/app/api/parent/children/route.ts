@@ -32,7 +32,7 @@ export async function GET() {
       );
     }
 
-    const children = await prisma.parentStudent.findMany({
+    const links = await prisma.parentStudent.findMany({
       where: { parentId: parent.id },
       include: {
         student: {
@@ -65,7 +65,25 @@ export async function GET() {
       },
     });
 
-    const data = children.map(({ student }) => student);
+    const studentIds = links.map((l) => l.student.id);
+
+    const averageRows = await prisma.grade.groupBy({
+      by: ["studentId"],
+      where: { studentId: { in: studentIds } },
+      _avg: { score: true },
+    });
+    const avgMap: Record<string, number | null> = {};
+    for (const r of averageRows) avgMap[r.studentId] = r._avg.score;
+
+    const data = links.map(({ student }) => {
+      const avg = avgMap[student.id];
+      return {
+        ...student,
+        className: student.class?.name ?? null,
+        average: avg != null ? Number(avg.toFixed(1)) : "—",
+        pendingAssignments: student._count.submissions ?? 0,
+      };
+    });
 
     return NextResponse.json({ success: true, data });
   } catch (error) {

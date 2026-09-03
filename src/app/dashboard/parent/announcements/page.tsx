@@ -18,10 +18,11 @@ interface Announcement {
   content: string;
   targetType: string;
   priority: string;
-  createdAt: string;
-  className?: string;
-  authorName?: string;
-}
+    createdAt: string;
+    className?: string;
+    class?: { name: string } | null;
+    authorName?: string;
+  }
 
 function PriorityIcon({ priority }: { priority: string }) {
   if (priority === "URGENT")
@@ -175,9 +176,9 @@ export default function ParentAnnouncements() {
               </h3>
               <p className="mt-2 text-sm text-gray-600 whitespace-pre-wrap">{ann.content}</p>
 
-              {ann.className && (
+              {ann.class && (
                 <p className="mt-4 text-xs text-gray-400">
-                  For <span className="font-medium text-gray-500">{ann.className}</span>
+                  For <span className="font-medium text-gray-500">{ann.class?.name}</span>
                 </p>
               )}
             </div>

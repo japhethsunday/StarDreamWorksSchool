@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Image as ImageIcon,
   Plus,
@@ -10,6 +10,7 @@ import {
   Upload,
   X,
   Eye,
+  Link2,
 } from "lucide-react";
 import ConfirmDialog from "@/components/dashboard/ConfirmDialog";
 import EmptyState from "@/components/dashboard/EmptyState";
@@ -18,7 +19,8 @@ import Modal from "@/components/dashboard/Modal";
 
 interface GalleryItem {
   id: string;
-  url: string;
+  url?: string;
+  imageUrl: string;
   title: string;
   category: string;
   createdAt: string;
@@ -34,8 +36,8 @@ export default function GalleryPage() {
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const [uploadTitle, setUploadTitle] = useState("");
   const [uploadCategory, setUploadCategory] = useState("");
+  const [uploadUrl, setUploadUrl] = useState("");
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchData = useCallback(async () => {
     try {
@@ -53,27 +55,33 @@ export default function GalleryPage() {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleUpload = async () => {
+    if (!uploadUrl.trim() || !uploadTitle.trim()) {
+      alert("Please provide both a title and an image URL.");
+      return;
+    }
     setUploading(true);
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("title", uploadTitle);
-      formData.append("category", uploadCategory);
-
-      const res = await fetch("/api/admin/gallery", { method: "POST", body: formData });
-      if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.message || "Upload failed"); }
+      const res = await fetch("/api/admin/gallery", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: uploadTitle,
+          imageUrl: uploadUrl.trim(),
+          category: uploadCategory,
+          isPublished: true,
+        }),
+      });
+      if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.error || "Upload failed"); }
       setUploadModalOpen(false);
       setUploadTitle("");
       setUploadCategory("");
+      setUploadUrl("");
       fetchData();
     } catch (e: any) {
       alert(e.message || "Upload failed");
     } finally {
       setUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
 
@@ -126,7 +134,7 @@ export default function GalleryPage() {
           {images.map((img) => (
             <div key={img.id} className="group relative bg-white rounded-2xl border border-gray-100 shadow-soft-sm overflow-hidden hover:shadow-soft-md transition-all">
               <div className="aspect-square bg-gray-100">
-                <img src={img.url} alt={img.title || ""} className="w-full h-full object-cover" />
+                <img src={img.imageUrl} alt={img.title || ""} className="w-full h-full object-cover" />
               </div>
               <div className="p-3">
                 <p className="text-sm font-medium text-gray-800 truncate">{img.title || "Untitled"}</p>
@@ -138,7 +146,7 @@ export default function GalleryPage() {
               </div>
               <div className="absolute top-2 right-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
-                  onClick={() => setPreviewImage(img.url)}
+                  onClick={() => setPreviewImage(img.imageUrl)}
                   className="p-1.5 bg-white/90 backdrop-blur-sm rounded-lg text-gray-600 hover:text-school-blue transition-colors shadow-sm"
                 >
                   <Eye className="w-3.5 h-3.5" />
@@ -166,17 +174,25 @@ export default function GalleryPage() {
             <input type="text" value={uploadCategory} onChange={(e) => setUploadCategory(e.target.value)} className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-school-blue/20 focus:border-school-blue" placeholder="e.g. Sports, Events" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Image File</label>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleUpload}
-              className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-school-blue/20 focus:border-school-blue file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-school-blue file:text-white"
-            />
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Image URL</label>
+            <div className="relative">
+              <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                type="url"
+                value={uploadUrl}
+                onChange={(e) => setUploadUrl(e.target.value)}
+                className="w-full pl-9 pr-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-school-blue/20 focus:border-school-blue"
+                placeholder="https://example.com/image.jpg"
+              />
+            </div>
+            <p className="text-xs text-gray-400 mt-1">Paste the public URL of the image you want to add.</p>
           </div>
           <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
             <button onClick={() => setUploadModalOpen(false)} className="px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors">Cancel</button>
+            <button onClick={handleUpload} disabled={uploading} className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-school-blue to-primary text-white text-sm font-semibold rounded-xl shadow-glow-blue hover:shadow-lg transition-all disabled:opacity-50">
+              {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+              Add to Gallery
+            </button>
           </div>
         </div>
       </Modal>

@@ -21,6 +21,7 @@ interface Announcement {
   createdAt: string;
   author?: { name: string } | null;
   className?: string;
+  class?: { name: string } | null;
   authorName?: string;
 }
 
@@ -182,7 +183,8 @@ export default function StudentAnnouncements() {
                   <span className="font-medium text-gray-500">
                     {ann.authorName || ann.author?.name}
                   </span>
-                  {ann.className && ` · for ${ann.className}`}
+                  {(ann.className || ann.class?.name) &&
+                    ` · for ${ann.class?.name || ann.className}`}
                 </p>
               )}
             </div>

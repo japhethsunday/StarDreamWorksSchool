@@ -29,10 +29,14 @@ import LoadingSpinner from "@/components/dashboard/LoadingSpinner";
 import EmptyState from "@/components/dashboard/EmptyState";
 
 interface Stats {
-  myClasses: number;
-  myStudents: number;
-  activeAssignments: number;
-  pendingReviews: number;
+  myClasses?: number;
+  classCount: number;
+  myStudents?: number;
+  studentCount: number;
+  activeAssignments?: number;
+  assignmentCount: number;
+  pendingReviews?: number;
+  pendingSubmissionCount: number;
   assignmentsPerClass?: { name: string; assignments: number }[];
   recentSubmissions?: {
     id: string;
@@ -133,25 +137,25 @@ export default function TeacherDashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         <StatsCard
           title="My Classes"
-          value={stats?.myClasses ?? 0}
+          value={stats?.classCount ?? 0}
           icon={<BookOpen className="w-5 h-5" />}
           color="blue"
         />
         <StatsCard
           title="My Students"
-          value={stats?.myStudents ?? 0}
+          value={stats?.studentCount ?? 0}
           icon={<Users className="w-5 h-5" />}
           color="green"
         />
         <StatsCard
           title="Active Assignments"
-          value={stats?.activeAssignments ?? 0}
+          value={stats?.assignmentCount ?? 0}
           icon={<ClipboardList className="w-5 h-5" />}
           color="gold"
         />
         <StatsCard
           title="Pending Reviews"
-          value={stats?.pendingReviews ?? 0}
+          value={stats?.pendingSubmissionCount ?? 0}
           icon={<CheckCircle2 className="w-5 h-5" />}
           color="purple"
         />

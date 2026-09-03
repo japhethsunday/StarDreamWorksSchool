@@ -115,6 +115,28 @@ export async function GET() {
       },
     });
 
+    const assignmentsPerClassRows = await prisma.assignment.groupBy({
+      by: ["classId"],
+      where: { teacherId: teacher.id },
+      _count: { _all: true },
+    });
+    const classIdToName: Record<string, string> = {};
+    for (const c of myClasses) classIdToName[c.class.id] = c.class.name;
+    const assignmentsPerClass = assignmentsPerClassRows.map((r) => ({
+      name: classIdToName[r.classId] || "Unnamed",
+      assignments: r._count._all,
+    }));
+
+    const recentSubmissionMap = recentSubmissions.map((s) => ({
+      id: s.id,
+      studentName: `${s.student.firstName} ${s.student.lastName}`,
+      assignmentTitle: s.assignment.title,
+      submittedAt: s.submittedAt,
+      status: s.status,
+      class: s.student.class?.name ?? "",
+      studentClass: s.student.class?.name ?? "",
+    }));
+
     return NextResponse.json({
       success: true,
       data: {
@@ -127,8 +149,9 @@ export async function GET() {
         materialCount,
         ungradedCount,
         recentAssignments,
-        recentSubmissions,
+        recentSubmissions: recentSubmissionMap,
         myClasses,
+        assignmentsPerClass,
       },
     });
   } catch (error) {

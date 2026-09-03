@@ -24,8 +24,12 @@ interface GradeRow {
   firstName?: string;
   lastName?: string;
   className?: string;
-  class?: { name: string } | null;
+  class?: { id: string; name: string } | null;
   subject?: { name: string } | string;
+  classId?: string;
+  gradeId?: string;
+  score?: number;
+  remarks?: string;
 }
 
 export default function TeacherGrades() {
@@ -69,13 +73,25 @@ export default function TeacherGrades() {
         throw new Error(data.error || "Failed to load grades.");
       }
       const json = await res.json();
-      const data = json.data || json || [];
+      const raw = json.data || json || [];
+      const data: GradeRow[] = raw.map((g: any) => ({
+        id: g.id,
+        studentId: g.student?.studentId || g.studentId || "",
+        firstName: g.student?.firstName || g.firstName,
+        lastName: g.student?.lastName || g.lastName,
+        className: g.class?.name || g.student?.class?.name || g.className,
+        classId: g.class?.id || g.classId,
+        subject: g.subject || g.subjectId,
+        gradeId: g.id,
+        score: g.score,
+        remarks: g.remarks,
+      }));
       setRows(data);
       const s: Record<string, string> = {};
       const r: Record<string, string> = {};
       data.forEach((row: GradeRow) => {
-        if ((row as any).score != null) s[row.id] = String((row as any).score);
-        if ((row as any).remarks) r[row.id] = (row as any).remarks;
+        if (row.score != null) s[row.id] = String(row.score);
+        if (row.remarks) r[row.id] = row.remarks;
       });
       setScores(s);
       setRemarks(r);
@@ -105,18 +121,19 @@ export default function TeacherGrades() {
       const payload: any = {
         studentId: row.studentId,
         subjectId: selectedSubject,
+        classId: row.classId,
         score: scores[row.id] != null ? Number(scores[row.id]) : undefined,
         remarks: remarks[row.id] || "",
       };
-      if ((row as any).gradeId) {
-        payload.gradeId = (row as any).gradeId;
+      if (row.gradeId) {
+        payload.gradeId = row.gradeId;
       }
       if (subjectName) payload.subjectName = subjectName;
       if (row.className || row.class) payload.className =
-        row.className || row.class?.name;
+        row.className || (row.class as any)?.name;
 
       const res = await fetch("/api/teacher/grades", {
-        method: (row as any).gradeId ? "PUT" : "POST",
+        method: row.gradeId ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });

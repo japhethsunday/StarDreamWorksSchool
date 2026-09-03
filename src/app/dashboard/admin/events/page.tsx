@@ -25,7 +25,7 @@ interface EventItem {
   startDate: string;
   endDate: string;
   location: string;
-  isActive: boolean;
+  isPublished: boolean;
 }
 
 interface FormData {
@@ -88,7 +88,7 @@ export default function EventsPage() {
     try {
       const url = editingId ? `/api/admin/events/${editingId}` : "/api/admin/events";
       const method = editingId ? "PUT" : "POST";
-      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
+      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, isPublished: true }) });
       if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.message || "Failed"); }
       setModalOpen(false);
       fetchData();
@@ -141,11 +141,11 @@ export default function EventsPage() {
       ),
     },
     {
-      key: "isActive",
+      key: "isPublished",
       label: "Status",
       render: (val: boolean) => (
         <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${val ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>
-          {val ? "Active" : "Ended"}
+          {val ? "Published" : "Hidden"}
         </span>
       ),
     },
