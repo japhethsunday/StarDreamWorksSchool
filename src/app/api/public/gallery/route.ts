@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+// Gallery content changes whenever an admin publishes photos, so this
+// must never be statically cached at build time.
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const gallery = await prisma.galleryItem.findMany({

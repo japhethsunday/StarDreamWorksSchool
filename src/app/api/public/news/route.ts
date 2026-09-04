@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+// News is published from the dashboard at any time — never cache statically.
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const news = await prisma.news.findMany({
