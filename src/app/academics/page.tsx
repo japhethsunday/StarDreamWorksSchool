@@ -21,8 +21,9 @@ export default function AcademicsPage() {
   const ordered = [...levels].sort((a, b) => a.sortOrder - b.sortOrder);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-white">
       <Navbar />
+      <main id="main-content">
       <PageHero
         eyebrow="Academics"
         title="Our programmes"
@@ -203,6 +204,7 @@ export default function AcademicsPage() {
         </div>
       </section>
 
+      </main>
       <Footer />
     </div>
   );

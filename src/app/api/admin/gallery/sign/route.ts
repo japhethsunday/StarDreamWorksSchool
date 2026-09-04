@@ -45,7 +45,7 @@ export async function POST() {
 
     return NextResponse.json({
       success: true,
-      data: { timestamp, signature, cloudName, folder: "stardreamworks/gallery" },
+      data: { timestamp, signature, apiKey, cloudName, folder: "stardreamworks/gallery" },
     });
   } catch {
     return NextResponse.json(

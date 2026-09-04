@@ -40,8 +40,9 @@ export default function GalleryPage() {
       : items.filter((i) => i.category === activeCategory);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-white">
       <Navbar />
+      <main id="main-content">
       <PageHero
         eyebrow="Gallery"
         title="School life"
@@ -102,7 +103,7 @@ export default function GalleryPage() {
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={item.imageUrl}
-                      alt={item.title}
+                      alt={item.title || "STAR DreamWorks Schools gallery photo"}
                       loading="lazy"
                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
                     />
@@ -131,6 +132,7 @@ export default function GalleryPage() {
         </div>
       </section>
 
+      </main>
       <Footer />
     </div>
   );

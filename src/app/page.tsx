@@ -75,9 +75,9 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
-
+      <main id="main-content">
       {/* ============ HERO ============ */}
-      <section id="main-content" className="relative overflow-hidden sd-hero-surface scroll-mt-20">
+      <section className="relative overflow-hidden sd-hero-surface scroll-mt-20">
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-16 lg:pt-20 lg:pb-24">
           <div className="grid lg:grid-cols-[1.15fr_0.85fr] gap-12 lg:gap-14 items-center">
             {/* Copy */}
@@ -620,6 +620,8 @@ export default function HomePage() {
           </Reveal>
         </div>
       </section>
+
+      </main>
 
       <Footer />
     </div>

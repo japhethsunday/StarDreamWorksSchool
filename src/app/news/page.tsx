@@ -47,8 +47,9 @@ export default function NewsPage() {
   const hasContent = !loading && (articles.length > 0 || events.length > 0);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-white">
       <Navbar />
+      <main id="main-content">
       <PageHero
         eyebrow="News & Events"
         title="School updates"
@@ -96,7 +97,7 @@ export default function NewsPage() {
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={a.image}
-                          alt={a.title}
+                          alt={a.title || "STAR DreamWorks Schools news article"}
                           loading="lazy"
                           className="w-full h-full object-cover"
                         />
@@ -179,6 +180,7 @@ export default function NewsPage() {
         </div>
       </section>
 
+      </main>
       <Footer />
     </div>
   );

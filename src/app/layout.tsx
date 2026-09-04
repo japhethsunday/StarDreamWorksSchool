@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins, Inter } from "next/font/google";
 import Providers from "@/components/Providers";
+import JsonLd from "@/components/JsonLd";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -18,32 +19,76 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://stardreamworksschool.vercel.app"),
-  title: "STAR DreamWorks Schools | Caring Nursery, Primary & JSS",
+  metadataBase: new URL("https://www.stardreamworksschools.com"),
+  title: {
+    default: "STAR DreamWorks Schools | Caring Nursery, Primary & Secondary School in Ajah, Lagos",
+    template: "%s | STAR DreamWorks Schools",
+  },
   description:
-    "STAR DreamWorks Schools - A leading educational institution in Ajah, Lagos, Nigeria. Providing quality Nursery, Primary, and Junior Secondary education with a focus on academic excellence, character development, and nurturing every child's potential.",
+    "STAR DreamWorks Schools is a caring nursery, primary and secondary school in Ajah, Lagos, Nigeria. Quality education from Creche through Secondary School with a focus on academic excellence and character development.",
   keywords: [
-    "school in Ajah",
-    "Lagos school",
-    "nursery school",
-    "primary school",
-    "JSS school",
     "STAR DreamWorks Schools",
+    "school in Ajah Lagos",
+    "nursery school in Ajah",
+    "primary school in Ajah",
+    "secondary school in Ajah",
+    "kindergarten school in Ajah",
+    "creche in Ajah",
+    "admissions in Ajah Lagos",
+    "Lagos school",
     "quality education Lagos",
   ],
+  authors: [{ name: "STAR DreamWorks Schools" }],
+  creator: "STAR DreamWorks Schools",
+  publisher: "STAR DreamWorks Schools",
+  metadataBase: new URL("https://www.stardreamworksschools.com"),
+  alternates: {
+    canonical: "https://www.stardreamworksschools.com",
+  },
   openGraph: {
-    title: "STAR DreamWorks Schools | Caring Nursery, Primary & JSS",
+    title: "STAR DreamWorks Schools | Caring Nursery, Primary & Secondary School in Ajah, Lagos",
     description:
-      "Admission is open — Creche, Kindergarten, Nursery, Primary and Secondary School in Ajah, Lagos.",
-    url: "https://stardreamworksschool.vercel.app",
+      "Admission is open — Creche, Kindergarten, Nursery, Primary and Secondary School in Ajah, Lagos, Nigeria.",
+    url: "https://www.stardreamworksschools.com",
     siteName: "STAR DreamWorks Schools",
+    images: [
+      {
+        url: "/images/school-crest.jpg",
+        width: 1200,
+        height: 630,
+        alt: "STAR DreamWorks Schools - School Logo",
+      },
+    ],
+    locale: "en_NG",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "STAR DreamWorks Schools | Caring Nursery, Primary & JSS",
+    title: "STAR DreamWorks Schools | Caring Nursery, Primary & Secondary School in Ajah, Lagos",
     description:
-      "Admission is open — Creche, Kindergarten, Nursery, Primary and Secondary School in Ajah, Lagos.",
+      "Admission is open — Creche, Kindergarten, Nursery, Primary and Secondary School in Ajah, Lagos, Nigeria.",
+    images: ["/images/school-crest.jpg"],
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/images/icon-32.png", type: "image/png", sizes: "32x32" },
+      { url: "/images/icon-16.png", type: "image/png", sizes: "16x16" },
+    ],
+    apple: [
+      { url: "/images/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
@@ -54,8 +99,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${poppins.variable} ${inter.variable}`}>
+      <head>
+        <meta name="theme-color" content="#1e3a5f" />
+        <meta name="msapplication-TileColor" content="#1e3a5f" />
+      </head>
       <body className="font-[family-name:var(--font-inter)] antialiased">
         <Providers>{children}</Providers>
+        <JsonLd />
       </body>
     </html>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { Target, Eye, Heart, ShieldCheck, Sparkles, Star, Phone } from "lucide-react";
+import Link from "next/link";
 import Navbar from "@/components/public/Navbar";
 import Footer from "@/components/public/Footer";
 import PageHero from "@/components/public/PageHero";
@@ -63,6 +64,7 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen">
       <Navbar />
+      <main id="main-content">
       <PageHero
         eyebrow="About us"
         title={`About ${name}`}
@@ -188,18 +190,19 @@ export default function AboutPage() {
               ))}
             </div>
             <div className="flex flex-wrap gap-3.5">
-              <a href="/admissions" className="sd-btn sd-btn-apply px-7 py-3.5 text-[15px]">
+              <Link href="/admissions" className="sd-btn sd-btn-apply px-7 py-3.5 text-[15px]">
                 Enquire about admissions
-              </a>
-              <a href="/contact" className="sd-btn sd-btn-outline-light px-7 py-3.5 text-[15px]">
+              </Link>
+              <Link href="/contact" className="sd-btn sd-btn-outline-light px-7 py-3.5 text-[15px]">
                 Contact us
-              </a>
+              </Link>
             </div>
           </div>
           </Reveal>
         </div>
       </section>
 
+      </main>
       <Footer />
     </div>
   );

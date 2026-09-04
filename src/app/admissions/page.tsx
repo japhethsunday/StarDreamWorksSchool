@@ -97,8 +97,9 @@ export default function AdmissionsPage() {
     "w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red/20 focus:border-brand-red transition-all";
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-white">
       <Navbar />
+      <main id="main-content">
       <PageHero
         eyebrow="Admissions"
         title="Admission is open"
@@ -472,6 +473,7 @@ export default function AdmissionsPage() {
         </div>
       </section>
 
+      </main>
       <Footer />
     </div>
   );

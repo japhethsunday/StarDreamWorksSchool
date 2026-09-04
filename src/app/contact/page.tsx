@@ -24,6 +24,7 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen">
       <Navbar />
+      <main id="main-content">
       <PageHero
         eyebrow="Contact us"
         title="We'd love to hear from you"
@@ -109,6 +110,7 @@ export default function ContactPage() {
         </div>
       </section>
 
+      </main>
       <Footer />
     </div>
   );
