@@ -13,6 +13,12 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
+    // Honeypot: bots fill the hidden "website" field; humans never see it.
+    // Pretend success without storing anything.
+    if (typeof body.website === "string" && body.website.trim() !== "") {
+      return NextResponse.json({ success: true, data: { id: null } });
+    }
+
     const childFirstName =
       typeof body.childFirstName === "string" ? body.childFirstName.trim() : "";
     const childLastName =
@@ -20,7 +26,7 @@ export async function POST(request: Request) {
     const parentName =
       typeof body.parentName === "string" ? body.parentName.trim() : "";
     const phone = typeof body.phone === "string" ? body.phone.trim() : "";
-    let level = typeof body.level === "string" ? body.level.trim() : "";
+    const level = typeof body.level === "string" ? body.level.trim() : "";
 
     if (!childFirstName) {
       return NextResponse.json(

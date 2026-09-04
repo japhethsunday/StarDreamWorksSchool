@@ -168,6 +168,9 @@ export default function Footer() {
           </p>
         </div>
       </div>
+
+      {/* Spacer so the mobile quick-action bar never covers footer content */}
+      <div aria-hidden="true" className="h-[72px] md:hidden" />
     </footer>
   );
 }

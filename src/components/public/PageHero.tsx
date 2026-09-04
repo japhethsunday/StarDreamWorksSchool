@@ -12,7 +12,7 @@ export default function PageHero({
   description,
 }: PageHeroProps) {
   return (
-    <section className="relative overflow-hidden sd-hero-surface">
+    <section id="main-content" className="relative overflow-hidden sd-hero-surface scroll-mt-20">
       {/* Crest watermark */}
       <Crest className="pointer-events-none absolute -right-8 -bottom-12 w-56 h-56 opacity-[0.07] select-none" />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-14 lg:pt-20 lg:pb-16">

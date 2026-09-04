@@ -18,6 +18,7 @@ import Footer from "@/components/public/Footer";
 import Reveal from "@/components/public/Reveal";
 import Logo from "@/components/public/Logo";
 import UniformIllustration from "@/components/public/UniformIllustration";
+import SchoolMap from "@/components/public/SchoolMap";
 import { useSiteContent } from "@/lib/use-site-content";
 import {
   displayPhones,
@@ -76,7 +77,7 @@ export default function HomePage() {
       <Navbar />
 
       {/* ============ HERO ============ */}
-      <section className="relative overflow-hidden sd-hero-surface">
+      <section id="main-content" className="relative overflow-hidden sd-hero-surface scroll-mt-20">
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-16 lg:pt-20 lg:pb-24">
           <div className="grid lg:grid-cols-[1.15fr_0.85fr] gap-12 lg:gap-14 items-center">
             {/* Copy */}
@@ -461,6 +462,55 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ============ SCHOOL LIFE (real school photographs) ============ */}
+      <section className="pb-20 lg:pb-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Reveal className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
+            <div className="max-w-2xl">
+              <p className="sd-eyebrow mb-3">School life</p>
+              <h2 className="font-heading text-3xl sm:text-4xl font-bold text-brand-ink tracking-tight">
+                Moments from around the school
+              </h2>
+            </div>
+            <Link
+              href="/gallery"
+              className="inline-flex shrink-0 items-center gap-1.5 text-sm font-bold text-brand-red hover:text-brand-red-dark transition-colors"
+            >
+              View gallery
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </Reveal>
+          <div className="grid sm:grid-cols-3 gap-5">
+            {[
+              {
+                src: "https://res.cloudinary.com/ohlwndfz/image/upload/w_800,q_auto/WhatsApp_Image_2026-09-03_at_6.19.54_PM_1.jpg",
+                alt: "Pupils and staff of STAR DreamWorks Schools together",
+              },
+              {
+                src: "https://res.cloudinary.com/ohlwndfz/image/upload/w_800,q_auto/WhatsApp_Image_2026-09-03_at_6.19.55_PM_3.jpg",
+                alt: "Pupils showing their Cultural Day crafts",
+              },
+              {
+                src: "https://res.cloudinary.com/ohlwndfz/image/upload/w_800,q_auto/WhatsApp_Image_2026-09-03_at_6.19.54_PM.jpg",
+                alt: "Pupils with flower crafts at the school Art Fair",
+              },
+            ].map((photo, i) => (
+              <Reveal key={photo.src} delay={i * 90}>
+                <div className="overflow-hidden rounded-2xl border border-brand-line">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={photo.src}
+                    alt={photo.alt}
+                    loading="lazy"
+                    className="aspect-[4/3] w-full object-cover transition-transform duration-500 ease-out hover:scale-[1.03]"
+                  />
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ============ MOTTO BAND ============ */}
       <section className="bg-brand-navy-deep">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
@@ -564,6 +614,10 @@ export default function HomePage() {
               </div>
             </Reveal>
           </div>
+
+          <Reveal className="mt-10">
+            <SchoolMap address={address} />
+          </Reveal>
         </div>
       </section>
 

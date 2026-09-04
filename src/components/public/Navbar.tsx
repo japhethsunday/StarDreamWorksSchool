@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, LogIn, ChevronRight, MapPin, Phone } from "lucide-react";
 import { useSiteContent } from "@/lib/use-site-content";
 import Logo from "@/components/public/Logo";
+import MobileActionBar from "@/components/public/MobileActionBar";
 import {
   displayPhones,
   displayAddress,
@@ -28,6 +29,9 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const { settings } = useSiteContent();
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const drawerRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
 
   const admissionOpen =
     (settings["admissions.status"] || "open").toLowerCase() === "open";
@@ -53,8 +57,51 @@ export default function Navbar() {
     };
   }, [isOpen]);
 
+  // Drawer accessibility: move focus in on open, trap Tab inside,
+  // close on Escape, and return focus to the toggle on close.
+  useEffect(() => {
+    if (!isOpen) return;
+    closeRef.current?.focus();
+    const toggleEl = toggleRef.current;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsOpen(false);
+        return;
+      }
+      if (e.key === "Tab" && drawerRef.current) {
+        const items = Array.from(
+          drawerRef.current.querySelectorAll<HTMLElement>(
+            'a[href], button:not([disabled])'
+          )
+        ).filter((el) => el.tabIndex >= 0);
+        if (items.length === 0) return;
+        const first = items[0];
+        const last = items[items.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      toggleEl?.focus();
+    };
+  }, [isOpen]);
+
   return (
     <>
+      {/* Skip link for keyboard and screen-reader users */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-brand-yellow focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-brand-navy-deep"
+      >
+        Skip to content
+      </a>
       {/* Contact topbar — verified school lines, tap-to-call on mobile */}
       <div className="bg-brand-navy-deep text-white/85 text-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-1.5 flex items-center justify-between gap-3">
@@ -162,10 +209,12 @@ export default function Navbar() {
 
             {/* Mobile toggle */}
             <button
+              ref={toggleRef}
               onClick={() => setIsOpen(!isOpen)}
               className="lg:hidden p-2.5 -mr-2 rounded-lg text-brand-navy hover:bg-brand-paper transition-colors"
               aria-label={isOpen ? "Close menu" : "Open menu"}
               aria-expanded={isOpen}
+              aria-controls="mobile-menu"
             >
               {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -183,6 +232,11 @@ export default function Navbar() {
 
       {/* Mobile drawer */}
       <div
+        ref={drawerRef}
+        id="mobile-menu"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Site menu"
         className={`fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white shadow-soft-xl z-50 transform transition-transform duration-300 ease-out lg:hidden flex flex-col ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
@@ -190,11 +244,12 @@ export default function Navbar() {
       >
         <div className="flex items-center justify-between p-5 border-b border-brand-line">
           <Logo crestClassName="w-9 h-9" />
-          <button
-            onClick={() => setIsOpen(false)}
-            className="p-2 rounded-lg text-brand-muted hover:bg-brand-paper transition-colors"
-            aria-label="Close menu"
-          >
+            <button
+              ref={closeRef}
+              onClick={() => setIsOpen(false)}
+              className="p-2 rounded-lg text-brand-muted hover:bg-brand-paper transition-colors"
+              aria-label="Close menu"
+            >
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -212,9 +267,9 @@ export default function Navbar() {
                   onClick={() => setIsOpen(false)}
                   tabIndex={isOpen ? 0 : -1}
                   style={{ "--enter-delay": `${60 + i * 40}ms` } as React.CSSProperties}
-                  className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${
-                    isOpen ? "sd-drawer-item" : "opacity-0"
-                  } ${
+                    className={`flex items-center justify-between px-4 py-3 min-h-[48px] rounded-xl text-sm font-semibold transition-colors ${
+                      isOpen ? "sd-drawer-item" : "opacity-0"
+                    } ${
                     isActive
                       ? "bg-brand-red/5 text-brand-red"
                       : "text-brand-body hover:bg-brand-paper hover:text-brand-navy"
@@ -272,6 +327,8 @@ export default function Navbar() {
           </div>
         </div>
       </div>
+
+      <MobileActionBar />
     </>
   );
 }

@@ -164,6 +164,45 @@ export default function AcademicsPage() {
         </div>
       </section>
 
+      {/* Resources — documents are issued by the school office; nothing is
+          offered for download until the school provides the actual files. */}
+      <section className="pb-20 lg:pb-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Reveal className="max-w-2xl mb-8">
+            <p className="sd-eyebrow mb-3">Resources</p>
+            <h2 className="font-heading text-2xl sm:text-3xl font-bold text-brand-ink tracking-tight">
+              Documents & guides
+            </h2>
+          </Reveal>
+          <div className="grid sm:grid-cols-3 gap-5">
+            {[
+              { title: "School Prospectus", text: "An overview of our programmes, values and daily life." },
+              { title: "Academic Calendar", text: "Term dates, holidays and key school events." },
+              { title: "Fee Guidelines", text: "Fee structure and payment guidance for parents." },
+            ].map((r, i) => (
+              <Reveal key={r.title} delay={i * 80}>
+                <div className="sd-card p-6 h-full flex flex-col">
+                  <h3 className="font-heading font-bold text-brand-ink mb-2">{r.title}</h3>
+                  <p className="text-sm text-brand-muted leading-relaxed mb-4 flex-1">{r.text}</p>
+                  <p className="text-xs text-brand-muted mb-4">
+                    <span className="inline-block font-bold uppercase tracking-widest text-brand-navy bg-brand-yellow/25 rounded-full px-2.5 py-1">
+                      Coming soon
+                    </span>
+                  </p>
+                  <Link
+                    href="/contact"
+                    className="inline-flex items-center gap-1.5 text-sm font-bold text-brand-red hover:text-brand-red-dark transition-colors"
+                  >
+                    Request from the school office
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <Footer />
     </div>
   );

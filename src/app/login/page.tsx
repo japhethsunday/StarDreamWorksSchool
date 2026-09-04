@@ -18,7 +18,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (status === "authenticated" && session?.user) {
-      const role = (session.user as any).role;
+      const role = (session.user as { role?: string } | null)?.role;
       if (role === "ADMIN") router.push("/dashboard/admin");
       else if (role === "TEACHER") router.push("/dashboard/teacher");
       else if (role === "STUDENT") router.push("/dashboard/student");
@@ -90,6 +90,16 @@ export default function LoginPage() {
             <p className="text-sm text-brand-muted mt-2">
               Sign in to access your portal
             </p>
+            <div className="mt-4 flex flex-wrap justify-center gap-1.5" aria-label="Available portals">
+              {["Admin", "Teacher", "Student", "Parent"].map((role) => (
+                <span
+                  key={role}
+                  className="text-[11px] font-bold uppercase tracking-widest text-brand-navy bg-brand-navy/5 border border-brand-line rounded-full px-2.5 py-1"
+                >
+                  {role}
+                </span>
+              ))}
+            </div>
           </div>
 
           {/* Error message */}

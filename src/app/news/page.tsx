@@ -97,6 +97,7 @@ export default function NewsPage() {
                         <img
                           src={a.image}
                           alt={a.title}
+                          loading="lazy"
                           className="w-full h-full object-cover"
                         />
                       </div>

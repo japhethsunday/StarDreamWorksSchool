@@ -6,6 +6,7 @@ import Navbar from "@/components/public/Navbar";
 import Footer from "@/components/public/Footer";
 import PageHero from "@/components/public/PageHero";
 import Reveal from "@/components/public/Reveal";
+import SchoolMap from "@/components/public/SchoolMap";
 import { useSiteContent } from "@/lib/use-site-content";
 import {
   displayPhones,
@@ -83,6 +84,10 @@ export default function ContactPage() {
               </div>
             </Reveal>
           </div>
+
+          <Reveal delay={120} className="mb-12">
+            <SchoolMap address={address} />
+          </Reveal>
 
           <Reveal>
             <div className="sd-hero-surface rounded-2xl p-8 lg:p-12">

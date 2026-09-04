@@ -34,6 +34,7 @@ interface FormState {
   email: string;
   address: string;
   message: string;
+  website: string;
 }
 
 const emptyForm: FormState = {
@@ -47,6 +48,7 @@ const emptyForm: FormState = {
   email: "",
   address: "",
   message: "",
+  website: "",
 };
 
 export default function AdmissionsPage() {
@@ -84,8 +86,8 @@ export default function AdmissionsPage() {
         throw new Error(data.error || "Could not submit your enquiry.");
       }
       setDone(true);
-    } catch (err: any) {
-      setError(err.message || "Could not submit your enquiry.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Could not submit your enquiry.");
     } finally {
       setSubmitting(false);
     }
@@ -395,6 +397,20 @@ export default function AdmissionsPage() {
                     className={`${inputCls} resize-none`}
                     placeholder="Anything you'd like us to know"
                   />
+                </div>
+
+                {/* Honeypot: hidden from humans, catches bots */}
+                <div className="hidden" aria-hidden="true">
+                  <label>
+                    Website
+                    <input
+                      type="text"
+                      value={form.website}
+                      onChange={(e) => update("website", e.target.value)}
+                      tabIndex={-1}
+                      autoComplete="off"
+                    />
+                  </label>
                 </div>
 
                 <button
