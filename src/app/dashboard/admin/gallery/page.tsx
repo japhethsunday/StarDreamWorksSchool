@@ -38,6 +38,10 @@ export default function GalleryPage() {
   const [uploadCategory, setUploadCategory] = useState("");
   const [uploadUrl, setUploadUrl] = useState("");
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [fileUploading, setFileUploading] = useState(false);
+  const [fileError, setFileError] = useState("");
+
+  const cloudinaryCloud = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
 
   const fetchData = useCallback(async () => {
     try {
@@ -54,6 +58,41 @@ export default function GalleryPage() {
   }, []);
 
   useEffect(() => { fetchData(); }, [fetchData]);
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setFileError("");
+    setFileUploading(true);
+    try {
+      const signRes = await fetch("/api/admin/gallery/sign", { method: "POST" });
+      const signData = await signRes.json().catch(() => ({}));
+      if (!signRes.ok || !signData.success) {
+        throw new Error(signData.error || "Image uploads are not configured yet.");
+      }
+      const { timestamp, signature, apiKey, cloudName, folder } = signData.data;
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("api_key", apiKey);
+      formData.append("timestamp", String(timestamp));
+      formData.append("signature", signature);
+      formData.append("folder", folder);
+      const upRes = await fetch(
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        { method: "POST", body: formData }
+      );
+      const upData = await upRes.json().catch(() => ({}));
+      if (!upRes.ok || !upData.secure_url) {
+        throw new Error(upData.error?.message || "File upload failed.");
+      }
+      setUploadUrl(upData.secure_url);
+    } catch (err: any) {
+      setFileError(err.message || "File upload failed.");
+    } finally {
+      setFileUploading(false);
+    }
+  };
 
   const handleUpload = async () => {
     if (!uploadUrl.trim() || !uploadTitle.trim()) {
@@ -174,6 +213,26 @@ export default function GalleryPage() {
             <input type="text" value={uploadCategory} onChange={(e) => setUploadCategory(e.target.value)} className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-school-blue/20 focus:border-school-blue" placeholder="e.g. Sports, Events" />
           </div>
           <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Image file</label>
+            {cloudinaryCloud ? (
+              <>
+                <label className="flex items-center justify-center gap-2 w-full px-3 py-3 bg-brand-paper border border-dashed border-brand-line rounded-xl text-sm font-semibold text-brand-navy cursor-pointer hover:border-brand-red/50 transition-colors">
+                  {fileUploading ? (
+                    <Loader2 className="w-4 h-4 animate-spin text-brand-red" />
+                  ) : (
+                    <Upload className="w-4 h-4 text-brand-red" />
+                  )}
+                  {fileUploading ? "Uploading..." : uploadUrl ? "Replace file" : "Choose a file to upload"}
+                  <input type="file" accept="image/*" className="hidden" onChange={handleFileSelect} disabled={fileUploading} />
+                </label>
+                {fileError && <p className="text-xs text-brand-red mt-1.5">{fileError}</p>}
+                <div className="flex items-center gap-3 my-3">
+                  <span className="flex-1 h-px bg-gray-200" />
+                  <span className="text-[11px] font-semibold uppercase tracking-widest text-gray-400">or paste URL</span>
+                  <span className="flex-1 h-px bg-gray-200" />
+                </div>
+              </>
+            ) : null}
             <label className="block text-sm font-medium text-gray-700 mb-1.5">Image URL</label>
             <div className="relative">
               <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
