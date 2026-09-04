@@ -40,6 +40,9 @@ interface FormData {
   phone: string;
   qualification: string;
   specialization: string;
+  classIds: string[];
+  subjectIds: string[];
+  isActive: boolean;
 }
 
 const emptyForm: FormData = {
@@ -49,10 +52,15 @@ const emptyForm: FormData = {
   phone: "",
   qualification: "",
   specialization: "",
+  classIds: [],
+  subjectIds: [],
+  isActive: true,
 };
 
 export default function TeachersPage() {
   const [teachers, setTeachers] = useState<Teacher[]>([]);
+  const [classes, setClasses] = useState<{ id: string; name: string }[]>([]);
+  const [subjects, setSubjects] = useState<{ id: string; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
@@ -66,10 +74,25 @@ export default function TeachersPage() {
   const fetchTeachers = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/admin/teachers");
-      if (!res.ok) throw new Error("Failed to load teachers");
-      const data = await res.json();
-      setTeachers(data.data || data.teachers || []);
+      const [tRes, cRes, sRes] = await Promise.allSettled([
+        fetch("/api/admin/teachers"),
+        fetch("/api/admin/classes"),
+        fetch("/api/admin/subjects"),
+      ]);
+      if (tRes.status === "fulfilled" && tRes.value.ok) {
+        const data = await tRes.value.json();
+        setTeachers(data.data || data.teachers || []);
+      } else if (tRes.status === "fulfilled") {
+        throw new Error("Failed to load teachers");
+      }
+      if (cRes.status === "fulfilled" && cRes.value.ok) {
+        const data = await cRes.value.json();
+        setClasses(data.data || data.classes || []);
+      }
+      if (sRes.status === "fulfilled" && sRes.value.ok) {
+        const data = await sRes.value.json();
+        setSubjects(data.data || data.subjects || []);
+      }
     } catch {
       setError("Failed to load teachers. Please try again.");
     } finally {
@@ -99,7 +122,10 @@ export default function TeachersPage() {
     setModalOpen(true);
   };
 
-  const openEdit = (teacher: Teacher & { user?: any }) => {
+  const toggleId = (ids: string[], id: string) =>
+    ids.includes(id) ? ids.filter((x) => x !== id) : [...ids, id];
+
+  const openEdit = (teacher: Teacher & { user?: any; classes?: any[]; subjects?: any[] }) => {
     setForm({
       name: teacher.name || `${teacher.firstName || ""} ${teacher.lastName || ""}`.trim(),
       email: teacher.email || teacher.user?.email || "",
@@ -107,6 +133,9 @@ export default function TeachersPage() {
       phone: teacher.phone || teacher.user?.phone || "",
       qualification: teacher.qualification || "",
       specialization: teacher.specialization || "",
+      classIds: (teacher.classes || []).map((c: any) => c.class?.id || c.id).filter(Boolean),
+      subjectIds: (teacher.subjects || []).map((s: any) => s.subject?.id || s.id).filter(Boolean),
+      isActive: teacher.user?.isActive ?? true,
     });
     setEditingId(teacher.id);
     setModalOpen(true);
@@ -124,10 +153,12 @@ export default function TeachersPage() {
         firstName: nameParts[0] || "",
         lastName: nameParts.slice(1).join(" ") || nameParts[0] || "",
         email: form.email,
-        ...(editingId ? {} : { password: form.password }),
+        ...(editingId ? { ...(form.password ? { password: form.password } : {}), isActive: form.isActive } : { password: form.password }),
         phone: form.phone || undefined,
         qualification: form.qualification || undefined,
         specialization: form.specialization || undefined,
+        classIds: form.classIds,
+        subjectIds: form.subjectIds,
       };
 
       const res = await fetch(url, {
@@ -138,7 +169,7 @@ export default function TeachersPage() {
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err.message || "Failed to save teacher");
+        throw new Error(err.error || "Failed to save teacher");
       }
 
       setModalOpen(false);
@@ -379,6 +410,57 @@ export default function TeachersPage() {
               placeholder="Mathematics, English..."
             />
           </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Assigned Classes</label>
+            {classes.length === 0 ? (
+              <p className="text-xs text-gray-400">No classes available.</p>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {classes.map((c) => (
+                  <button
+                    key={c.id}
+                    type="button"
+                    onClick={() => setForm({ ...form, classIds: toggleId(form.classIds, c.id) })}
+                    className={`px-3 py-1.5 text-xs font-semibold rounded-full border transition-colors ${form.classIds.includes(c.id) ? "bg-school-blue text-white border-school-blue" : "bg-gray-50 text-gray-600 border-gray-200 hover:border-school-blue/40"}`}
+                  >
+                    {c.name}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Assigned Subjects</label>
+            {subjects.length === 0 ? (
+              <p className="text-xs text-gray-400">No subjects available.</p>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {subjects.map((s) => (
+                  <button
+                    key={s.id}
+                    type="button"
+                    onClick={() => setForm({ ...form, subjectIds: toggleId(form.subjectIds, s.id) })}
+                    className={`px-3 py-1.5 text-xs font-semibold rounded-full border transition-colors ${form.subjectIds.includes(s.id) ? "bg-school-blue text-white border-school-blue" : "bg-gray-50 text-gray-600 border-gray-200 hover:border-school-blue/40"}`}
+                  >
+                    {s.name}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          {editingId && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Account Status</label>
+              <select
+                value={form.isActive ? "active" : "inactive"}
+                onChange={(e) => setForm({ ...form, isActive: e.target.value === "active" })}
+                className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-school-blue/20 focus:border-school-blue"
+              >
+                <option value="active">Active — can log in</option>
+                <option value="inactive">Inactive — login disabled</option>
+              </select>
+            </div>
+          )}
           <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
             <button
               onClick={() => setModalOpen(false)}

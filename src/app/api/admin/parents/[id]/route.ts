@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import bcrypt from "bcryptjs";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
+import { logActivity, clientIp } from "@/lib/activity";
 
 export async function GET(
   req: Request,
@@ -220,6 +221,13 @@ export async function PUT(
       });
     });
 
+    await logActivity(
+      (session.user as any).id,
+      "PARENT_UPDATE",
+      `Updated parent ${updatedParent.firstName} ${updatedParent.lastName}`,
+      clientIp(req)
+    );
+
     return NextResponse.json({ success: true, data: updatedParent });
   } catch {
     return NextResponse.json(
@@ -267,6 +275,13 @@ export async function DELETE(
       prisma.parent.delete({ where: { id: parent.id } }),
       prisma.user.delete({ where: { id: parent.userId } }),
     ]);
+
+    await logActivity(
+      (session.user as any).id,
+      "PARENT_DELETE",
+      `Deleted parent ${parent.firstName} ${parent.lastName}`,
+      clientIp(req)
+    );
 
     return NextResponse.json({
       success: true,

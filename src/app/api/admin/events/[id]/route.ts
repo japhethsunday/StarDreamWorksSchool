@@ -2,6 +2,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
+import { logActivity, clientIp } from "@/lib/activity";
 
 export async function PUT(
   req: Request,
@@ -93,6 +94,13 @@ export async function PUT(
       },
     });
 
+    await logActivity(
+      (session.user as any).id,
+      updated.isPublished ? "EVENT_PUBLISH" : "EVENT_UPDATE",
+      `${updated.isPublished ? "Published" : "Updated"} event "${updated.title}"`,
+      clientIp(req)
+    );
+
     return NextResponse.json({ success: true, data: updated });
   } catch {
     return NextResponse.json(
@@ -135,6 +143,13 @@ export async function DELETE(
     }
 
     await prisma.event.delete({ where: { id: event.id } });
+
+    await logActivity(
+      (session.user as any).id,
+      "EVENT_DELETE",
+      `Deleted event "${event.title}"`,
+      clientIp(req)
+    );
 
     return NextResponse.json({
       success: true,

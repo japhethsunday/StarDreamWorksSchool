@@ -45,6 +45,7 @@ interface FormData {
   password: string;
   phone: string;
   childrenIds: string[];
+  isActive: boolean;
 }
 
 const emptyForm: FormData = {
@@ -53,6 +54,7 @@ const emptyForm: FormData = {
   password: "",
   phone: "",
   childrenIds: [],
+  isActive: true,
 };
 
 export default function ParentsPage() {
@@ -113,6 +115,7 @@ export default function ParentsPage() {
       password: "",
       phone: parent.phone || parent.user?.phone || "",
       childrenIds: children.map((c: any) => c.id).filter(Boolean),
+      isActive: parent.user?.isActive ?? true,
     });
     setEditingId(parent.id);
     setModalOpen(true);
@@ -131,6 +134,7 @@ export default function ParentsPage() {
         ...(editingId ? {} : { password: form.password }),
         phone: form.phone || undefined,
         studentIds: form.childrenIds,
+        ...(editingId ? { isActive: form.isActive } : {}),
       };
       const res = await fetch(url, {
         method,
@@ -139,7 +143,7 @@ export default function ParentsPage() {
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err.message || "Failed to save parent");
+        throw new Error(err.error || err.message || "Failed to save parent");
       }
       setModalOpen(false);
       fetchData();
@@ -326,6 +330,15 @@ export default function ParentsPage() {
                   </label>
                 ))}
               </div>
+            </div>
+          )}
+          {editingId && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Account Status</label>
+              <select value={form.isActive ? "active" : "inactive"} onChange={(e) => setForm({ ...form, isActive: e.target.value === "active" })} className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-school-blue/20 focus:border-school-blue">
+                <option value="active">Active — can log in</option>
+                <option value="inactive">Inactive — login disabled</option>
+              </select>
             </div>
           )}
           <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">

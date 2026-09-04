@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
+import { logActivity, clientIp } from "@/lib/activity";
 import { createClassSchema } from "@/lib/validations";
 
 export async function GET() {
@@ -167,6 +168,13 @@ export async function POST(req: Request) {
         },
       }).catch(() => undefined);
     }
+
+    await logActivity(
+      (session.user as any).id,
+      "CLASS_CREATE",
+      `Created class ${classRecord.name} (${classRecord.level})`,
+      clientIp(req)
+    );
 
     return NextResponse.json({ success: true, data: classRecord }, { status: 201 });
   } catch {

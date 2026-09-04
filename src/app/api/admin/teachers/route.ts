@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import bcrypt from "bcryptjs";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
+import { logActivity, clientIp } from "@/lib/activity";
 import { createTeacherSchema } from "@/lib/validations";
 import { generateTeacherId } from "@/lib/utils";
 
@@ -143,6 +144,13 @@ export async function POST(req: Request) {
         },
       });
     });
+
+    await logActivity(
+      (session.user as any).id,
+      "TEACHER_CREATE",
+      `Created teacher ${teacher.firstName} ${teacher.lastName} (${teacher.teacherId})`,
+      clientIp(req)
+    );
 
     return NextResponse.json({ success: true, data: teacher }, { status: 201 });
   } catch {

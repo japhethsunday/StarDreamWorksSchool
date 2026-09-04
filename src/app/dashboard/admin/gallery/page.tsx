@@ -23,6 +23,7 @@ interface GalleryItem {
   imageUrl: string;
   title: string;
   category: string;
+  isPublished: boolean;
   createdAt: string;
 }
 
@@ -124,6 +125,20 @@ export default function GalleryPage() {
     }
   };
 
+  const togglePublish = async (img: GalleryItem) => {
+    try {
+      const res = await fetch(`/api/admin/gallery/${img.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isPublished: !img.isPublished }),
+      });
+      if (!res.ok) throw new Error("Failed");
+      fetchData();
+    } catch {
+      alert("Failed to update visibility");
+    }
+  };
+
   const handleDelete = async () => {
     if (!confirmDelete) return;
     setDeleting(true);
@@ -176,12 +191,23 @@ export default function GalleryPage() {
                 <img src={img.imageUrl} alt={img.title || ""} className="w-full h-full object-cover" />
               </div>
               <div className="p-3">
-                <p className="text-sm font-medium text-gray-800 truncate">{img.title || "Untitled"}</p>
-                {img.category && (
-                  <span className="text-[10px] font-medium text-school-blue bg-blue-50 px-2 py-0.5 rounded-full mt-1 inline-block">
-                    {img.category}
-                  </span>
-                )}
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-sm font-medium text-gray-800 truncate">{img.title || "Untitled"}</p>
+                  <button
+                    onClick={() => togglePublish(img)}
+                    title={img.isPublished ? "Unpublish (hide from website)" : "Publish (show on website)"}
+                    className={`shrink-0 text-[10px] font-semibold px-2 py-0.5 rounded-full transition-colors ${img.isPublished ? "bg-green-100 text-green-700 hover:bg-green-200" : "bg-gray-100 text-gray-500 hover:bg-gray-200"}`}
+                  >
+                    {img.isPublished ? "Published" : "Hidden"}
+                  </button>
+                </div>
+                <div className="flex items-center gap-1.5 mt-1">
+                  {img.category && (
+                    <span className="text-[10px] font-medium text-school-blue bg-blue-50 px-2 py-0.5 rounded-full inline-block">
+                      {img.category}
+                    </span>
+                  )}
+                </div>
               </div>
               <div className="absolute top-2 right-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button

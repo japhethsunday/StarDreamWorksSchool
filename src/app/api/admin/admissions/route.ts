@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
+import { logActivity, clientIp } from "@/lib/activity";
 
 const VALID_STATUS = ["NEW", "CONTACTED", "APPROVED", "REJECTED"];
 
@@ -69,6 +70,13 @@ export async function PATCH(request: Request) {
       where: { id },
       data: { status: status.toUpperCase() },
     });
+
+    await logActivity(
+      (session.user as any).id,
+      "ADMISSION_STATUS",
+      `Set admission enquiry for ${enquiry.childFirstName} to ${enquiry.status}`,
+      clientIp(request)
+    );
 
     return NextResponse.json({ success: true, data: enquiry });
   } catch {

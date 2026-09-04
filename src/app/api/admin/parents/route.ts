@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import bcrypt from "bcryptjs";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
+import { logActivity, clientIp } from "@/lib/activity";
 import { createParentSchema } from "@/lib/validations";
 
 export async function GET() {
@@ -192,6 +193,13 @@ export async function POST(req: Request) {
         },
       },
     });
+
+    await logActivity(
+      (session.user as any).id,
+      "PARENT_CREATE",
+      `Created parent ${firstName} ${lastName}`,
+      clientIp(req)
+    );
 
     return NextResponse.json({ success: true, data: fullParent }, { status: 201 });
   } catch {

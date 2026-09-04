@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
+import { logActivity, clientIp } from "@/lib/activity";
 
 const validateLevel = (body: any): string | null => {
   if (!body?.name || typeof body.name !== "string") return "Level name is required.";
@@ -57,6 +58,13 @@ export async function POST(request: Request) {
         isActive: body.isActive ?? true,
       },
     });
+
+    await logActivity(
+      (session.user as any).id,
+      "LEVEL_CREATE",
+      `Created educational level "${level.name}"`,
+      clientIp(request)
+    );
 
     return NextResponse.json({ success: true, data: level });
   } catch {

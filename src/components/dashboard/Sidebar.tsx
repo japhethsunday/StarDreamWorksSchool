@@ -18,6 +18,7 @@ import {
   X,
   ClipboardList,
   FolderOpen,
+  Activity,
   Layers,
   MessageSquare,
   Globe,
@@ -44,6 +45,7 @@ const adminNav: NavItem[] = [
   { label: "Classes", href: "/dashboard/admin/classes", icon: <BookOpen className="w-5 h-5" /> },
   { label: "Subjects", href: "/dashboard/admin/subjects", icon: <FileText className="w-5 h-5" /> },
   { label: "Assignments", href: "/dashboard/admin/assignments", icon: <ClipboardList className="w-5 h-5" /> },
+  { label: "Materials", href: "/dashboard/admin/materials", icon: <FolderOpen className="w-5 h-5" /> },
   { label: "Announcements", href: "/dashboard/admin/announcements", icon: <Megaphone className="w-5 h-5" /> },
   { label: "News", href: "/dashboard/admin/news", icon: <Newspaper className="w-5 h-5" /> },
   { label: "Events", href: "/dashboard/admin/events", icon: <Calendar className="w-5 h-5" /> },
@@ -51,6 +53,7 @@ const adminNav: NavItem[] = [
   { label: "Admissions", href: "/dashboard/admin/admissions", icon: <MessageSquare className="w-5 h-5" /> },
   { label: "Educational Levels", href: "/dashboard/admin/educational-levels", icon: <Layers className="w-5 h-5" /> },
   { label: "Site Content", href: "/dashboard/admin/site-content", icon: <Globe className="w-5 h-5" /> },
+  { label: "Activity", href: "/dashboard/admin/activity", icon: <Activity className="w-5 h-5" /> },
   { label: "Settings", href: "/dashboard/admin/settings", icon: <Settings className="w-5 h-5" /> },
 ];
 

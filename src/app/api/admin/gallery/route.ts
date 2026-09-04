@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
+import { logActivity, clientIp } from "@/lib/activity";
 
 export async function GET() {
   try {
@@ -78,6 +79,13 @@ export async function POST(req: Request) {
         isPublished: typeof isPublished === "boolean" ? isPublished : false,
       },
     });
+
+    await logActivity(
+      (session.user as any).id,
+      "GALLERY_UPLOAD",
+      `Added gallery image "${galleryItem.title}"`,
+      clientIp(req)
+    );
 
     return NextResponse.json({ success: true, data: galleryItem }, { status: 201 });
   } catch {

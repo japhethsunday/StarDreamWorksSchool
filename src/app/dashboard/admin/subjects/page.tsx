@@ -81,7 +81,7 @@ export default function SubjectsPage() {
       const url = editingId ? `/api/admin/subjects/${editingId}` : "/api/admin/subjects";
       const method = editingId ? "PUT" : "POST";
       const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
-      if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.message || "Failed"); }
+      if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.error || err.message || "Failed"); }
       setModalOpen(false);
       fetchData();
     } catch (e: any) { alert(e.message || "Error"); } finally { setSaving(false); }

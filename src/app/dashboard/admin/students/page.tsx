@@ -45,6 +45,8 @@ interface FormData {
   gender: string;
   classId: string;
   parentContact: string;
+  status: string;
+  isActive: boolean;
 }
 
 const emptyForm: FormData = {
@@ -56,6 +58,8 @@ const emptyForm: FormData = {
   gender: "MALE",
   classId: "",
   parentContact: "",
+  status: "ACTIVE",
+  isActive: true,
 };
 
 export default function StudentsPage() {
@@ -114,16 +118,18 @@ export default function StudentsPage() {
     setModalOpen(true);
   };
 
-  const openEdit = (student: Student) => {
+  const openEdit = (student: Student & { user?: { email?: string; isActive?: boolean } }) => {
     setForm({
       firstName: student.firstName || "",
       lastName: student.lastName || "",
-      email: (student as any).email || "",
+      email: (student as any).email || student.user?.email || "",
       password: "",
       dateOfBirth: student.dateOfBirth?.split("T")[0] || "",
       gender: student.gender || "MALE",
       classId: student.classId || "",
       parentContact: student.parentContact || "",
+      status: (student.status || "ACTIVE").toUpperCase(),
+      isActive: student.user?.isActive ?? true,
     });
     setEditingId(student.id);
     setModalOpen(true);
@@ -138,7 +144,7 @@ export default function StudentsPage() {
       const method = editingId ? "PUT" : "POST";
       const body = editingId
         ? { ...form, password: form.password || undefined }
-        : { ...form };
+        : { ...form, status: undefined, isActive: undefined };
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
@@ -147,7 +153,7 @@ export default function StudentsPage() {
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err.message || "Failed to save student");
+        throw new Error(err.error || "Failed to save student");
       }
 
       setModalOpen(false);
@@ -416,6 +422,34 @@ export default function StudentsPage() {
               placeholder="Phone or email"
             />
           </div>
+          {editingId && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Enrolment Status</label>
+                <select
+                  value={form.status}
+                  onChange={(e) => setForm({ ...form, status: e.target.value })}
+                  className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-school-blue/20 focus:border-school-blue"
+                >
+                  <option value="ACTIVE">Active</option>
+                  <option value="INACTIVE">Inactive</option>
+                  <option value="GRADUATED">Graduated</option>
+                  <option value="SUSPENDED">Suspended</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Account Status</label>
+                <select
+                  value={form.isActive ? "active" : "inactive"}
+                  onChange={(e) => setForm({ ...form, isActive: e.target.value === "active" })}
+                  className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-school-blue/20 focus:border-school-blue"
+                >
+                  <option value="active">Active — can log in</option>
+                  <option value="inactive">Inactive — login disabled</option>
+                </select>
+              </div>
+            </div>
+          )}
           <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
             <button
               onClick={() => setModalOpen(false)}

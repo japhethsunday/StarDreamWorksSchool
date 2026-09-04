@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
+import { logActivity, clientIp } from "@/lib/activity";
 import { createEventSchema } from "@/lib/validations";
 
 export async function GET() {
@@ -104,6 +105,13 @@ export async function POST(req: Request) {
         isPublished,
       },
     });
+
+    await logActivity(
+      (session.user as any).id,
+      isPublished ? "EVENT_PUBLISH" : "EVENT_CREATE",
+      `${isPublished ? "Published" : "Created"} event "${event.title}"`,
+      clientIp(req)
+    );
 
     return NextResponse.json({ success: true, data: event }, { status: 201 });
   } catch {

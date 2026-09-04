@@ -2,6 +2,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
+import { logActivity, clientIp } from "@/lib/activity";
 
 export async function PUT(
   request: Request,
@@ -34,6 +35,13 @@ export async function PUT(
       data,
     });
 
+    await logActivity(
+      (session.user as any).id,
+      "LEVEL_UPDATE",
+      `Updated educational level "${level.name}"`,
+      clientIp(request)
+    );
+
     return NextResponse.json({ success: true, data: level });
   } catch {
     return NextResponse.json(
@@ -57,7 +65,15 @@ export async function DELETE(
     }
 
     const { id } = context.params;
+    const doomed = await prisma.educationalLevel.findUnique({ where: { id } });
     await prisma.educationalLevel.delete({ where: { id } });
+
+    await logActivity(
+      (session.user as any).id,
+      "LEVEL_DELETE",
+      `Deleted educational level "${doomed?.name ?? id}"`,
+      clientIp(request)
+    );
 
     return NextResponse.json({ success: true });
   } catch {

@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import bcrypt from "bcryptjs";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
+import { logActivity, clientIp } from "@/lib/activity";
 
 export async function GET(
   req: Request,
@@ -223,6 +224,13 @@ export async function PUT(
       });
     });
 
+    await logActivity(
+      (session.user as any).id,
+      "TEACHER_UPDATE",
+      `Updated teacher ${updatedTeacher.firstName} ${updatedTeacher.lastName}`,
+      clientIp(req)
+    );
+
     return NextResponse.json({ success: true, data: updatedTeacher });
   } catch {
     return NextResponse.json(
@@ -271,6 +279,13 @@ export async function DELETE(
       prisma.teacher.delete({ where: { id: teacher.id } }),
       prisma.user.delete({ where: { id: teacher.userId } }),
     ]);
+
+    await logActivity(
+      (session.user as any).id,
+      "TEACHER_DELETE",
+      `Deleted teacher ${teacher.firstName} ${teacher.lastName}`,
+      clientIp(req)
+    );
 
     return NextResponse.json({
       success: true,

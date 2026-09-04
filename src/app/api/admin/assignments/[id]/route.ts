@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
+import { logActivity, clientIp } from "@/lib/activity";
 import { z } from "zod";
 
 const updateAssignmentSchema = z.object({
@@ -92,6 +93,13 @@ export async function PUT(
       },
     });
 
+    await logActivity(
+      (session.user as any).id,
+      "ASSIGNMENT_UPDATE",
+      `Updated assignment "${updated.title}"`,
+      clientIp(req)
+    );
+
     return NextResponse.json({
       success: true,
       data: {
@@ -153,6 +161,13 @@ export async function DELETE(
     await prisma.assignment.delete({
       where: { id: params.id },
     });
+
+    await logActivity(
+      (session.user as any).id,
+      "ASSIGNMENT_DELETE",
+      `Deleted assignment "${existing.title}"`,
+      clientIp(_req)
+    );
 
     return NextResponse.json({ success: true });
   } catch {

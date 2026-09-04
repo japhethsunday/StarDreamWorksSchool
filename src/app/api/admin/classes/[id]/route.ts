@@ -2,6 +2,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
+import { logActivity, clientIp } from "@/lib/activity";
 
 export async function GET(
   req: Request,
@@ -230,6 +231,13 @@ export async function PUT(
       });
     });
 
+    await logActivity(
+      (session.user as any).id,
+      "CLASS_UPDATE",
+      `Updated class ${updated.name}`,
+      clientIp(req)
+    );
+
     return NextResponse.json({ success: true, data: updated });
   } catch {
     return NextResponse.json(
@@ -289,6 +297,13 @@ export async function DELETE(
       prisma.classSubject.deleteMany({ where: { classId: classRecord.id } }),
       prisma.class.delete({ where: { id: classRecord.id } }),
     ]);
+
+    await logActivity(
+      (session.user as any).id,
+      "CLASS_DELETE",
+      `Deleted class ${classRecord.name}`,
+      clientIp(req)
+    );
 
     return NextResponse.json({
       success: true,

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
+import { logActivity, clientIp } from "@/lib/activity";
 import { createSubjectSchema } from "@/lib/validations";
 
 export async function GET() {
@@ -118,6 +119,13 @@ export async function POST(req: Request) {
         },
       },
     });
+
+    await logActivity(
+      (session.user as any).id,
+      "SUBJECT_CREATE",
+      `Created subject ${subject.name} (${subject.code})`,
+      clientIp(req)
+    );
 
     return NextResponse.json({ success: true, data: subject }, { status: 201 });
   } catch {

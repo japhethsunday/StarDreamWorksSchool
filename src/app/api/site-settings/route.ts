@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
+import { logActivity, clientIp } from "@/lib/activity";
 
 export async function GET() {
   try {
@@ -69,6 +70,12 @@ export async function PUT(request: Request) {
     }
 
     if (updates.length > 0) await Promise.all(updates);
+    await logActivity(
+      (session.user as any).id,
+      "SITE_SETTINGS_UPDATE",
+      `Updated site settings: ${Object.keys(body).filter((k) => allowedKeys.includes(k as any)).join(", ")}`,
+      clientIp(request)
+    );
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json(

@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import bcrypt from "bcryptjs";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
+import { logActivity, clientIp } from "@/lib/activity";
 import { createStudentSchema } from "@/lib/validations";
 import { generateStudentId } from "@/lib/utils";
 
@@ -180,6 +181,13 @@ export async function POST(req: Request) {
         },
       });
     });
+
+    await logActivity(
+      (session.user as any).id,
+      "STUDENT_CREATE",
+      `Created student ${student.firstName} ${student.lastName} (${student.studentId})`,
+      clientIp(req)
+    );
 
     return NextResponse.json({ success: true, data: student }, { status: 201 });
   } catch {

@@ -13,6 +13,9 @@ export default function SettingsPage() {
   const [newPassword, setNewPassword] = useState("");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [pwSaving, setPwSaving] = useState(false);
+  const [pwSaved, setPwSaved] = useState(false);
+  const [pwError, setPwError] = useState("");
 
   const user = session?.user as any;
 
@@ -43,6 +46,30 @@ export default function SettingsPage() {
       alert(err.message || "Failed to update profile");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handlePasswordChange = async () => {
+    setPwError("");
+    setPwSaving(true);
+    try {
+      const res = await fetch("/api/admin/settings/password", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Failed to update password");
+      }
+      setCurrentPassword("");
+      setNewPassword("");
+      setPwSaved(true);
+      setTimeout(() => setPwSaved(false), 4000);
+    } catch (err: any) {
+      setPwError(err.message || "Failed to update password");
+    } finally {
+      setPwSaving(false);
     }
   };
 
@@ -113,9 +140,12 @@ export default function SettingsPage() {
             <label className="block text-sm font-medium text-gray-700 mb-1.5">New Password</label>
             <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-school-blue/20 focus:border-school-blue" />
           </div>
-          <button disabled={!currentPassword || !newPassword} className="px-5 py-2.5 text-sm font-semibold text-white bg-red-600 rounded-xl hover:bg-red-700 transition-all disabled:opacity-50">
+          {pwError && <p className="text-sm text-red-600 font-medium">{pwError}</p>}
+          <button onClick={handlePasswordChange} disabled={!currentPassword || !newPassword || pwSaving} className="px-5 py-2.5 text-sm font-semibold text-white bg-red-600 rounded-xl hover:bg-red-700 transition-all disabled:opacity-50 flex items-center gap-2">
+            {pwSaving && <Loader2 className="w-4 h-4 animate-spin" />}
             Update Password
           </button>
+          {pwSaved && <span className="text-sm text-green-600 font-medium">Password updated!</span>}
         </div>
       </div>
     </div>

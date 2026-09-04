@@ -2,6 +2,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
+import { logActivity, clientIp } from "@/lib/activity";
 
 export async function GET(
   req: Request,
@@ -154,6 +155,13 @@ export async function PUT(
       },
     });
 
+    await logActivity(
+      (session.user as any).id,
+      "SUBJECT_UPDATE",
+      `Updated subject ${updated.name} (${updated.code})`,
+      clientIp(req)
+    );
+
     return NextResponse.json({ success: true, data: updated });
   } catch {
     return NextResponse.json(
@@ -200,6 +208,13 @@ export async function DELETE(
       prisma.classSubject.deleteMany({ where: { subjectId: subject.id } }),
       prisma.subject.delete({ where: { id: subject.id } }),
     ]);
+
+    await logActivity(
+      (session.user as any).id,
+      "SUBJECT_DELETE",
+      `Deleted subject ${subject.name} (${subject.code})`,
+      clientIp(req)
+    );
 
     return NextResponse.json({
       success: true,
