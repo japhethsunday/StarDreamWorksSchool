@@ -138,7 +138,7 @@ export default function Navbar() {
           <span className="inline-flex items-center gap-2 font-bold tracking-wide">
             <span className="sd-live-dot inline-block h-2 w-2 rounded-full bg-brand-green" />
             {admissionOpen
-              ? "Admission is Open — Creche to Secondary School"
+              ? "Admission is Open — Pre-school to High School"
               : "Admissions currently closed"}
           </span>
           {admissionOpen && (

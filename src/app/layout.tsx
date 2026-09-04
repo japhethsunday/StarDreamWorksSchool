@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     template: "%s | STAR DreamWorks Schools",
   },
   description:
-    "STAR DreamWorks Schools is a caring nursery, primary and secondary school in Ajah, Lagos, Nigeria. Quality education from Creche through Secondary School with a focus on academic excellence and character development.",
+    "STAR DreamWorks Schools is a caring pre-school, nursery, primary and high school in Ajah, Lagos, Nigeria. Quality education from Pre-school through High School with a focus on academic excellence and character development.",
   keywords: [
     "STAR DreamWorks Schools",
     "school in Ajah Lagos",
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     "primary school in Ajah",
     "secondary school in Ajah",
     "kindergarten school in Ajah",
-    "creche in Ajah",
+    "pre-school in Ajah",
     "admissions in Ajah Lagos",
     "Lagos school",
     "quality education Lagos",
@@ -46,9 +46,9 @@ export const metadata: Metadata = {
     canonical: "https://www.stardreamworksschools.com",
   },
   openGraph: {
-    title: "STAR DreamWorks Schools | Caring Nursery, Primary & Secondary School in Ajah, Lagos",
+    title: "STAR DreamWorks Schools | Pre-school, Nursery, Primary & High School in Ajah, Lagos",
     description:
-      "Admission is open — Creche, Kindergarten, Nursery, Primary and Secondary School in Ajah, Lagos, Nigeria.",
+      "Admission is open — Pre-school, Kindergarten, Nursery, Primary and High School in Ajah, Lagos, Nigeria.",
     url: "https://www.stardreamworksschools.com",
     siteName: "STAR DreamWorks Schools",
     images: [
@@ -64,9 +64,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "STAR DreamWorks Schools | Caring Nursery, Primary & Secondary School in Ajah, Lagos",
+    title: "STAR DreamWorks Schools | Pre-school, Nursery, Primary & High School in Ajah, Lagos",
     description:
-      "Admission is open — Creche, Kindergarten, Nursery, Primary and Secondary School in Ajah, Lagos, Nigeria.",
+      "Admission is open — Pre-school, Kindergarten, Nursery, Primary and High School in Ajah, Lagos, Nigeria.",
     images: ["/images/school-crest.jpg"],
   },
   icons: {

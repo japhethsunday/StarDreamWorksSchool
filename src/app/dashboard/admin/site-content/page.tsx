@@ -141,7 +141,7 @@ export default function SiteContentPage() {
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1.5">Message</label>
-          <textarea rows={3} value={settings["admissions.message"] || ""} onChange={(e) => update("admissions.message", e.target.value)} className={`${inputCls} resize-none`} placeholder="Applications are open for Creche, Kindergarten, Nursery, Primary and Secondary School." />
+          <textarea rows={3} value={settings["admissions.message"] || ""} onChange={(e) => update("admissions.message", e.target.value)} className={`${inputCls} resize-none`} placeholder="Applications are open for Pre-school, Kindergarten, Nursery, Primary and High School." />
         </div>
       </SectionCard>
 
