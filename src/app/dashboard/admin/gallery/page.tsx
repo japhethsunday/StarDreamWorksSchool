@@ -213,9 +213,9 @@ export default function GalleryPage() {
             <input type="text" value={uploadCategory} onChange={(e) => setUploadCategory(e.target.value)} className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-school-blue/20 focus:border-school-blue" placeholder="e.g. Sports, Events" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Image file</label>
             {cloudinaryCloud ? (
               <>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Image file</label>
                 <label className="flex items-center justify-center gap-2 w-full px-3 py-3 bg-brand-paper border border-dashed border-brand-line rounded-xl text-sm font-semibold text-brand-navy cursor-pointer hover:border-brand-red/50 transition-colors">
                   {fileUploading ? (
                     <Loader2 className="w-4 h-4 animate-spin text-brand-red" />
