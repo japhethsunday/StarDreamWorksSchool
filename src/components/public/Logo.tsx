@@ -6,11 +6,10 @@ interface LogoProps {
 }
 
 /**
- * STAR DreamWorks Schools crest, drawn to match the embroidered uniform
- * patch: an interlocked "DW" monogram in collegiate outline style. The
- * curved outer "D" doubles as the shield-like frame, with the "W" nested
- * inside it. Layered strokes mimic the patch's distinct outer border and
- * raised satin-stitch edge, all in monochrome school red.
+ * STAR DreamWorks Schools crest: a modern geometric interlocked "DW"
+ * monogram with a faceted, beveled look. Layered gradient planes in
+ * monochrome school red with crisp white edge highlights give it a raised,
+ * embossed finish that echoes the embroidered uniform patch.
  */
 export function Crest({ className = "w-10 h-10" }: { className?: string }) {
   const D = "M20 62 V16 C40 16 52 27 52 39.5 C52 52 40 62 20 62";
@@ -22,31 +21,54 @@ export function Crest({ className = "w-10 h-10" }: { className?: string }) {
       aria-label="STAR DreamWorks Schools crest"
       className={className}
     >
+      <defs>
+        <linearGradient id="dw-edge" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#E8543A" />
+          <stop offset="0.55" stopColor="#C93720" />
+          <stop offset="1" stopColor="#8E2313" />
+        </linearGradient>
+        <linearGradient id="dw-face" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#F0755C" />
+          <stop offset="0.5" stopColor="#D63F27" />
+          <stop offset="1" stopColor="#A82A18" />
+        </linearGradient>
+        <linearGradient id="dw-sheen" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#FFFFFF" stopOpacity="0.9" />
+          <stop offset="1" stopColor="#FFFFFF" stopOpacity="0" />
+        </linearGradient>
+      </defs>
       <g fill="none" strokeLinecap="round" strokeLinejoin="round">
-        {/* Distinct outer border layer (darker red edge) */}
-        <path d={D} stroke="#A82A18" strokeWidth="10" />
-        <path d={W} stroke="#A82A18" strokeWidth="8" />
-        {/* Main satin face */}
-        <path d={D} stroke="#C93720" strokeWidth="7" />
-        <path d={W} stroke="#C93720" strokeWidth="5.4" />
-        {/* Hollow core between the stitched edges */}
-        <path d={D} stroke="#FFFFFF" strokeWidth="3.2" />
-        <path d={W} stroke="#FFFFFF" strokeWidth="2.2" />
-        {/* Stitch line down the middle of each stroke */}
+        {/* Deep bevel base */}
+        <path d={D} stroke="#7A1D0F" strokeWidth="11" />
+        <path d={W} stroke="#7A1D0F" strokeWidth="9" />
+        {/* Facet planes */}
+        <path d={D} stroke="url(#dw-edge)" strokeWidth="8" />
+        <path d={W} stroke="url(#dw-edge)" strokeWidth="6.2" />
+        <path d={D} stroke="url(#dw-face)" strokeWidth="4.2" />
+        <path d={W} stroke="url(#dw-face)" strokeWidth="3" />
+        {/* Raised top-edge highlights (embossed light) */}
         <path
-          d={D}
-          stroke="#C93720"
+          d="M20 16 C40 16 52 27 52 39.5"
+          stroke="#FFFFFF"
+          strokeWidth="1.4"
+          opacity="0.85"
+        />
+        <path
+          d="M20 62 C40 62 52 52 52 42"
+          stroke="#FFFFFF"
           strokeWidth="1"
-          strokeDasharray="2.4 2"
-          opacity="0.55"
+          opacity="0.25"
         />
         <path
-          d={W}
-          stroke="#C93720"
-          strokeWidth="0.9"
-          strokeDasharray="2.2 1.8"
-          opacity="0.55"
+          d="M26.5 35 L31 58.5 L35.5 43 L40 58.5 L44.5 35"
+          stroke="url(#dw-sheen)"
+          strokeWidth="1.1"
+          opacity="0.7"
         />
+        {/* Flat polygonal glints for the crystal cut */}
+        <polygon points="30,20 38,20 34,30" fill="#FFFFFF" opacity="0.28" />
+        <polygon points="44,44 50,48 45,54" fill="#FFFFFF" opacity="0.22" />
+        <polygon points="24,50 29,52 26,58" fill="#7A1D0F" opacity="0.3" />
       </g>
     </svg>
   );
