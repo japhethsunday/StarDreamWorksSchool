@@ -42,7 +42,7 @@ export default function Footer() {
                 Admission is open
               </p>
               <p className="text-sm text-white/60 mt-1">
-                Pre-school, Kindergarten, Nursery, Primary and High School —
+                Creche, Kindergarten, Nursery, Primary and Secondary School —
                 call or send an enquiry today.
               </p>
             </div>
@@ -74,7 +74,7 @@ export default function Footer() {
               <Logo variant="light" tagline={tagline} />
             </Link>
             <p className="text-sm text-white/55 leading-relaxed max-w-xs">
-              A caring pre-school, nursery, primary and high school in Ajah,
+              A caring nursery, primary and junior secondary school in Ajah,
               Lagos — combining strong academics with good character.
             </p>
             <p className="mt-4 text-sm font-semibold italic text-brand-yellow">
@@ -142,8 +142,8 @@ export default function Footer() {
               Admissions
             </h3>
             <p className="text-sm text-white/60 leading-relaxed mb-4">
-              Applications are open for Pre-school, Kindergarten, Nursery, Primary
-              and High School.
+              Applications are open for Creche, Kindergarten, Nursery, Primary
+              and Secondary School.
             </p>
             <Link
               href="/admissions"

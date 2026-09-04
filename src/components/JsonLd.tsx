@@ -5,16 +5,16 @@ export default function JsonLd() {
     name: "STAR DreamWorks Schools",
     alternateName: "STAR DreamWorks",
     description:
-      "A caring pre-school, nursery, primary and high school in Ajah, Lagos, Nigeria, providing quality education from Pre-school through High School.",
+      "A caring nursery, primary and junior secondary school in Ajah, Lagos, Nigeria, providing quality education from Creche through Secondary School.",
     url: "https://www.stardreamworksschools.com",
     logo: "https://www.stardreamworksschools.com/images/school-crest.jpg",
     image: "https://www.stardreamworksschools.com/images/school-crest.jpg",
-    telephone: ["+2348028330066", "+2348023913673", "+2348080693316"],
+    telephone: ["+2348038330066", "+2348023913673", "+2348080693316"],
     email: "",
     address: {
       "@type": "PostalAddress",
       streetAddress:
-        "No 2 Sanni Aro baale street moba off mobil road ilaje Ajah",
+        "2, Sanmi Arewa Ara Street, Off Mobil Road, Oniseke Ilaje Bus-Stop",
       addressLocality: "Ajah",
       addressRegion: "Lagos",
       addressCountry: "NG",
@@ -28,11 +28,11 @@ export default function JsonLd() {
     hasMap: "",
     foundingDate: "",
     educationalLevel: [
-      "Pre-school",
+      "Creche",
       "Kindergarten",
       "Nursery",
       "Primary School",
-      "High School",
+      "Secondary School",
     ],
     parentOrganization: {
       "@type": "Organization",

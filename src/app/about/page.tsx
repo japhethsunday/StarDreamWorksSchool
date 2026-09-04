@@ -23,7 +23,7 @@ export default function AboutPage() {
   const phones = displayPhones(settings["school.phone"]);
   const introBody =
     settings["homepage.introBody"] ||
-    "STAR DreamWorks Schools is a caring pre-school, nursery, primary and high school in Ajah, Lagos. We combine strong academics with good character, giving every child the foundation they need to thrive.";
+    "STAR DreamWorks Schools is a caring nursery, primary and junior secondary school in Ajah, Lagos. We combine strong academics with good character, giving every child the foundation they need to thrive.";
 
   const values = [
     {
@@ -68,7 +68,7 @@ export default function AboutPage() {
       <PageHero
         eyebrow="About us"
         title={`About ${name}`}
-        description="A caring pre-school, nursery, primary and high school in Ajah, Lagos, built on strong academics and good character."
+        description="A caring nursery, primary and junior secondary school in Ajah, Lagos, built on strong academics and good character."
       />
 
       {/* School intro */}
@@ -90,7 +90,7 @@ export default function AboutPage() {
           <Reveal delay={140}>
             <div className="relative bg-brand-paper border border-brand-line rounded-2xl overflow-hidden max-w-md mx-auto lg:ml-auto w-full">
               <div className="bg-brand-red text-white text-center text-[11px] font-bold uppercase py-2 px-4" style={{ letterSpacing: "0.18em" }}>
-                Pre-school, Nursery, Primary & High school
+                Creche, Nursery & Primary Schools
               </div>
               <div className="p-7">
                 <dl className="space-y-2 text-center">

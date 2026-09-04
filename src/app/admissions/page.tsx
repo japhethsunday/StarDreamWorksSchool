@@ -56,7 +56,7 @@ export default function AdmissionsPage() {
   const admissionOpen = (settings["admissions.status"] || "open").toLowerCase() === "open";
   const message =
     settings["admissions.message"] ||
-    "Applications are open for Pre-school, Kindergarten, Nursery, Primary and High School.";
+    "Applications are open for Creche, Kindergarten, Nursery, Primary and Secondary School.";
   const location = displayAddress(settings["school.location"]);
   const phones = displayPhones(settings["school.phone"]);
   const email = settings["school.email"];

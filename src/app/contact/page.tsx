@@ -98,7 +98,7 @@ export default function ContactPage() {
               </h2>
               <p className="text-white/70 leading-relaxed max-w-2xl mb-8">
                 Our admissions team will be in touch with the information you
-                need about pre-school, kindergarten, nursery, primary and high
+                need about creche, kindergarten, nursery, primary and secondary
                 school places.
               </p>
               <Link href="/admissions" className="sd-btn sd-btn-apply px-7 py-3.5 text-[15px]">

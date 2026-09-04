@@ -8,13 +8,13 @@
  */
 
 export const VERIFIED_PHONES = [
-  "08028330066",
+  "08038330066",
   "08023913673",
   "08080693316",
 ] as const;
 
 export const VERIFIED_ADDRESS =
-  "No 2 Sanni Aro baale street moba off mobil road ilaje Ajah, Lagos.";
+  "2, Sanmi Arewa Ara Street, Off Mobil Road, Oniseke Ilaje Bus-Stop, Ajah, Lagos.";
 
 export const VERIFIED_LOCATION_SHORT = "Ajah, Lagos, Nigeria";
 
@@ -29,15 +29,15 @@ export const SCHOOL_MOTTO_LINES = [
 export const SCHOOL_SIGNATURE_LINE = "Your Dream Is Your Signature";
 
 /** Levels line printed on the flyer's red ribbon. */
-export const SCHOOL_LEVELS_RIBBON = "Pre-school, Nursery, Primary & High school";
+export const SCHOOL_LEVELS_RIBBON = "Creche, Nursery & Primary Schools";
 
 /** Admission levels stated on the website admissions copy. */
 export const ADMISSION_LEVELS = [
-  "Pre-school",
+  "Creche",
   "Kindergarten",
   "Nursery",
   "Primary",
-  "High School",
+  "Secondary School",
 ] as const;
 
 /** Convert a Nigerian 080... number to an international tel: link. */
