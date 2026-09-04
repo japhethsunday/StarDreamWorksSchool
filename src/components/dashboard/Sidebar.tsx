@@ -22,11 +22,13 @@ import {
   Layers,
   MessageSquare,
   Globe,
+  ShieldCheck,
 } from "lucide-react";
 import { Crest } from "@/components/public/Logo";
 
 interface SidebarProps {
   role: string;
+  isSuperAdmin?: boolean;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -81,10 +83,16 @@ const parentNav: NavItem[] = [
   { label: "Announcements", href: "/dashboard/parent/announcements", icon: <Megaphone className="w-5 h-5" /> },
 ];
 
-function getNavItems(role: string): NavItem[] {
+function getNavItems(role: string, isSuperAdmin: boolean): NavItem[] {
   switch (role) {
     case "ADMIN":
-      return adminNav;
+      return isSuperAdmin
+        ? [
+            ...adminNav.slice(0, -3),
+            { label: "Admin Management", href: "/dashboard/admin/admin-management", icon: <ShieldCheck className="w-5 h-5" /> },
+            ...adminNav.slice(-3),
+          ]
+        : adminNav;
     case "TEACHER":
       return teacherNav;
     case "STUDENT":
@@ -103,9 +111,9 @@ const roleLabel: Record<string, string> = {
   PARENT: "Parent Portal",
 };
 
-export default function Sidebar({ role, isOpen, onClose }: SidebarProps) {
+export default function Sidebar({ role, isSuperAdmin = false, isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
-  const navItems = getNavItems(role);
+  const navItems = getNavItems(role, isSuperAdmin);
   const homeHref = `/dashboard/${role.toLowerCase()}`;
 
   return (

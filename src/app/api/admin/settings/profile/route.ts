@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
+import { SUPER_ADMIN_EMAIL } from "@/lib/super-admin";
 
 export async function PUT(req: Request) {
   try {
@@ -30,6 +31,16 @@ export async function PUT(req: Request) {
 
     if (email !== undefined && email.trim()) {
       const normalized = email.trim().toLowerCase();
+
+      // The super admin email is reserved and acts as the authorization key
+      // for Admin Management. It can never be reassigned or renamed.
+      if (normalized === SUPER_ADMIN_EMAIL || (session.user as any).email === SUPER_ADMIN_EMAIL) {
+        return NextResponse.json(
+          { success: false, error: "Email cannot be changed for this account." },
+          { status: 400 }
+        );
+      }
+
       const existing = await prisma.user.findUnique({
         where: { email: normalized },
       });

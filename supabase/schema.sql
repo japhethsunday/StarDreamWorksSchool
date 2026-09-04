@@ -8,6 +8,7 @@ CREATE TABLE "users" (
     "image" TEXT,
     "phone" TEXT,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "isSuperAdmin" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
