@@ -11,7 +11,7 @@ const LON = 3.5852;
 const BBOX = `${LON - 0.03},${LAT - 0.02},${LON + 0.03},${LAT + 0.02}`;
 
 const DIRECTIONS_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-  "2 Sanmi Arewa Ara Street Off Mobil Road Ilaje Ajah Lagos Nigeria"
+  "No. 2 Sanni Aro Baale Street Moba Off Mobil Road Ilaje Ajah Lagos Nigeria"
 )}`;
 
 export default function SchoolMap({ address }: { address?: string }) {

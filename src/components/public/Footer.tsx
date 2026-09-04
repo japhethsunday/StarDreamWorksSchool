@@ -15,7 +15,7 @@ import {
 export default function Footer() {
   const { settings } = useSiteContent();
   const name = settings["school.name"] || "STAR DreamWorks Schools";
-  const tagline = settings["school.tagline"] || "Caring Nursery, Primary & JSS";
+  const tagline = settings["school.tagline"] || "Pre-School, Nursery, Primary & High School";
   const address = displayAddress(settings["school.location"]);
   const phones = displayPhones(settings["school.phone"]);
   const email = settings["school.email"];
@@ -74,7 +74,7 @@ export default function Footer() {
               <Logo variant="light" tagline={tagline} />
             </Link>
             <p className="text-sm text-white/55 leading-relaxed max-w-xs">
-              A caring nursery, primary and junior secondary school in Ajah,
+              A caring pre-school, nursery, primary and high school in Ajah,
               Lagos — combining strong academics with good character.
             </p>
             <p className="mt-4 text-sm font-semibold italic text-brand-yellow">

@@ -33,11 +33,11 @@ import {
 
 export default function HomePage() {
   const { settings, levels, loading } = useSiteContent();
-  const tagline = settings["school.tagline"] || "Caring Nursery, Primary & JSS";
+  const tagline = settings["school.tagline"] || "Pre-School, Nursery, Primary & High School";
   const introTitle = settings["homepage.introTitle"] || "Welcome to STAR DreamWorks Schools";
   const introBody =
     settings["homepage.introBody"] ||
-    "STAR DreamWorks Schools is a caring nursery, primary and junior secondary school in Ajah, Lagos. We combine strong academics with good character, giving every child the foundation they need to thrive.";
+    "STAR DreamWorks Schools is a caring pre-school, nursery, primary and high school in Ajah, Lagos. We combine strong academics with good character, giving every child the foundation they need to thrive.";
   const address = displayAddress(settings["school.location"]);
   const phones = displayPhones(settings["school.phone"]);
   const email = settings["school.email"];
@@ -89,7 +89,7 @@ export default function HomePage() {
                 <span className="sd-live-dot inline-block h-2 w-2 rounded-full bg-brand-green" />
                 <span className="text-[13px] font-bold text-brand-yellow tracking-wide">
                   {admissionOpen
-                    ? "Admission is Open — Creche to Secondary School"
+                    ? "Admission is Open — Pre-School to High School"
                     : tagline}
                 </span>
               </p>
@@ -113,7 +113,7 @@ export default function HomePage() {
                 className="text-base sm:text-lg text-white/70 max-w-xl leading-relaxed mb-7 sd-enter"
                 style={{ "--enter-delay": "230ms" } as React.CSSProperties}
               >
-                A caring nursery, primary and junior secondary school in Ajah,
+                A caring pre-school, nursery, primary and high school in Ajah,
                 Lagos — strong learning and good character, together.
               </p>
 
@@ -286,7 +286,7 @@ export default function HomePage() {
               A learning journey for every age
             </h2>
             <p className="text-brand-body leading-relaxed">
-              From creche through to secondary school, each stage is designed
+              From pre-school through to high school, each stage is designed
               to meet children where they are and help them grow.
             </p>
           </Reveal>
@@ -302,11 +302,11 @@ export default function HomePage() {
           {!loading && !displayLevels && (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {[
-                { name: "Creche", ageRange: "0 – 2 years" },
+                { name: "Pre-School", ageRange: "0 – 2 years" },
                 { name: "Kindergarten", ageRange: "Age 3" },
                 { name: "Nursery", ageRange: "Ages 4 – 5" },
                 { name: "Primary", ageRange: "Ages 6 – 11" },
-                { name: "Secondary School", ageRange: "Ages 12+" },
+                { name: "High School", ageRange: "Ages 12+" },
               ].map((lvl, i) => (
                 <Reveal key={lvl.name} delay={(i % 3) * 90}>
                   <Link href="/admissions" className="sd-card group block p-7 h-full">

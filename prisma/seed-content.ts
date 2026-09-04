@@ -57,9 +57,9 @@ const levels = [
 
 const settings: { key: string; value: string }[] = [
   { key: "school.name", value: "STAR DreamWorks Schools" },
-  { key: "school.tagline", value: "Caring Nursery, Primary & JSS" },
-  { key: "school.location", value: "2, Sanmi Arewa Ara Street, Off Mobil Road, Oniseke Ilaje Bus-Stop, Ajah, Lagos." },
-  { key: "school.phone", value: "08038330066, 08023913673, 08080693316" },
+  { key: "school.tagline", value: "Pre-School, Nursery, Primary & High School" },
+  { key: "school.location", value: "No. 2 Sanni Aro Baale Street, Moba, Off Mobil Road, Ilaje, Ajah, Lagos." },
+  { key: "school.phone", value: "08028330066, 08023913673, 08080693316" },
   { key: "school.email", value: "" },
   { key: "admissions.status", value: "open" },
   {
@@ -71,7 +71,7 @@ const settings: { key: string; value: string }[] = [
   {
     key: "homepage.introBody",
     value:
-      "STAR DreamWorks Schools is a caring nursery, primary and junior secondary school in Ajah, Lagos. We combine strong academics with good character, giving every child the foundation they need to thrive.",
+      "STAR DreamWorks Schools is a caring pre-school, nursery, primary and high school in Ajah, Lagos. We combine strong academics with good character, giving every child the foundation they need to thrive.",
   },
 ];
 

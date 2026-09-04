@@ -37,7 +37,7 @@ export default function Navbar() {
     (settings["admissions.status"] || "open").toLowerCase() === "open";
   const phones = displayPhones(settings["school.phone"]);
   const address = displayAddress(settings["school.location"]);
-  const tagline = settings["school.tagline"] || "Caring Nursery, Primary & JSS";
+  const tagline = settings["school.tagline"] || "Pre-School, Nursery, Primary & High School";
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -138,7 +138,7 @@ export default function Navbar() {
           <span className="inline-flex items-center gap-2 font-bold tracking-wide">
             <span className="sd-live-dot inline-block h-2 w-2 rounded-full bg-brand-green" />
             {admissionOpen
-              ? "Admission is Open — Creche to Secondary School"
+              ? "Admission is Open — Pre-School to High School"
               : "Admissions currently closed"}
           </span>
           {admissionOpen && (

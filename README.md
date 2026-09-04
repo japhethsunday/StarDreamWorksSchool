@@ -6,7 +6,7 @@
 
 **School Management & Learning Platform**
 
-Caring Nursery, Primary & Secondary School — Ajah, Lagos, Nigeria
+Pre-School, Nursery, Primary & High School — Ajah, Lagos, Nigeria
 
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed_on-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://www.stardreamworksschools.com)
 [![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org)

@@ -27,7 +27,7 @@ export default function AcademicsPage() {
       <PageHero
         eyebrow="Academics"
         title="Our programmes"
-        description="From creche through to secondary school, a caring learning journey at every stage."
+        description="From pre-school through to high school, a caring learning journey at every stage."
       />
 
       <section className="py-20 lg:py-28">

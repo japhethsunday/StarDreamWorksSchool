@@ -107,7 +107,7 @@ export default function SiteContentPage() {
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1.5">Tagline</label>
-          <input type="text" value={settings["school.tagline"] || ""} onChange={(e) => update("school.tagline", e.target.value)} className={inputCls} placeholder="Caring Nursery, Primary & JSS" />
+          <input type="text" value={settings["school.tagline"] || ""} onChange={(e) => update("school.tagline", e.target.value)} className={inputCls} placeholder="Pre-School, Nursery, Primary & High School" />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1.5 flex items-center gap-1.5">

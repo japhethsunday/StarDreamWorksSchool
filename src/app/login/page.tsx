@@ -185,7 +185,7 @@ export default function LoginPage() {
 
         {/* School branding below */}
         <p className="text-center text-white/40 text-xs mt-6">
-          STAR DreamWorks Schools &mdash; Caring Nursery, Primary & JSS
+          STAR DreamWorks Schools &mdash; Pre-School, Nursery, Primary & High School
         </p>
       </div>
     </div>

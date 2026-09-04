@@ -21,17 +21,17 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.stardreamworksschools.com"),
   title: {
-    default: "STAR DreamWorks Schools | Caring Nursery, Primary & Secondary School in Ajah, Lagos",
+    default: "STAR DreamWorks Schools | Pre-School, Nursery, Primary & High School in Ajah, Lagos",
     template: "%s | STAR DreamWorks Schools",
   },
   description:
-    "STAR DreamWorks Schools is a caring nursery, primary and secondary school in Ajah, Lagos, Nigeria. Quality education from Creche through Secondary School with a focus on academic excellence and character development.",
+    "STAR DreamWorks Schools is a caring pre-school, nursery, primary and high school in Ajah, Lagos, Nigeria. Quality education from Pre-School through High School with a focus on academic excellence and character development.",
   keywords: [
     "STAR DreamWorks Schools",
     "school in Ajah Lagos",
     "nursery school in Ajah",
     "primary school in Ajah",
-    "secondary school in Ajah",
+    "high school in Ajah",
     "kindergarten school in Ajah",
     "creche in Ajah",
     "admissions in Ajah Lagos",
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     canonical: "https://www.stardreamworksschools.com",
   },
   openGraph: {
-    title: "STAR DreamWorks Schools | Caring Nursery, Primary & Secondary School in Ajah, Lagos",
+    title: "STAR DreamWorks Schools | Pre-School, Nursery, Primary & High School in Ajah, Lagos",
     description:
       "Admission is open — Creche, Kindergarten, Nursery, Primary and Secondary School in Ajah, Lagos, Nigeria.",
     url: "https://www.stardreamworksschools.com",
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "STAR DreamWorks Schools | Caring Nursery, Primary & Secondary School in Ajah, Lagos",
+    title: "STAR DreamWorks Schools | Pre-School, Nursery, Primary & High School in Ajah, Lagos",
     description:
       "Admission is open — Creche, Kindergarten, Nursery, Primary and Secondary School in Ajah, Lagos, Nigeria.",
     images: ["/images/school-crest.jpg"],

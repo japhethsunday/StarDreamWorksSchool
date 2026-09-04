@@ -8,13 +8,13 @@
  */
 
 export const VERIFIED_PHONES = [
-  "08038330066",
+  "08028330066",
   "08023913673",
   "08080693316",
 ] as const;
 
 export const VERIFIED_ADDRESS =
-  "2, Sanmi Arewa Ara Street, Off Mobil Road, Oniseke Ilaje Bus-Stop, Ajah, Lagos.";
+  "No. 2 Sanni Aro Baale Street, Moba, Off Mobil Road, Ilaje, Ajah, Lagos.";
 
 export const VERIFIED_LOCATION_SHORT = "Ajah, Lagos, Nigeria";
 
@@ -29,7 +29,7 @@ export const SCHOOL_MOTTO_LINES = [
 export const SCHOOL_SIGNATURE_LINE = "Your Dream Is Your Signature";
 
 /** Levels line printed on the flyer's red ribbon. */
-export const SCHOOL_LEVELS_RIBBON = "Creche, Nursery & Primary Schools";
+export const SCHOOL_LEVELS_RIBBON = "Pre-School, Nursery, Primary & High School";
 
 /** Admission levels stated on the website admissions copy. */
 export const ADMISSION_LEVELS = [
@@ -47,7 +47,7 @@ export function telHref(phone: string): string {
   return `tel:${intl}`;
 }
 
-/** Format 08038330066 -> 0803 833 0066 for readable display (digits unchanged). */
+/** Format 08028330066 -> 0802 833 0066 for readable display (digits unchanged). */
 export function formatPhone(phone: string): string {
   const digits = phone.replace(/[^\d]/g, "");
   if (digits.length === 11) {
