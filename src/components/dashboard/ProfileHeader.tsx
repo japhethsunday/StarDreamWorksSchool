@@ -45,16 +45,13 @@ export default function ProfileHeader({
 }: ProfileHeaderProps) {
   return (
     <div className="bg-white rounded-xl border border-brand-line shadow-sm overflow-hidden">
-      <div className="h-24 bg-gradient-to-r from-brand-navy-deep via-brand-navy to-brand-green relative">
-        <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_70%_20%,rgba(255,255,255,0.25),transparent_40%)]" />
-      </div>
-      <div className="px-6 pb-6">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 -mt-10">
-          <div className="flex items-end gap-4">
-            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-brand-green to-brand-navy flex items-center justify-center text-white text-2xl font-bold ring-4 ring-white shadow-lg shrink-0">
+      <div className="px-5 py-6 sm:px-6">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="flex items-start gap-4">
+            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-brand-green to-brand-navy flex items-center justify-center text-white text-2xl font-bold ring-4 ring-brand-paper shadow-lg shrink-0">
               {initials}
             </div>
-            <div className="pt-2">
+            <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
                 <h2 className="font-heading text-2xl font-bold text-brand-ink tracking-tight">
                   {name}
@@ -82,14 +79,10 @@ export default function ProfileHeader({
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center gap-2 flex-wrap lg:justify-end">
             <span
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${
-                active
-                  ? active
-                    ? "bg-green-100 text-brand-green"
-                    : "bg-red-100 text-brand-red"
-                  : "bg-red-100 text-brand-red"
+                active ? "bg-green-100 text-brand-green" : "bg-red-100 text-brand-red"
               }`}
             >
               <span
