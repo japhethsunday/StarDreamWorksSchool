@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Gallery | STAR DreamWorks Schools",
+  title: "Gallery",
   description:
     "Browse photos of school life at STAR DreamWorks Schools in Ajah, Lagos — classrooms, activities, events, and more.",
   alternates: {
     canonical: "https://www.stardreamworksschools.com/gallery",
   },
   openGraph: {
-    title: "Gallery | STAR DreamWorks Schools",
+    title: "Gallery — STAR DreamWorks Schools",
     description:
       "Browse photos of school life at STAR DreamWorks Schools in Ajah, Lagos.",
     url: "https://www.stardreamworksschools.com/gallery",
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Gallery | STAR DreamWorks Schools",
+    title: "Gallery — STAR DreamWorks Schools",
     description:
       "Browse photos of school life at STAR DreamWorks Schools in Ajah, Lagos.",
     images: ["/images/school-crest.jpg"],

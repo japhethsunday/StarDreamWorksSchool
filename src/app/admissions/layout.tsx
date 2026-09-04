@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Admissions | STAR DreamWorks Schools",
+  title: "Admissions",
   description:
     "Apply to STAR DreamWorks Schools in Ajah, Lagos. Admission is open for Creche, Kindergarten, Nursery, Primary and Secondary School. Start your enquiry today.",
   alternates: {
     canonical: "https://www.stardreamworksschools.com/admissions",
   },
   openGraph: {
-    title: "Admissions | STAR DreamWorks Schools",
+    title: "Admissions — STAR DreamWorks Schools",
     description:
       "Apply to STAR DreamWorks Schools in Ajah, Lagos. Admission is open for Creche, Kindergarten, Nursery, Primary and Secondary School.",
     url: "https://www.stardreamworksschools.com/admissions",
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Admissions | STAR DreamWorks Schools",
+    title: "Admissions — STAR DreamWorks Schools",
     description:
       "Apply to STAR DreamWorks Schools in Ajah, Lagos. Admission is open for Creche, Kindergarten, Nursery, Primary and Secondary School.",
     images: ["/images/school-crest.jpg"],

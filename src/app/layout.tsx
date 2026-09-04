@@ -100,6 +100,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${poppins.variable} ${inter.variable}`}>
       <head>
+        <link rel="manifest" href="/site.webmanifest" />
         <meta name="theme-color" content="#1e3a5f" />
         <meta name="msapplication-TileColor" content="#1e3a5f" />
       </head>
