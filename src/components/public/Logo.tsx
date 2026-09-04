@@ -14,13 +14,13 @@ interface LogoProps {
 export function Crest({ className = "w-10 h-10" }: { className?: string }) {
   return (
     <span
-      className={`inline-flex items-center justify-center overflow-hidden rounded-[28%] bg-white ring-1 ring-black/10 ${className}`}
+      className={`inline-flex shrink-0 items-center justify-center overflow-hidden rounded-[26%] bg-white shadow-[0_2px_10px_rgba(27,35,64,0.22)] ring-2 ring-brand-red/70 ring-offset-2 ring-offset-white ${className}`}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src="/images/school-crest.jpg"
         alt="STAR DreamWorks Schools crest"
-        className="h-full w-full object-contain"
+        className="h-full w-full scale-[1.02] object-cover"
         draggable={false}
       />
     </span>
