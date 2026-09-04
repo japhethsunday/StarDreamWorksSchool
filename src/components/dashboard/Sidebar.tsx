@@ -29,6 +29,7 @@ import { Crest } from "@/components/public/Logo";
 interface SidebarProps {
   role: string;
   isSuperAdmin?: boolean;
+  permissions?: string[];
   isOpen: boolean;
   onClose: () => void;
 }
@@ -37,25 +38,26 @@ interface NavItem {
   label: string;
   href: string;
   icon: React.ReactNode;
+  permission?: string;
 }
 
 const adminNav: NavItem[] = [
   { label: "Dashboard", href: "/dashboard/admin", icon: <LayoutDashboard className="w-5 h-5" /> },
-  { label: "Teachers", href: "/dashboard/admin/teachers", icon: <GraduationCap className="w-5 h-5" /> },
-  { label: "Students", href: "/dashboard/admin/students", icon: <Users className="w-5 h-5" /> },
-  { label: "Parents", href: "/dashboard/admin/parents", icon: <UserCheck className="w-5 h-5" /> },
-  { label: "Classes", href: "/dashboard/admin/classes", icon: <BookOpen className="w-5 h-5" /> },
-  { label: "Subjects", href: "/dashboard/admin/subjects", icon: <FileText className="w-5 h-5" /> },
-  { label: "Assignments", href: "/dashboard/admin/assignments", icon: <ClipboardList className="w-5 h-5" /> },
-  { label: "Materials", href: "/dashboard/admin/materials", icon: <FolderOpen className="w-5 h-5" /> },
-  { label: "Announcements", href: "/dashboard/admin/announcements", icon: <Megaphone className="w-5 h-5" /> },
-  { label: "News", href: "/dashboard/admin/news", icon: <Newspaper className="w-5 h-5" /> },
-  { label: "Events", href: "/dashboard/admin/events", icon: <Calendar className="w-5 h-5" /> },
-  { label: "Gallery", href: "/dashboard/admin/gallery", icon: <Image className="w-5 h-5" /> },
-  { label: "Admissions", href: "/dashboard/admin/admissions", icon: <MessageSquare className="w-5 h-5" /> },
-  { label: "Educational Levels", href: "/dashboard/admin/educational-levels", icon: <Layers className="w-5 h-5" /> },
-  { label: "Site Content", href: "/dashboard/admin/site-content", icon: <Globe className="w-5 h-5" /> },
-  { label: "Activity", href: "/dashboard/admin/activity", icon: <Activity className="w-5 h-5" /> },
+  { label: "Teachers", href: "/dashboard/admin/teachers", icon: <GraduationCap className="w-5 h-5" />, permission: "MANAGE_TEACHERS" },
+  { label: "Students", href: "/dashboard/admin/students", icon: <Users className="w-5 h-5" />, permission: "MANAGE_STUDENTS" },
+  { label: "Parents", href: "/dashboard/admin/parents", icon: <UserCheck className="w-5 h-5" />, permission: "MANAGE_PARENTS" },
+  { label: "Classes", href: "/dashboard/admin/classes", icon: <BookOpen className="w-5 h-5" />, permission: "MANAGE_CLASSES" },
+  { label: "Subjects", href: "/dashboard/admin/subjects", icon: <FileText className="w-5 h-5" />, permission: "MANAGE_SUBJECTS" },
+  { label: "Assignments", href: "/dashboard/admin/assignments", icon: <ClipboardList className="w-5 h-5" />, permission: "MANAGE_ASSIGNMENTS" },
+  { label: "Materials", href: "/dashboard/admin/materials", icon: <FolderOpen className="w-5 h-5" />, permission: "MANAGE_MATERIALS" },
+  { label: "Announcements", href: "/dashboard/admin/announcements", icon: <Megaphone className="w-5 h-5" />, permission: "MANAGE_ANNOUNCEMENTS" },
+  { label: "News", href: "/dashboard/admin/news", icon: <Newspaper className="w-5 h-5" />, permission: "MANAGE_NEWS" },
+  { label: "Events", href: "/dashboard/admin/events", icon: <Calendar className="w-5 h-5" />, permission: "MANAGE_EVENTS" },
+  { label: "Gallery", href: "/dashboard/admin/gallery", icon: <Image className="w-5 h-5" />, permission: "MANAGE_GALLERY" },
+  { label: "Admissions", href: "/dashboard/admin/admissions", icon: <MessageSquare className="w-5 h-5" />, permission: "MANAGE_ADMISSIONS" },
+  { label: "Educational Levels", href: "/dashboard/admin/educational-levels", icon: <Layers className="w-5 h-5" />, permission: "MANAGE_LEVELS" },
+  { label: "Site Content", href: "/dashboard/admin/site-content", icon: <Globe className="w-5 h-5" />, permission: "MANAGE_SETTINGS" },
+  { label: "Activity", href: "/dashboard/admin/activity", icon: <Activity className="w-5 h-5" />, permission: "VIEW_ACTIVITY" },
   { label: "Settings", href: "/dashboard/admin/settings", icon: <Settings className="w-5 h-5" /> },
 ];
 
@@ -83,16 +85,23 @@ const parentNav: NavItem[] = [
   { label: "Announcements", href: "/dashboard/parent/announcements", icon: <Megaphone className="w-5 h-5" /> },
 ];
 
-function getNavItems(role: string, isSuperAdmin: boolean): NavItem[] {
+function canAccess(item: NavItem, permissions?: string[]): boolean {
+  if (!item.permission) return true;
+  if (!permissions || permissions.length === 0) return true;
+  return permissions.includes(item.permission);
+}
+
+function getNavItems(role: string, isSuperAdmin: boolean, permissions?: string[]): NavItem[] {
   switch (role) {
-    case "ADMIN":
-      return isSuperAdmin
-        ? [
-            ...adminNav.slice(0, -3),
-            { label: "Admin Management", href: "/dashboard/admin/admin-management", icon: <ShieldCheck className="w-5 h-5" /> },
-            ...adminNav.slice(-3),
-          ]
-        : adminNav;
+    case "ADMIN": {
+      const visible = adminNav.filter((item) => canAccess(item, permissions));
+      if (!isSuperAdmin) return visible;
+      return [
+        ...visible.slice(0, -1),
+        { label: "Admin Management", href: "/dashboard/admin/admin-management", icon: <ShieldCheck className="w-5 h-5" /> },
+        ...visible.slice(-1),
+      ];
+    }
     case "TEACHER":
       return teacherNav;
     case "STUDENT":
@@ -111,9 +120,9 @@ const roleLabel: Record<string, string> = {
   PARENT: "Parent Portal",
 };
 
-export default function Sidebar({ role, isSuperAdmin = false, isOpen, onClose }: SidebarProps) {
+export default function Sidebar({ role, isSuperAdmin = false, permissions, isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
-  const navItems = getNavItems(role, isSuperAdmin);
+  const navItems = getNavItems(role, isSuperAdmin, permissions);
   const homeHref = `/dashboard/${role.toLowerCase()}`;
 
   return (

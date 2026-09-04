@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import {
   Users,
   Plus,
   Search,
   Edit2,
   Trash2,
+  Eye,
   Loader2,
   AlertCircle,
 } from "lucide-react";
@@ -63,12 +65,14 @@ const emptyForm: FormData = {
 };
 
 export default function StudentsPage() {
+  const router = useRouter();
   const [students, setStudents] = useState<Student[]>([]);
   const [classes, setClasses] = useState<Class[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [filterClass, setFilterClass] = useState("");
+  const [filterStatus, setFilterStatus] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<FormData>(emptyForm);
@@ -79,9 +83,9 @@ export default function StudentsPage() {
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
-      const [studentsRes, classesRes] = await Promise.allSettled([
+      const [studentsRes, refRes] = await Promise.allSettled([
         fetch("/api/admin/students"),
-        fetch("/api/admin/classes"),
+        fetch("/api/admin/reference"),
       ]);
 
       if (studentsRes.status === "fulfilled" && studentsRes.value.ok) {
@@ -89,9 +93,10 @@ export default function StudentsPage() {
         setStudents(data.data || data.students || []);
       }
 
-      if (classesRes.status === "fulfilled" && classesRes.value.ok) {
-        const data = await classesRes.value.json();
-        setClasses(data.data || data.classes || []);
+      if (refRes.status === "fulfilled" && refRes.value.ok) {
+        const ref = await refRes.value.json();
+        const d = ref.data || {};
+        setClasses(d.classes || []);
       }
     } catch {
       setError("Failed to load students. Please try again.");
@@ -107,9 +112,13 @@ export default function StudentsPage() {
   const filtered = students.filter((s) => {
     const matchesSearch =
       `${s.firstName} ${s.lastName}`.toLowerCase().includes(search.toLowerCase()) ||
-      s.studentId?.toLowerCase().includes(search.toLowerCase());
+      s.studentId?.toLowerCase().includes(search.toLowerCase()) ||
+      (s as any)?.user?.email?.toLowerCase().includes(search.toLowerCase());
     const matchesClass = filterClass ? s.classId === filterClass : true;
-    return matchesSearch && matchesClass;
+    const status = (s.status || "ACTIVE").toUpperCase();
+    const matchesStatus =
+      filterStatus === "" ? true : status === filterStatus.toUpperCase();
+    return matchesSearch && matchesClass && matchesStatus;
   });
 
   const openAdd = () => {
@@ -187,17 +196,20 @@ export default function StudentsPage() {
       key: "name",
       label: "Student",
       render: (_: any, row: Student) => (
-        <div className="flex items-center gap-3">
+        <button
+          onClick={() => router.push(`/dashboard/admin/students/${row.id}`)}
+          className="flex items-center gap-3 text-left group hover:opacity-90 transition-opacity"
+        >
           <div className="w-9 h-9 bg-gradient-to-br from-school-green to-accent rounded-lg flex items-center justify-center text-white text-xs font-bold shrink-0">
             {`${row.firstName?.[0] || ""}${row.lastName?.[0] || ""}`.toUpperCase()}
           </div>
           <div>
-            <p className="font-medium text-gray-800">
+            <p className="font-medium text-gray-800 group-hover:text-school-blue transition-colors">
               {row.firstName} {row.lastName}
             </p>
             <p className="text-xs text-gray-400">{row.studentId}</p>
           </div>
-        </div>
+        </button>
       ),
     },
     {
@@ -238,6 +250,13 @@ export default function StudentsPage() {
       className: "text-right",
       render: (_: any, row: Student) => (
         <div className="flex items-center justify-end gap-2">
+          <button
+            onClick={() => router.push(`/dashboard/admin/students/${row.id}`)}
+            className="p-2 text-gray-400 hover:text-school-blue hover:bg-blue-50 rounded-lg transition-colors"
+            title="View Profile"
+          >
+            <Eye className="w-4 h-4" />
+          </button>
           <button
             onClick={() => openEdit(row)}
             className="p-2 text-gray-400 hover:text-school-blue hover:bg-blue-50 rounded-lg transition-colors"
@@ -312,9 +331,20 @@ export default function StudentsPage() {
             </option>
           ))}
         </select>
+        <select
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value)}
+          className="px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-school-blue/20"
+        >
+          <option value="">All Statuses</option>
+          <option value="ACTIVE">Active</option>
+          <option value="INACTIVE">Inactive</option>
+          <option value="GRADUATED">Graduated</option>
+          <option value="SUSPENDED">Suspended</option>
+        </select>
       </div>
 
-      {filtered.length === 0 && !search && !filterClass ? (
+      {filtered.length === 0 && !search && !filterClass && !filterStatus ? (
         <EmptyState
           icon={<Users className="w-10 h-10 text-gray-400" />}
           title="No students yet"

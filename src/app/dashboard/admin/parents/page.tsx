@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import {
   UserCheck,
   Plus,
   Search,
   Edit2,
   Trash2,
+  Eye,
   Mail,
   Phone,
   Loader2,
@@ -58,11 +60,13 @@ const emptyForm: FormData = {
 };
 
 export default function ParentsPage() {
+  const router = useRouter();
   const [parents, setParents] = useState<Parent[]>([]);
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
+  const [filterStatus, setFilterStatus] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<FormData>(emptyForm);
@@ -73,17 +77,18 @@ export default function ParentsPage() {
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
-      const [parentsRes, studentsRes] = await Promise.allSettled([
+      const [parentsRes, refRes] = await Promise.allSettled([
         fetch("/api/admin/parents"),
-        fetch("/api/admin/students"),
+        fetch("/api/admin/reference"),
       ]);
       if (parentsRes.status === "fulfilled" && parentsRes.value.ok) {
         const data = await parentsRes.value.json();
         setParents(data.data || data.parents || []);
       }
-      if (studentsRes.status === "fulfilled" && studentsRes.value.ok) {
-        const data = await studentsRes.value.json();
-        setStudents(data.data || data.students || []);
+      if (refRes.status === "fulfilled" && refRes.value.ok) {
+        const ref = await refRes.value.json();
+        const d = ref.data || {};
+        setStudents(d.students || []);
       }
     } catch {
       setError("Failed to load parents.");
@@ -98,10 +103,18 @@ export default function ParentsPage() {
     (p) => {
       const fullName = p.name || `${p.firstName || ""} ${p.lastName || ""}`.trim();
       const email = p.email || p.user?.email || "";
-      return (
+      const childNames = (p.children || (p.studentLinks || []).map((l) => l.student).filter(Boolean) || [])
+        .map((c: any) => `${c.firstName || ""} ${c.lastName || ""}`.toLowerCase())
+        .join(" ");
+      const matchesSearch =
         fullName.toLowerCase().includes(search.toLowerCase()) ||
-        email.toLowerCase().includes(search.toLowerCase())
-      );
+        email.toLowerCase().includes(search.toLowerCase()) ||
+        (p.phone || "").toLowerCase().includes(search.toLowerCase()) ||
+        childNames.includes(search.toLowerCase());
+      const active = p.isActive ?? p.user?.isActive ?? true;
+      const matchesStatus =
+        filterStatus === "" ? true : filterStatus === "active" ? active : !active;
+      return matchesSearch && matchesStatus;
     }
   );
 
@@ -186,17 +199,22 @@ export default function ParentsPage() {
         const fullName = row.name || `${row.firstName || ""} ${row.lastName || ""}`.trim();
         const email = row.email || row.user?.email || "";
         return (
-          <div className="flex items-center gap-3">
+          <button
+            onClick={() => router.push(`/dashboard/admin/parents/${row.id}`)}
+            className="flex items-center gap-3 text-left group hover:opacity-90 transition-opacity"
+          >
             <div className="w-9 h-9 bg-brand-navy rounded-lg flex items-center justify-center text-white text-xs font-bold shrink-0">
               {fullName.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
             </div>
             <div>
-              <p className="font-medium text-gray-800">{fullName}</p>
+              <p className="font-medium text-gray-800 group-hover:text-school-blue transition-colors">
+                {fullName}
+              </p>
               <p className="text-xs text-gray-400 flex items-center gap-1">
                 <Mail className="w-3 h-3" /> {email}
               </p>
             </div>
-          </div>
+          </button>
         );
       },
     },
@@ -248,6 +266,9 @@ export default function ParentsPage() {
       className: "text-right",
       render: (_: any, row: Parent) => (
         <div className="flex items-center justify-end gap-2">
+          <button onClick={() => router.push(`/dashboard/admin/parents/${row.id}`)} className="p-2 text-gray-400 hover:text-school-blue hover:bg-blue-50 rounded-lg transition-colors" title="View Profile">
+            <Eye className="w-4 h-4" />
+          </button>
           <button onClick={() => openEdit(row)} className="p-2 text-gray-400 hover:text-school-blue hover:bg-blue-50 rounded-lg transition-colors">
             <Edit2 className="w-4 h-4" />
           </button>
@@ -285,12 +306,23 @@ export default function ParentsPage() {
         </button>
       </div>
 
-      <div className="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 w-full sm:w-80">
-        <Search className="w-4 h-4 text-gray-400" />
-        <input type="text" placeholder="Search parents..." value={search} onChange={(e) => setSearch(e.target.value)} className="bg-transparent text-sm outline-none w-full" />
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 flex-1 sm:max-w-xs">
+          <Search className="w-4 h-4 text-gray-400" />
+          <input type="text" placeholder="Search by name, email, child..." value={search} onChange={(e) => setSearch(e.target.value)} className="bg-transparent text-sm outline-none w-full" />
+        </div>
+        <select
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value)}
+          className="px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-school-blue/20"
+        >
+          <option value="">All Statuses</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
       </div>
 
-      {filtered.length === 0 && !search ? (
+      {filtered.length === 0 && !search && !filterStatus ? (
         <EmptyState icon={<UserCheck className="w-10 h-10 text-gray-400" />} title="No parents yet" description="Add parent accounts and link them to students." action={{ label: "Add Parent", onClick: openAdd }} />
       ) : (
         <DataTable columns={columns} data={filtered} emptyMessage="No parents match your search." />

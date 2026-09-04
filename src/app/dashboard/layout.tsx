@@ -33,10 +33,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const role = (session.user as any)?.role || "ADMIN";
   const isSuperAdmin = (session.user as any)?.isSuperAdmin === true;
+  const permissions = (session.user as any)?.permissions || [];
 
   return (
     <div className="min-h-screen bg-brand-paper/60">
-      <Sidebar role={role} isSuperAdmin={isSuperAdmin} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <Sidebar role={role} isSuperAdmin={isSuperAdmin} permissions={permissions} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <div className="lg:pl-72 min-h-screen flex flex-col">
         <Header

@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { logActivity, clientIp } from "@/lib/activity";
 import { createTeacherSchema } from "@/lib/validations";
 import { generateTeacherId } from "@/lib/utils";
+import { permissionResponse } from "@/lib/permissions";
 
 export async function GET() {
   try {
@@ -24,6 +25,8 @@ export async function GET() {
         { status: 403 }
       );
     }
+    const permCheck = await permissionResponse("MANAGE_TEACHERS");
+    if (permCheck) return permCheck;
 
     const teachers = await prisma.teacher.findMany({
       orderBy: { createdAt: "desc" },
@@ -80,6 +83,8 @@ export async function POST(req: Request) {
         { status: 403 }
       );
     }
+    const permCheck = await permissionResponse("MANAGE_TEACHERS");
+    if (permCheck) return permCheck;
 
     const body = await req.json();
     const validated = createTeacherSchema.safeParse(body);
@@ -96,6 +101,8 @@ export async function POST(req: Request) {
 
     const { firstName, lastName, email, password, phone, qualification, specialization } =
       validated.data;
+    const classIds: string[] = Array.isArray(body.classIds) ? body.classIds : [];
+    const subjectIds: string[] = Array.isArray(body.subjectIds) ? body.subjectIds : [];
 
     const existingUser = await prisma.user.findUnique({
       where: { email: email.toLowerCase().trim() },
@@ -131,6 +138,14 @@ export async function POST(req: Request) {
           phone,
           qualification,
           specialization,
+          classes:
+            classIds.length > 0
+              ? { create: classIds.map((classId: string) => ({ classId })) }
+              : undefined,
+          subjects:
+            subjectIds.length > 0
+              ? { create: subjectIds.map((subjectId: string) => ({ subjectId })) }
+              : undefined,
         },
         include: {
           user: {

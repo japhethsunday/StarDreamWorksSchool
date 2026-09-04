@@ -74,22 +74,19 @@ export default function ClassesPage() {
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
-      const [classesRes, teachersRes, subjectsRes] = await Promise.allSettled([
+      const [classesRes, refRes] = await Promise.allSettled([
         fetch("/api/admin/classes"),
-        fetch("/api/admin/teachers"),
-        fetch("/api/admin/subjects"),
+        fetch("/api/admin/reference"),
       ]);
       if (classesRes.status === "fulfilled" && classesRes.value.ok) {
         const data = await classesRes.value.json();
         setClasses(data.data || data.classes || []);
       }
-      if (teachersRes.status === "fulfilled" && teachersRes.value.ok) {
-        const data = await teachersRes.value.json();
-        setTeachers(data.data || data.teachers || []);
-      }
-      if (subjectsRes.status === "fulfilled" && subjectsRes.value.ok) {
-        const data = await subjectsRes.value.json();
-        setSubjects(data.data || data.subjects || []);
+      if (refRes.status === "fulfilled" && refRes.value.ok) {
+        const ref = await refRes.value.json();
+        const d = ref.data || {};
+        setTeachers(d.teachers || []);
+        setSubjects(d.subjects || []);
       }
     } catch {
       setError("Failed to load classes.");

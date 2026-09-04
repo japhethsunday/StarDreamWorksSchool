@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
 import { logActivity, clientIp } from "@/lib/activity";
+import { permissionResponse } from "@/lib/permissions";
 
 export async function GET() {
   try {
@@ -36,6 +37,8 @@ export async function PUT(request: Request) {
         { status: 401 }
       );
     }
+    const permCheck = await permissionResponse("MANAGE_SETTINGS");
+    if (permCheck) return permCheck;
 
     const body = await request.json();
     if (!body || typeof body !== "object" || Array.isArray(body)) {

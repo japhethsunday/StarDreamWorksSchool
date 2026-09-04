@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
 import { logActivity, clientIp } from "@/lib/activity";
+import { permissionResponse } from "@/lib/permissions";
 
 const VALID_TYPES = ["PDF", "DOCUMENT", "IMAGE", "VIDEO", "LINK"];
 
@@ -27,6 +28,8 @@ export async function GET() {
         { status: 403 }
       );
     }
+    const permCheck = await permissionResponse("MANAGE_MATERIALS");
+    if (permCheck) return permCheck;
 
     const materials = await prisma.learningMaterial.findMany({
       orderBy: { createdAt: "desc" },
@@ -70,6 +73,8 @@ export async function POST(req: Request) {
         { status: 403 }
       );
     }
+    const permCheck = await permissionResponse("MANAGE_MATERIALS");
+    if (permCheck) return permCheck;
 
     const body = await req.json();
     const { title, description, type, fileUrl, subjectId, classId, teacherId } = body;

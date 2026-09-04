@@ -9,6 +9,7 @@ CREATE TABLE "users" (
     "phone" TEXT,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
     "isSuperAdmin" BOOLEAN NOT NULL DEFAULT false,
+    "permissions" TEXT[] DEFAULT ARRAY[]::TEXT[],
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 

@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
 import { logActivity, clientIp } from "@/lib/activity";
 import { createNewsSchema } from "@/lib/validations";
+import { permissionResponse } from "@/lib/permissions";
 
 export async function GET() {
   try {
@@ -22,6 +23,8 @@ export async function GET() {
         { status: 403 }
       );
     }
+    const permCheck = await permissionResponse("MANAGE_NEWS");
+    if (permCheck) return permCheck;
 
     const news = await prisma.news.findMany({
       orderBy: { createdAt: "desc" },
@@ -58,6 +61,8 @@ export async function POST(req: Request) {
         { status: 403 }
       );
     }
+    const permCheck = await permissionResponse("MANAGE_NEWS");
+    if (permCheck) return permCheck;
 
     const body = await req.json();
     const validated = createNewsSchema.safeParse(body);

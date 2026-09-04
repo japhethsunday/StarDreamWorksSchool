@@ -68,27 +68,20 @@ export default function AdminAssignmentsPage() {
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
-      const [aRes, sRes, cRes, tRes] = await Promise.allSettled([
+      const [aRes, refRes] = await Promise.allSettled([
         fetch("/api/admin/assignments"),
-        fetch("/api/admin/subjects"),
-        fetch("/api/admin/classes"),
-        fetch("/api/admin/teachers"),
+        fetch("/api/admin/reference"),
       ]);
       if (aRes.status === "fulfilled" && aRes.value.ok) {
         const d = await aRes.value.json();
         setAssignments(d.data || []);
       }
-      if (sRes.status === "fulfilled" && sRes.value.ok) {
-        const d = await sRes.value.json();
-        setSubjects(d.data || []);
-      }
-      if (cRes.status === "fulfilled" && cRes.value.ok) {
-        const d = await cRes.value.json();
-        setClasses(d.data || []);
-      }
-      if (tRes.status === "fulfilled" && tRes.value.ok) {
-        const d = await tRes.value.json();
-        setTeachers(d.data || []);
+      if (refRes.status === "fulfilled" && refRes.value.ok) {
+        const ref = await refRes.value.json();
+        const d = ref.data || {};
+        setSubjects(d.subjects || []);
+        setClasses(d.classes || []);
+        setTeachers(d.teachers || []);
       }
     } catch {
       setError("Failed to load assignments.");

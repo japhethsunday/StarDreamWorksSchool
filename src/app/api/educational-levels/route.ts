@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
 import { logActivity, clientIp } from "@/lib/activity";
+import { permissionResponse } from "@/lib/permissions";
 
 const validateLevel = (body: any): string | null => {
   if (!body?.name || typeof body.name !== "string") return "Level name is required.";
@@ -37,6 +38,8 @@ export async function POST(request: Request) {
         { status: 401 }
       );
     }
+    const permCheck = await permissionResponse("MANAGE_LEVELS");
+    if (permCheck) return permCheck;
 
     const body = await request.json();
     const err = validateLevel(body);

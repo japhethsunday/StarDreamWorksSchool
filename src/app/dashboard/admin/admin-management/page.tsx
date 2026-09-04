@@ -14,7 +14,9 @@ import {
   Loader2,
   AlertCircle,
   Lock,
+  Settings2,
 } from "lucide-react";
+import { PERMISSION_CATALOG, permissionLabel } from "@/lib/permission-catalog";
 import DataTable from "@/components/dashboard/DataTable";
 import Modal from "@/components/dashboard/Modal";
 import ConfirmDialog from "@/components/dashboard/ConfirmDialog";
@@ -29,6 +31,7 @@ interface AdminUser {
   image: string | null;
   isActive: boolean;
   isSuperAdmin: boolean;
+  permissions: string[];
   createdAt: string;
 }
 
@@ -57,6 +60,10 @@ export default function AdminManagementPage() {
 
   const [editTarget, setEditTarget] = useState<AdminUser | null>(null);
   const [editForm, setEditForm] = useState({ name: "", phone: "" });
+
+  const [permTarget, setPermTarget] = useState<AdminUser | null>(null);
+  const [permSelected, setPermSelected] = useState<string[]>([]);
+  const [permSaving, setPermSaving] = useState(false);
 
   const [resetTarget, setResetTarget] = useState<AdminUser | null>(null);
   const [resetPass, setResetPass] = useState("");
@@ -194,6 +201,37 @@ export default function AdminManagementPage() {
     }
   };
 
+  const openPermissions = (admin: AdminUser) => {
+    setPermTarget(admin);
+    setPermSelected([...(admin.permissions || [])]);
+  };
+
+  const togglePermission = (key: string) => {
+    setPermSelected((prev) =>
+      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
+    );
+  };
+
+  const handleSavePermissions = async () => {
+    if (!permTarget) return;
+    setPermSaving(true);
+    try {
+      const res = await fetch(`/api/admin/admins/${permTarget.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ permissions: permSelected }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Failed to save permissions");
+      setPermTarget(null);
+      fetchData();
+    } catch (e: any) {
+      alert(e.message || "Failed to save permissions");
+    } finally {
+      setPermSaving(false);
+    }
+  };
+
   if (loading) return <LoadingSpinner text="Loading admin management..." fullScreen />;
 
   if (accessDenied && !isSuperAdminSession) {
@@ -255,6 +293,30 @@ export default function AdminManagementPage() {
       ),
     },
     {
+      key: "permissions",
+      label: "Access",
+      render: (_: unknown, row: AdminUser) =>
+        row.isSuperAdmin ? (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-purple-100 text-purple-700">
+            <ShieldCheck className="w-3 h-3" /> Full Access
+          </span>
+        ) : !row.permissions || row.permissions.length === 0 ? (
+          <span
+            className="text-xs text-gray-500"
+            title="No permissions listed means full access is granted."
+          >
+            Full Access
+          </span>
+        ) : (
+          <span
+            className="text-xs text-gray-500"
+            title={row.permissions.map(permissionLabel).join(", ")}
+          >
+            {row.permissions.length} permission{row.permissions.length === 1 ? "" : "s"}
+          </span>
+        ),
+    },
+    {
       key: "createdAt",
       label: "Created",
       render: (v: string) => (
@@ -275,6 +337,13 @@ export default function AdminManagementPage() {
         }
         return (
           <div className="flex items-center justify-end gap-1.5">
+            <button
+              onClick={() => openPermissions(row)}
+              className="p-2 text-gray-400 hover:text-brand-navy hover:bg-purple-50 rounded-lg transition-colors"
+              title="Manage permissions"
+            >
+              <Settings2 className="w-4 h-4" />
+            </button>
             <button
               onClick={() => { setEditTarget(row); setEditForm({ name: row.name || "", phone: row.phone || "" }); }}
               className="p-2 text-gray-400 hover:text-school-blue hover:bg-blue-50 rounded-lg transition-colors"
@@ -424,6 +493,57 @@ export default function AdminManagementPage() {
             <button onClick={handleResetAccess} disabled={saving || resetPass.length < 8} className="px-5 py-2.5 text-sm font-semibold text-white bg-amber-600 rounded-xl hover:bg-amber-700 transition-all disabled:opacity-50 flex items-center gap-2">
               {saving && <Loader2 className="w-4 h-4 animate-spin" />}
               Reset Access
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Permissions */}
+      <Modal
+        isOpen={!!permTarget}
+        onClose={() => setPermTarget(null)}
+        title={`Manage Permissions — ${permTarget?.name || ""}`}
+        size="lg"
+      >
+        <div className="space-y-4">
+          <div className="flex items-start gap-3 p-3 rounded-xl bg-brand-navy/[0.06] text-sm text-brand-body">
+            <Lock className="w-4 h-4 text-brand-navy shrink-0 mt-0.5" />
+            <p>
+              Grant specific capabilities to this admin.{" "}
+              <span className="font-semibold text-brand-navy">No permissions selected = unrestricted access</span>{" "}
+              (full access to everything). The Super Admin always retains full access regardless of this list.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-80 overflow-y-auto pr-1">
+            {PERMISSION_CATALOG.map((p) => (
+              <label
+                key={p.key}
+                className="flex items-start gap-3 p-3 rounded-xl border border-brand-line hover:bg-brand-paper cursor-pointer transition-colors"
+              >
+                <input
+                  type="checkbox"
+                  checked={permSelected.includes(p.key)}
+                  onChange={() => togglePermission(p.key)}
+                  className="mt-0.5 accent-brand-navy"
+                />
+                <div>
+                  <p className="text-sm font-semibold text-brand-ink">{p.label}</p>
+                  <p className="text-xs text-brand-muted">{p.description}</p>
+                </div>
+              </label>
+            ))}
+          </div>
+          <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+            <button onClick={() => setPermTarget(null)} className="px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors">
+              Cancel
+            </button>
+            <button
+              onClick={handleSavePermissions}
+              disabled={permSaving}
+              className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-school-blue to-primary rounded-xl shadow-glow-blue hover:shadow-lg transition-all disabled:opacity-50"
+            >
+              {permSaving && <Loader2 className="w-4 h-4 animate-spin" />}
+              Save Permissions
             </button>
           </div>
         </div>

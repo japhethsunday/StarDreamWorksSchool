@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
 import { logActivity, clientIp } from "@/lib/activity";
+import { permissionResponse } from "@/lib/permissions";
 
 export async function PUT(
   req: Request,
@@ -24,6 +25,8 @@ export async function PUT(
         { status: 403 }
       );
     }
+    const permCheck = await permissionResponse("MANAGE_ANNOUNCEMENTS");
+    if (permCheck) return permCheck;
 
     const announcement = await prisma.announcement.findUnique({
       where: { id: params.id },
@@ -118,6 +121,8 @@ export async function DELETE(
         { status: 403 }
       );
     }
+    const permCheck = await permissionResponse("MANAGE_ANNOUNCEMENTS");
+    if (permCheck) return permCheck;
 
     const announcement = await prisma.announcement.findUnique({
       where: { id: params.id },

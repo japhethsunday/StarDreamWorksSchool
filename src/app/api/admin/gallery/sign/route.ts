@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
+import { permissionResponse } from "@/lib/permissions";
 import { v2 as cloudinary } from "cloudinary";
 
 /**
@@ -25,6 +26,8 @@ export async function POST() {
         { status: 403 }
       );
     }
+    const permCheck = await permissionResponse("MANAGE_GALLERY");
+    if (permCheck) return permCheck;
 
     const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
     const apiKey = process.env.CLOUDINARY_API_KEY;

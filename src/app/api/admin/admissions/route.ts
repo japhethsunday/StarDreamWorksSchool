@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
 import { logActivity, clientIp } from "@/lib/activity";
+import { permissionResponse } from "@/lib/permissions";
 
 const VALID_STATUS = ["NEW", "CONTACTED", "APPROVED", "REJECTED"];
 
@@ -15,6 +16,8 @@ export async function GET(request: Request) {
         { status: 401 }
       );
     }
+    const permCheck = await permissionResponse("MANAGE_ADMISSIONS");
+    if (permCheck) return permCheck;
 
     const { searchParams } = new URL(request.url);
     const status = searchParams.get("status");
@@ -51,6 +54,8 @@ export async function PATCH(request: Request) {
         { status: 401 }
       );
     }
+    const permCheck = await permissionResponse("MANAGE_ADMISSIONS");
+    if (permCheck) return permCheck;
 
     const { id, status } = await request.json();
     if (!id || typeof id !== "string") {

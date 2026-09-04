@@ -18,6 +18,7 @@ model User {
   phone        String?
   isActive     Boolean  @default(true)
   isSuperAdmin Boolean  @default(false)
+  permissions  String[] @default([])
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
