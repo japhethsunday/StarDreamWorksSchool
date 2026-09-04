@@ -19,8 +19,7 @@ export async function GET(request: Request) {
     });
 
     return NextResponse.json({ success: true, data: levels });
-  } catch (error) {
-    console.error("Error fetching educational levels:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to load educational levels." },
       { status: 500 }
@@ -60,8 +59,7 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ success: true, data: level });
-  } catch (error) {
-    console.error("Error creating educational level:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to create educational level." },
       { status: 500 }

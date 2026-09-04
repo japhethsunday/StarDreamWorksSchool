@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
@@ -59,8 +59,7 @@ export async function DELETE(
       success: true,
       data: { message: "Material deleted successfully." },
     });
-  } catch (error) {
-    console.error("Error deleting material:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to delete material. Please try again." },
       { status: 500 }

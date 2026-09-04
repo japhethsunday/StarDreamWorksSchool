@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
@@ -48,8 +48,7 @@ export async function DELETE(
       success: true,
       data: { message: "Announcement deleted successfully." },
     });
-  } catch (error) {
-    console.error("Error deleting announcement:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to delete announcement. Please try again." },
       { status: 500 }

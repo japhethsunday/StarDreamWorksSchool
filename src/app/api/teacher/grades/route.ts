@@ -66,8 +66,7 @@ export async function GET(req: Request) {
     });
 
     return NextResponse.json({ success: true, data: grades });
-  } catch (error) {
-    console.error("Error fetching grades:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch grades. Please try again." },
       { status: 500 }
@@ -236,8 +235,7 @@ export async function POST(req: Request) {
       { success: true, data: fullGrade },
       { status: existing ? 200 : 201 }
     );
-  } catch (error) {
-    console.error("Error saving grade:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to save grade. Please try again." },
       { status: 500 }

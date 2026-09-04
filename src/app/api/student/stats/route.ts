@@ -210,8 +210,7 @@ export async function GET() {
         announcements,
       },
     });
-  } catch (error) {
-    console.error("Error fetching student stats:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch dashboard statistics. Please try again." },
       { status: 500 }

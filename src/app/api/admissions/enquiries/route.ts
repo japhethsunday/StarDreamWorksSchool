@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { rateLimit } from "@/lib/rate-limit";
 
 const VALID_LEVELS = [
   "creche",
@@ -11,6 +12,18 @@ const VALID_LEVELS = [
 
 export async function POST(request: Request) {
   try {
+    // Rate limit: 5 enquiries per IP per 15 minutes
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
+      || request.headers.get("x-real-ip")
+      || "unknown";
+    const rl = rateLimit(`admissions:${ip}`, 5, 15 * 60 * 1000);
+    if (!rl.ok) {
+      return NextResponse.json(
+        { success: false, error: "Too many requests. Please try again later." },
+        { status: 429 }
+      );
+    }
+
     const body = await request.json();
 
     // Honeypot: bots fill the hidden "website" field; humans never see it.
@@ -75,8 +88,7 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ success: true, data: { id: enquiry.id } });
-  } catch (error) {
-    console.error("Error submitting admission enquiry:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Sorry, we could not submit your enquiry. Please try again." },
       { status: 500 }

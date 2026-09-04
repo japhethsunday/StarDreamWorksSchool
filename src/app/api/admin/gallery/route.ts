@@ -26,8 +26,7 @@ export async function GET() {
     });
 
     return NextResponse.json({ success: true, data: galleryItems });
-  } catch (error) {
-    console.error("Error listing gallery items:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch gallery items. Please try again." },
       { status: 500 }
@@ -81,8 +80,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true, data: galleryItem }, { status: 201 });
-  } catch (error) {
-    console.error("Error adding gallery item:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to add gallery item. Please try again." },
       { status: 500 }

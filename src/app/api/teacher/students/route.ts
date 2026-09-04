@@ -69,8 +69,7 @@ export async function GET(req: Request) {
     });
 
     return NextResponse.json({ success: true, data: students });
-  } catch (error) {
-    console.error("Error fetching teacher students:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch students. Please try again." },
       { status: 500 }

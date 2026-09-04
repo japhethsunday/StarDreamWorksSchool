@@ -94,8 +94,7 @@ export async function GET() {
           : [],
       })),
     });
-  } catch (error) {
-    console.error("Error fetching parent announcements:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch announcements. Please try again." },
       { status: 500 }

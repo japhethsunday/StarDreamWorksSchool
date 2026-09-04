@@ -12,6 +12,7 @@ import {
   BookOpen,
   Link2,
 } from "lucide-react";
+import { isSafeUrl } from "@/lib/utils";
 import LoadingSpinner from "@/components/dashboard/LoadingSpinner";
 import EmptyState from "@/components/dashboard/EmptyState";
 import Modal from "@/components/dashboard/Modal";
@@ -344,7 +345,7 @@ export default function StudentAssignments() {
                     {selected.mySubmission.content}
                   </p>
                 )}
-                {selected.mySubmission.files && (
+                {selected.mySubmission.files && isSafeUrl(selected.mySubmission.files) ? (
                   <a
                     href={selected.mySubmission.files}
                     target="_blank"
@@ -354,7 +355,12 @@ export default function StudentAssignments() {
                     <Link2 className="w-3.5 h-3.5" />
                     View attachment
                   </a>
-                )}
+                ) : selected.mySubmission.files ? (
+                  <span className="text-sm font-medium text-gray-400 inline-flex items-center gap-1 mt-2">
+                    <Link2 className="w-3.5 h-3.5" />
+                    Attachment unavailable
+                  </span>
+                ) : null}
                 <p className="text-xs text-gray-500 mt-2">
                   Submitted {new Date(selected.mySubmission.submittedAt).toLocaleDateString("en-NG", {
                     day: "numeric",

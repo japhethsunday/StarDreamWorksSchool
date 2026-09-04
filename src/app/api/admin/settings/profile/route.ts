@@ -49,8 +49,7 @@ export async function PUT(req: Request) {
     });
 
     return NextResponse.json({ success: true, data: user });
-  } catch (error) {
-    console.error("Error updating admin profile:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to update profile. Please try again." },
       { status: 500 }

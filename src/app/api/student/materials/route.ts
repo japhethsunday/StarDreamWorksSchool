@@ -64,8 +64,7 @@ export async function GET(req: Request) {
     });
 
     return NextResponse.json({ success: true, data: materials });
-  } catch (error) {
-    console.error("Error fetching materials:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch materials. Please try again." },
       { status: 500 }

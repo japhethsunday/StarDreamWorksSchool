@@ -12,8 +12,7 @@ export async function GET() {
       orderBy: { createdAt: "desc" },
     });
     return NextResponse.json({ success: true, data: gallery });
-  } catch (error) {
-    console.error("Error fetching public gallery:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to load gallery." },
       { status: 500 }

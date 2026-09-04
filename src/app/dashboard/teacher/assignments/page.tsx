@@ -12,6 +12,7 @@ import {
   X,
   Save,
 } from "lucide-react";
+import { isSafeUrl } from "@/lib/utils";
 import LoadingSpinner from "@/components/dashboard/LoadingSpinner";
 import EmptyState from "@/components/dashboard/EmptyState";
 import Modal from "@/components/dashboard/Modal";
@@ -586,7 +587,7 @@ export default function TeacherAssignments() {
                         {sub.content}
                       </div>
                     )}
-                    {sub.files && (
+                    {sub.files && isSafeUrl(sub.files) ? (
                       <a
                         href={sub.files}
                         target="_blank"
@@ -596,7 +597,12 @@ export default function TeacherAssignments() {
                         <BookOpen className="w-3.5 h-3.5" />
                         View attachment
                       </a>
-                    )}
+                    ) : sub.files ? (
+                      <span className="text-xs font-medium text-gray-400 inline-flex items-center gap-1">
+                        <BookOpen className="w-3.5 h-3.5" />
+                        Attachment unavailable
+                      </span>
+                    ) : null}
 
                     <div className="grid grid-cols-1 gap-2 pt-1 border-t border-gray-200">
                       <div>

@@ -141,8 +141,7 @@ export async function GET() {
         })),
       },
     });
-  } catch (error) {
-    console.error("Error fetching parent stats:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch dashboard statistics. Please try again." },
       { status: 500 }

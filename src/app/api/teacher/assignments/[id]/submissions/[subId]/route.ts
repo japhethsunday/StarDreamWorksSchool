@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
@@ -102,8 +102,7 @@ export async function PUT(
     });
 
     return NextResponse.json({ success: true, data: updated });
-  } catch (error) {
-    console.error("Error grading submission:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to grade submission. Please try again." },
       { status: 500 }

@@ -13,19 +13,16 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error("Email and password are required");
+          throw new Error("Invalid email or password");
         }
 
         const user = await prisma.user.findUnique({
           where: { email: credentials.email.toLowerCase().trim() },
         });
 
-        if (!user) {
-          throw new Error("No account found with this email");
-        }
-
-        if (!user.isActive) {
-          throw new Error("Account is deactivated. Contact administrator.");
+        // Generic error for all auth failures — prevents account enumeration
+        if (!user || !user.isActive) {
+          throw new Error("Invalid email or password");
         }
 
         const isPasswordValid = await bcrypt.compare(
@@ -34,7 +31,7 @@ export const authOptions: NextAuthOptions = {
         );
 
         if (!isPasswordValid) {
-          throw new Error("Invalid password");
+          throw new Error("Invalid email or password");
         }
 
         return {

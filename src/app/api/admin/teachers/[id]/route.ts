@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import bcrypt from "bcryptjs";
 import { authOptions } from "@/lib/auth-options";
@@ -78,8 +78,7 @@ export async function GET(
     }
 
     return NextResponse.json({ success: true, data: teacher });
-  } catch (error) {
-    console.error("Error fetching teacher:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch teacher. Please try again." },
       { status: 500 }
@@ -225,8 +224,7 @@ export async function PUT(
     });
 
     return NextResponse.json({ success: true, data: updatedTeacher });
-  } catch (error) {
-    console.error("Error updating teacher:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to update teacher. Please try again." },
       { status: 500 }
@@ -278,8 +276,7 @@ export async function DELETE(
       success: true,
       data: { message: "Teacher deleted successfully." },
     });
-  } catch (error) {
-    console.error("Error deleting teacher:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to delete teacher. Please try again." },
       { status: 500 }

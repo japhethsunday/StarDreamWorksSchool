@@ -18,8 +18,7 @@ export async function GET() {
     }
 
     return NextResponse.json({ success: true, data: map });
-  } catch (error) {
-    console.error("Error fetching site settings:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to load site settings." },
       { status: 500 }
@@ -71,8 +70,7 @@ export async function PUT(request: Request) {
 
     if (updates.length > 0) await Promise.all(updates);
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error("Error updating site settings:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to update site settings." },
       { status: 500 }

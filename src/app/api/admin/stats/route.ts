@@ -73,8 +73,7 @@ export async function GET() {
         recentAnnouncements,
       },
     });
-  } catch (error) {
-    console.error("Error fetching admin stats:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch dashboard statistics. Please try again." },
       { status: 500 }

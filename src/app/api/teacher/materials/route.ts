@@ -48,8 +48,7 @@ export async function GET(req: Request) {
     });
 
     return NextResponse.json({ success: true, data: materials });
-  } catch (error) {
-    console.error("Error fetching materials:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch materials. Please try again." },
       { status: 500 }
@@ -156,8 +155,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true, data: material }, { status: 201 });
-  } catch (error) {
-    console.error("Error creating material:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to create material. Please try again." },
       { status: 500 }

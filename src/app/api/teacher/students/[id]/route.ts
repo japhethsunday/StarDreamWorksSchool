@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
@@ -119,8 +119,7 @@ export async function GET(
     };
 
     return NextResponse.json({ success: true, data });
-  } catch (error) {
-    console.error("Error fetching teacher student profile:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to load student profile. Please try again." },
       { status: 500 }

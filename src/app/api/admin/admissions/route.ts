@@ -33,8 +33,7 @@ export async function GET(request: Request) {
     });
 
     return NextResponse.json({ success: true, data: enquiries, counts });
-  } catch (error) {
-    console.error("Error fetching admission enquiries:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to load admission enquiries." },
       { status: 500 }
@@ -72,8 +71,7 @@ export async function PATCH(request: Request) {
     });
 
     return NextResponse.json({ success: true, data: enquiry });
-  } catch (error) {
-    console.error("Error updating admission enquiry:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to update enquiry." },
       { status: 500 }

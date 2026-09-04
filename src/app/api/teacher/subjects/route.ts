@@ -49,8 +49,7 @@ export async function GET() {
     const data = teacherSubjects.map((ts) => ts.subject);
 
     return NextResponse.json({ success: true, data });
-  } catch (error) {
-    console.error("Error fetching teacher subjects:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch subjects. Please try again." },
       { status: 500 }

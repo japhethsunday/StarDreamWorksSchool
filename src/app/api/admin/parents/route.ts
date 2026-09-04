@@ -58,8 +58,7 @@ export async function GET() {
     });
 
     return NextResponse.json({ success: true, data: parents });
-  } catch (error) {
-    console.error("Error listing parents:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch parents. Please try again." },
       { status: 500 }
@@ -195,8 +194,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true, data: fullParent }, { status: 201 });
-  } catch (error) {
-    console.error("Error creating parent:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to create parent. Please try again." },
       { status: 500 }

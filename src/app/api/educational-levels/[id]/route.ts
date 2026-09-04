@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
@@ -35,8 +35,7 @@ export async function PUT(
     });
 
     return NextResponse.json({ success: true, data: level });
-  } catch (error) {
-    console.error("Error updating educational level:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to update educational level." },
       { status: 500 }
@@ -61,8 +60,7 @@ export async function DELETE(
     await prisma.educationalLevel.delete({ where: { id } });
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error("Error deleting educational level:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to delete educational level." },
       { status: 500 }

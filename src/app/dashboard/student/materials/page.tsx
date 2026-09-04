@@ -11,6 +11,7 @@ import {
   File,
   FileType,
 } from "lucide-react";
+import { isSafeUrl } from "@/lib/utils";
 import LoadingSpinner from "@/components/dashboard/LoadingSpinner";
 import EmptyState from "@/components/dashboard/EmptyState";
 import DataTable from "@/components/dashboard/DataTable";
@@ -190,7 +191,7 @@ export default function StudentMaterials() {
               key: "actions",
               label: "",
               render: (_, row) =>
-                row.fileUrl ? (
+                row.fileUrl && isSafeUrl(row.fileUrl) ? (
                   <a
                     href={row.fileUrl}
                     target="_blank"

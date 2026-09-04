@@ -69,8 +69,7 @@ export async function GET() {
     const data = classes.map(({ class: cls }) => cls);
 
     return NextResponse.json({ success: true, data });
-  } catch (error) {
-    console.error("Error fetching teacher classes:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch classes. Please try again." },
       { status: 500 }

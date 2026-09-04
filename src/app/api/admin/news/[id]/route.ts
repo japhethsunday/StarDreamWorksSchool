@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
@@ -60,8 +60,7 @@ export async function PUT(
     });
 
     return NextResponse.json({ success: true, data: updated });
-  } catch (error) {
-    console.error("Error updating news:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to update news. Please try again." },
       { status: 500 }
@@ -107,8 +106,7 @@ export async function DELETE(
       success: true,
       data: { message: "News article deleted successfully." },
     });
-  } catch (error) {
-    console.error("Error deleting news:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to delete news. Please try again." },
       { status: 500 }

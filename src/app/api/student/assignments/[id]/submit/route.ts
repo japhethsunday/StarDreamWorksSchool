@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
@@ -109,8 +109,7 @@ export async function POST(
     }
 
     return NextResponse.json({ success: true, data: submission });
-  } catch (error) {
-    console.error("Error submitting assignment:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to submit assignment. Please try again." },
       { status: 500 }

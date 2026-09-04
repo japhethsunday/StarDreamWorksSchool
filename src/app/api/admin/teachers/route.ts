@@ -54,8 +54,7 @@ export async function GET() {
     });
 
     return NextResponse.json({ success: true, data: teachers });
-  } catch (error) {
-    console.error("Error listing teachers:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch teachers. Please try again." },
       { status: 500 }
@@ -146,8 +145,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true, data: teacher }, { status: 201 });
-  } catch (error) {
-    console.error("Error creating teacher:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to create teacher. Please try again." },
       { status: 500 }

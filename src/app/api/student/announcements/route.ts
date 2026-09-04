@@ -54,8 +54,7 @@ export async function GET() {
     });
 
     return NextResponse.json({ success: true, data: announcements });
-  } catch (error) {
-    console.error("Error fetching announcements:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch announcements. Please try again." },
       { status: 500 }

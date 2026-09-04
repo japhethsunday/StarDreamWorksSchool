@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import bcrypt from "bcryptjs";
 import { authOptions } from "@/lib/auth-options";
@@ -71,8 +71,7 @@ export async function GET(
     }
 
     return NextResponse.json({ success: true, data: parent });
-  } catch (error) {
-    console.error("Error fetching parent:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch parent. Please try again." },
       { status: 500 }
@@ -222,8 +221,7 @@ export async function PUT(
     });
 
     return NextResponse.json({ success: true, data: updatedParent });
-  } catch (error) {
-    console.error("Error updating parent:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to update parent. Please try again." },
       { status: 500 }
@@ -274,8 +272,7 @@ export async function DELETE(
       success: true,
       data: { message: "Parent deleted successfully." },
     });
-  } catch (error) {
-    console.error("Error deleting parent:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to delete parent. Please try again." },
       { status: 500 }

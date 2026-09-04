@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
@@ -41,8 +41,7 @@ export async function DELETE(
       success: true,
       data: { message: "Gallery item deleted successfully." },
     });
-  } catch (error) {
-    console.error("Error deleting gallery item:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to delete gallery item. Please try again." },
       { status: 500 }

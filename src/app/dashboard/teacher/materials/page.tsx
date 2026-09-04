@@ -14,6 +14,7 @@ import {
   FileType,
   Save,
 } from "lucide-react";
+import { isSafeUrl } from "@/lib/utils";
 import LoadingSpinner from "@/components/dashboard/LoadingSpinner";
 import EmptyState from "@/components/dashboard/EmptyState";
 import Modal from "@/components/dashboard/Modal";
@@ -284,7 +285,7 @@ export default function TeacherMaterials() {
               label: "Actions",
               render: (_, row) => (
                 <div className="flex items-center gap-2">
-                  {row.fileUrl && (
+                  {row.fileUrl && isSafeUrl(row.fileUrl) && (
                     <a
                       href={row.fileUrl}
                       target="_blank"

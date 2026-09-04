@@ -45,10 +45,9 @@ export async function POST() {
 
     return NextResponse.json({
       success: true,
-      data: { timestamp, signature, apiKey, cloudName, folder: "stardreamworks/gallery" },
+      data: { timestamp, signature, cloudName, folder: "stardreamworks/gallery" },
     });
-  } catch (error) {
-    console.error("Error signing upload:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Could not prepare upload. Please try again." },
       { status: 500 }

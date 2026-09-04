@@ -11,8 +11,7 @@ export async function GET() {
       orderBy: { startDate: "asc" },
     });
     return NextResponse.json({ success: true, data: events });
-  } catch (error) {
-    console.error("Error fetching public events:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to load events." },
       { status: 500 }

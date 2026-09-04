@@ -66,8 +66,7 @@ export async function GET(req: Request) {
     });
 
     return NextResponse.json({ success: true, data: announcements });
-  } catch (error) {
-    console.error("Error fetching announcements:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch announcements. Please try again." },
       { status: 500 }
@@ -121,7 +120,8 @@ export async function POST(req: Request) {
       );
     }
 
-    const target = targetType === "SCHOOL" ? "SCHOOL" : "CLASS";
+    // Teachers can only create CLASS-scoped announcements, not SCHOOL-wide
+    const target = "CLASS";
 
     if (target === "CLASS" && !classId) {
       return NextResponse.json(
@@ -170,8 +170,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true, data: announcement }, { status: 201 });
-  } catch (error) {
-    console.error("Error creating announcement:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to create announcement. Please try again." },
       { status: 500 }

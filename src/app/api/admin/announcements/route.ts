@@ -35,8 +35,7 @@ export async function GET() {
     });
 
     return NextResponse.json({ success: true, data: announcements });
-  } catch (error) {
-    console.error("Error listing announcements:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch announcements. Please try again." },
       { status: 500 }
@@ -114,8 +113,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true, data: announcement }, { status: 201 });
-  } catch (error) {
-    console.error("Error creating announcement:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to create announcement. Please try again." },
       { status: 500 }

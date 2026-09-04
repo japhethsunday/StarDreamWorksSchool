@@ -27,8 +27,7 @@ export async function GET() {
     });
 
     return NextResponse.json({ success: true, data: events });
-  } catch (error) {
-    console.error("Error listing events:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch events. Please try again." },
       { status: 500 }
@@ -107,8 +106,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true, data: event }, { status: 201 });
-  } catch (error) {
-    console.error("Error creating event:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to create event. Please try again." },
       { status: 500 }

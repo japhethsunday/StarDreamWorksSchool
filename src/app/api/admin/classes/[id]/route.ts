@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
@@ -87,8 +87,7 @@ export async function GET(
     }
 
     return NextResponse.json({ success: true, data: classRecord });
-  } catch (error) {
-    console.error("Error fetching class:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch class. Please try again." },
       { status: 500 }
@@ -232,8 +231,7 @@ export async function PUT(
     });
 
     return NextResponse.json({ success: true, data: updated });
-  } catch (error) {
-    console.error("Error updating class:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to update class. Please try again." },
       { status: 500 }
@@ -296,8 +294,7 @@ export async function DELETE(
       success: true,
       data: { message: "Class deleted successfully." },
     });
-  } catch (error) {
-    console.error("Error deleting class:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to delete class. Please try again." },
       { status: 500 }

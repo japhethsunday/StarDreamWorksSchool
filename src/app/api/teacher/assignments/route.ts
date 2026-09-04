@@ -54,8 +54,7 @@ export async function GET(req: Request) {
     });
 
     return NextResponse.json({ success: true, data: assignments });
-  } catch (error) {
-    console.error("Error fetching assignments:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch assignments. Please try again." },
       { status: 500 }
@@ -176,8 +175,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true, data: assignment }, { status: 201 });
-  } catch (error) {
-    console.error("Error creating assignment:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to create assignment. Please try again." },
       { status: 500 }

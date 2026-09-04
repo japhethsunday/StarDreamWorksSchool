@@ -120,8 +120,7 @@ export async function GET(req: Request) {
         })),
       },
     });
-  } catch (error) {
-    console.error("Error fetching parent grades:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch grades. Please try again." },
       { status: 500 }

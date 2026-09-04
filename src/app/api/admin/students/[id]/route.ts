@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import bcrypt from "bcryptjs";
 import { authOptions } from "@/lib/auth-options";
@@ -105,8 +105,7 @@ export async function GET(
     }
 
     return NextResponse.json({ success: true, data: student });
-  } catch (error) {
-    console.error("Error fetching student:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch student. Please try again." },
       { status: 500 }
@@ -272,8 +271,7 @@ export async function PUT(
     });
 
     return NextResponse.json({ success: true, data: updatedStudent });
-  } catch (error) {
-    console.error("Error updating student:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to update student. Please try again." },
       { status: 500 }
@@ -324,8 +322,7 @@ export async function DELETE(
       success: true,
       data: { message: "Student deleted successfully." },
     });
-  } catch (error) {
-    console.error("Error deleting student:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to delete student. Please try again." },
       { status: 500 }

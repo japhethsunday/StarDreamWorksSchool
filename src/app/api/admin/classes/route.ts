@@ -57,8 +57,7 @@ export async function GET() {
     });
 
     return NextResponse.json({ success: true, data: classes });
-  } catch (error) {
-    console.error("Error listing classes:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch classes. Please try again." },
       { status: 500 }
@@ -170,8 +169,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ success: true, data: classRecord }, { status: 201 });
-  } catch (error) {
-    console.error("Error creating class:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to create class. Please try again." },
       { status: 500 }

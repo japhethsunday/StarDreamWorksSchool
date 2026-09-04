@@ -71,3 +71,13 @@ export function slugify(text: string): string {
     .replace(/[\s_]+/g, "-")
     .replace(/-+/g, "-");
 }
+
+export function isSafeUrl(url: string | null | undefined): boolean {
+  if (!url || typeof url !== "string") return false;
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
+}

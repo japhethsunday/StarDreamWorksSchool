@@ -86,8 +86,7 @@ export async function GET() {
     });
 
     return NextResponse.json({ success: true, data });
-  } catch (error) {
-    console.error("Error fetching parent children:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch children. Please try again." },
       { status: 500 }

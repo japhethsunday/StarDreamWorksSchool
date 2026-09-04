@@ -49,8 +49,7 @@ export async function GET() {
     });
 
     return NextResponse.json({ success: true, data: subjects });
-  } catch (error) {
-    console.error("Error listing subjects:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch subjects. Please try again." },
       { status: 500 }
@@ -121,8 +120,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true, data: subject }, { status: 201 });
-  } catch (error) {
-    console.error("Error creating subject:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to create subject. Please try again." },
       { status: 500 }

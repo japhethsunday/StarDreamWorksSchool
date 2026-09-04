@@ -76,8 +76,7 @@ export async function GET() {
     }));
 
     return NextResponse.json({ success: true, data });
-  } catch (error) {
-    console.error("Error fetching student assignments:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch assignments. Please try again." },
       { status: 500 }

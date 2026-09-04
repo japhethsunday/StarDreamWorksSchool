@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
@@ -109,7 +109,7 @@ export async function GET(
       class: student.class,
       status: student.status,
       email: student.user?.email ?? null,
-      average: avgRows._avg.score != null ? Number(avgRows._avg.score.toFixed(1)) : "—",
+      average: avgRows._avg.score != null ? Number(avgRows._avg.score.toFixed(1)) : "â€”",
       pendingAssignments,
       grades: grades.map((g) => ({
         id: g.id,
@@ -133,8 +133,7 @@ export async function GET(
     };
 
     return NextResponse.json({ success: true, data });
-  } catch (error) {
-    console.error("Error fetching child profile:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to load child profile. Please try again." },
       { status: 500 }
