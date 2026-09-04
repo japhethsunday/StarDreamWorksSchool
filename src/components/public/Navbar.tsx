@@ -160,14 +160,14 @@ export default function Navbar() {
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-between h-[76px] lg:h-20">
+          <div className="flex items-center justify-between gap-4 h-[76px] lg:h-20">
             {/* Logo */}
-            <Link href="/" className="flex items-center" aria-label="STAR DreamWorks Schools — home">
+            <Link href="/" className="flex items-center shrink-0" aria-label="STAR DreamWorks Schools — home">
               <Logo tagline={tagline} />
             </Link>
 
             {/* Desktop nav */}
-            <div className="hidden lg:flex items-center gap-1">
+            <div className="hidden lg:flex items-center gap-0.5 min-w-0">
               {navLinks.map((link) => {
                 const isActive =
                   pathname === link.href ||
@@ -177,7 +177,7 @@ export default function Navbar() {
                     key={link.href}
                     href={link.href}
                     aria-current={isActive ? "page" : undefined}
-                    className={`relative px-3.5 py-2 text-sm font-semibold rounded-lg transition-colors ${
+                    className={`relative px-2.5 py-2.5 text-sm font-semibold rounded-lg whitespace-nowrap transition-colors ${
                       isActive
                         ? "text-brand-red"
                         : "text-brand-body hover:text-brand-navy hover:bg-brand-navy/5"
@@ -185,7 +185,7 @@ export default function Navbar() {
                   >
                     {link.label}
                     {isActive && (
-                      <span className="absolute left-3.5 right-3.5 -bottom-0.5 h-0.5 rounded-full bg-brand-yellow" />
+                      <span className="absolute left-2.5 right-2.5 -bottom-0.5 h-0.5 rounded-full bg-brand-yellow" />
                     )}
                   </Link>
                 );
@@ -193,15 +193,15 @@ export default function Navbar() {
             </div>
 
             {/* Desktop CTA */}
-            <div className="hidden lg:flex items-center gap-2">
+            <div className="hidden lg:flex items-center gap-2 shrink-0">
               <Link
                 href="/login"
-                className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-brand-body hover:text-brand-navy transition-colors"
+                className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold whitespace-nowrap text-brand-body hover:text-brand-navy transition-colors"
               >
                 <LogIn className="w-4 h-4" />
                 Login
               </Link>
-              <Link href="/admissions" className="sd-btn sd-btn-apply px-5 py-2.5 text-sm">
+              <Link href="/admissions" className="sd-btn sd-btn-apply px-5 py-2.5 text-sm whitespace-nowrap">
                 Apply Now
                 <ChevronRight className="w-4 h-4" />
               </Link>
