@@ -28,6 +28,7 @@ model User {
   activityLogs   ActivityLog[]
   authoredNews   News[]
   announcements  Announcement[]
+  notificationPreference NotificationPreference?
 
   @@map("users")
 }
@@ -415,15 +416,40 @@ model EmailLog {
   error      String?
   remoteId   String? // Resend message id, used to correlate webhook events
   refId      String? // business reference (studentId, teacherId, enquiryId, announcementId, gradeId, userId)
+  userId     String? // recipient account id, used for notification preferences
+  body       String? // full rendered HTML, retained for auditing and retries
+  attempts   Int      @default(1)
+  sentAt     DateTime?
+  deliveredAt DateTime?
   dedupHash  String   @unique
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
   @@index([type])
   @@index([refId])
+  @@index([userId])
   @@index([remoteId])
   @@index([createdAt])
   @@map("email_logs")
+}
+
+// Per-user email notification preferences. Security-critical emails (password
+// resets, account status, security alerts) are always sent and are not gated.
+model NotificationPreference {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  assignment     Boolean  @default(true)
+  grade          Boolean  @default(true)
+  feedback       Boolean  @default(true)
+  announcements  Boolean  @default(true)
+  materials      Boolean  @default(true)
+  academicUpdates Boolean @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notification_preferences")
 }
 
 // Public admission enquiries submitted from the website. Admin can review them.

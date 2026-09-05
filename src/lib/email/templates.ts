@@ -34,7 +34,7 @@ const wrap = (title: string, bodyHtml: string): string =>
                 STAR&nbsp;DreamWorks&nbsp;Schools
               </div>
               <div style="color:#f5b301;font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;margin-top:4px;">
-                Nurturing Leaders of Tomorrow
+                Caring Nursery, Primary &amp; JSS
               </div>
             </td>
           </tr>
@@ -137,6 +137,194 @@ export const passwordResetTemplate = ({ name, email, password, actor }: Password
       )}
       ${button("Sign in to your portal", `${APP_URL}/login`)}
       ${paragraph(`If you did not request this change, please contact the school administration office immediately.`)}`
+    ),
+  };
+};
+
+export interface PasswordChangedData {
+  name: string;
+}
+
+export const passwordChangedTemplate = ({ name }: PasswordChangedData): { subject: string; html: string } => {
+  return {
+    subject: "Your STAR DreamWorks Schools password was changed",
+    html: wrap(
+      "Password changed",
+      `${heading(`Password changed, ${name}`)}
+      ${paragraph(`Your portal password was successfully changed. If you made this change, no further action is needed.`)}
+      ${paragraph(`If you did NOT change your password, please contact the school administration office immediately.`)}`
+    ),
+  };
+};
+
+export interface AccountStatusData {
+  name: string;
+  status: string; // ACTIVATED | SUSPENDED
+}
+
+export const accountStatusTemplate = ({ name, status }: AccountStatusData): { subject: string; html: string } => {
+  const activated = status === "ACTIVATED";
+  return {
+    subject: `Your STAR DreamWorks Schools account has been ${activated ? "activated" : "suspended"}`,
+    html: wrap(
+      "Account status update",
+      `${heading(`${activated ? "Welcome back" : "Account suspended"}, ${name}`)}
+      ${activated
+        ? paragraph(`Your account has been <strong>activated</strong>. You can now sign in to the school portal and use your account normally.`)
+        : paragraph(`Your account has been <strong>suspended</strong>. If you believe this is a mistake, please contact the school administration office.`)}
+      ${button("Visit the school portal", `${APP_URL}/login`)}`
+    ),
+  };
+};
+
+export interface SecurityAlertData {
+  name: string;
+  details: string;
+}
+
+export const securityAlertTemplate = ({ name, details }: SecurityAlertData): { subject: string; html: string } => {
+  return {
+    subject: "Security alert — STAR DreamWorks Schools",
+    html: wrap(
+      "Security alert",
+      `${heading(`Security alert, ${name}`)}
+      ${paragraph(details)}
+      ${paragraph(`If this was you, you can safely ignore this message. If this was NOT you, please contact the school administration office immediately.`)}`
+    ),
+  };
+};
+
+export interface AssignmentSubmittedData {
+  teacherName: string;
+  studentName: string;
+  title: string;
+  subjectName: string;
+  className: string;
+  resubmitted: boolean;
+}
+
+export const assignmentSubmittedTemplate = ({ teacherName, studentName, title, subjectName, className, resubmitted }: AssignmentSubmittedData): { subject: string; html: string } => {
+  return {
+    subject: `${studentName} ${resubmitted ? "resubmitted" : "submitted"}: ${title} — STAR DreamWorks Schools`,
+    html: wrap(
+      `Submission: ${title}`,
+      `${heading(`${studentName} ${resubmitted ? "resubmitted their" : "submitted their"} assignment`)}
+      ${paragraph(`Dear ${teacherName},`)}
+      ${infoBlock(
+        `${infoRow("Student", studentName)}
+         ${infoRow("Assignment", title)}
+         ${infoRow("Subject", subjectName)}
+         ${infoRow("Class", className)}`
+      )}
+      ${button("Review submission in portal", `${APP_URL}/login`)}`
+    ),
+  };
+};
+
+export interface SubmissionGradedData {
+  recipientName: string;
+  studentName: string;
+  title: string;
+  subjectName: string;
+  score: string;
+  maxScore: string;
+  feedback: string;
+}
+
+export const submissionGradedTemplate = ({ recipientName, studentName, title, subjectName, score, maxScore, feedback }: SubmissionGradedData): { subject: string; html: string } => {
+  return {
+    subject: `Assignment graded: ${title} (${score}/${maxScore}) — STAR DreamWorks Schools`,
+    html: wrap(
+      `Grade: ${title}`,
+      `${heading(`Assignment graded: ${title}`)}
+      ${paragraph(`Dear ${recipientName},`)}
+      ${infoBlock(
+        `${infoRow("Student", studentName)}
+         ${infoRow("Assignment", title)}
+         ${infoRow("Subject", subjectName)}
+         ${infoRow("Score", `${score} / ${maxScore}`)}`
+      )}
+      ${feedback ? `<div style="font-size:14px;color:${BRAND.body};line-height:1.75;margin-bottom:14px;"><strong>Teacher feedback:</strong> ${esc(feedback)}</div>` : ""}
+      ${button("View grade in portal", `${APP_URL}/login`)}`
+    ),
+  };
+};
+
+export interface DeadlineReminderData {
+  recipientName: string;
+  title: string;
+  subjectName: string;
+  className: string;
+  dueDate: string;
+  status: "reminder" | "overdue";
+}
+
+export const deadlineReminderTemplate = ({ recipientName, title, subjectName, className, dueDate, status }: DeadlineReminderData): { subject: string; html: string } => {
+  const overdue = status === "overdue";
+  return {
+    subject: `${overdue ? "Assignment overdue" : "Assignment due soon"}: ${title} — STAR DreamWorks Schools`,
+    html: wrap(
+      overdue ? "Assignment overdue" : "Assignment reminder",
+      `${heading(overdue ? `Assignment overdue: ${title}` : `Assignment due soon: ${title}`)}
+      ${paragraph(`Dear ${recipientName},`)}
+      ${overdue
+        ? paragraph(`The submission deadline for <strong>${esc(title)}</strong> has passed. Please submit it as soon as possible to avoid missing marks.`)
+        : paragraph(`This is a friendly reminder that <strong>${esc(title)}</strong> is due ${dueDate}. Please make sure you submit it on time.`)}
+      ${infoBlock(
+        `${infoRow("Assignment", title)}
+         ${infoRow("Subject", subjectName)}
+         ${infoRow("Class", className)}
+         ${infoRow("Due date", dueDate)}`
+      )}
+      ${button("Open assignment in portal", `${APP_URL}/login`)}`
+    ),
+  };
+};
+
+export interface LearningMaterialData {
+  recipientName: string;
+  title: string;
+  description: string;
+  type: string;
+  subjectName: string;
+  className: string;
+}
+
+export const learningMaterialTemplate = ({ recipientName, title, description, type, subjectName, className }: LearningMaterialData): { subject: string; html: string } => {
+  return {
+    subject: `New learning material: ${title} — STAR DreamWorks Schools`,
+    html: wrap(
+      `Learning material: ${title}`,
+      `${heading(`New learning material: ${title}`)}
+      ${paragraph(`Dear ${recipientName},`)}
+      ${infoBlock(
+        `${infoRow("Material type", type)}
+         ${infoRow("Subject", subjectName)}
+         ${infoRow("Class", className)}`
+      )}
+      <div style="font-size:14px;color:${BRAND.body};line-height:1.75;margin-bottom:14px;">${esc(description ?? "")}</div>
+      ${button("View material in portal", `${APP_URL}/login`)}`
+    ),
+  };
+};
+
+export interface AcademicUpdateData {
+  recipientName: string;
+  studentName: string;
+  title: string;
+  details: string;
+}
+
+export const academicUpdateTemplate = ({ recipientName, studentName, title, details }: AcademicUpdateData): { subject: string; html: string } => {
+  return {
+    subject: `Academic update: ${title} — STAR DreamWorks Schools`,
+    html: wrap(
+      "Academic update",
+      `${heading(title)}
+      ${paragraph(`Dear ${recipientName},`)}
+      ${studentName ? `<div style="font-size:14px;color:${BRAND.body};line-height:1.75;margin-bottom:14px;"><strong>Student:</strong> ${esc(studentName)}</div>` : ""}
+      <div style="font-size:14px;color:${BRAND.body};line-height:1.75;margin-bottom:14px;">${esc(details)}</div>
+      ${button("View in portal", `${APP_URL}/login`)}`
     ),
   };
 };

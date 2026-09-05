@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
 import { logActivity, clientIp } from "@/lib/activity";
+import { sendPasswordChangedEmail } from "@/lib/email/notifications";
 
 export async function PUT(req: Request) {
   try {
@@ -63,6 +64,12 @@ export async function PUT(req: Request) {
     });
 
     await logActivity(userId, "PASSWORD_CHANGE", "Admin changed their password", clientIp(req));
+
+    await sendPasswordChangedEmail({
+      userId,
+      name: user.name,
+      email: user.email,
+    });
 
     return NextResponse.json({ success: true, data: { message: "Password updated successfully." } });
   } catch {

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
+import { sendMaterialEmails } from "@/lib/email/notifications";
 
 export async function GET(req: Request) {
   try {
@@ -153,6 +154,8 @@ export async function POST(req: Request) {
         class: { select: { id: true, name: true } },
       },
     });
+
+    await sendMaterialEmails(material);
 
     return NextResponse.json({ success: true, data: material }, { status: 201 });
   } catch {

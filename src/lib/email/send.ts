@@ -8,10 +8,19 @@ const resend = emailConfig.apiKey ? new Resend(emailConfig.apiKey) : null;
 export type EmailType =
   | "ACCOUNT_CREATED"
   | "PASSWORD_RESET"
+  | "PASSWORD_CHANGED"
+  | "ACCOUNT_STATUS"
+  | "SECURITY_ALERT"
   | "ADMISSION_ENQUIRY_RECEIVED"
   | "ADMISSION_STATUS_CHANGED"
   | "ANNOUNCEMENT"
   | "ASSIGNMENT_PUBLISHED"
+  | "ASSIGNMENT_SUBMITTED"
+  | "ASSIGNMENT_GRADED"
+  | "ASSIGNMENT_REMINDER"
+  | "ASSIGNMENT_OVERDUE"
+  | "LEARNING_MATERIAL"
+  | "ACADEMIC_UPDATE"
   | "GRADE_PUBLISHED"
   | "SYSTEM_ALERT";
 
@@ -21,6 +30,7 @@ export interface SendEmailInput {
   subject: string;
   html: string;
   refId?: string;
+  userId?: string;
 }
 
 export interface SendEmailResult {
@@ -60,6 +70,8 @@ export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult>
         subject: input.subject.slice(0, 200),
         status: "SENDING",
         refId: input.refId ?? null,
+        userId: input.userId ?? null,
+        body: input.html,
         dedupHash,
       },
     });
@@ -67,8 +79,13 @@ export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult>
     if (!resend || !emailConfig.apiKey) {
       await prisma.emailLog.update({
         where: { id: log.id },
-        data: { status: "FAILED", error: "RESEND_API_KEY is not configured." },
+        data: {
+          status: "FAILED",
+          error: "RESEND_API_KEY is not configured.",
+          attempts: { increment: 1 },
+        },
       });
+      await notifyAdminsOfFailure(input, log.id);
       return { ok: false, logId: log.id };
     }
 
@@ -82,15 +99,20 @@ export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult>
     if (result.error) {
       await prisma.emailLog.update({
         where: { id: log.id },
-        data: { status: "FAILED", error: result.error.message },
+        data: {
+          status: "FAILED",
+          error: String(result.error.message).slice(0, 500),
+          attempts: { increment: 1 },
+        },
       });
+      await notifyAdminsOfFailure(input, log.id);
       return { ok: false, logId: log.id };
     }
 
     const remoteId = result.data?.id ?? null;
     await prisma.emailLog.update({
       where: { id: log.id },
-      data: { status: "SENT", remoteId },
+      data: { status: "SENT", remoteId, sentAt: new Date() },
     });
 
     return { ok: true, logId: log.id, remoteId: remoteId ?? undefined };
@@ -105,12 +127,92 @@ export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult>
         data: {
           status: "FAILED",
           error: error?.message ? String(error.message).slice(0, 500) : "Unknown send error",
+          attempts: { increment: 1 },
         },
       });
     } catch {
       // Swallow secondary logging failures.
     }
     return { ok: false };
+  }
+}
+
+/**
+ * Alerts admins about a first-time delivery failure. Bounded: we never alert
+ * about failures of SYSTEM_ALERT emails themselves, which prevents cascades.
+ */
+async function notifyAdminsOfFailure(
+  input: SendEmailInput,
+  logId: string
+): Promise<void> {
+  if (input.type === "SYSTEM_ALERT") return;
+  try {
+    void notifyAdmins(
+      "SYSTEM_ALERT",
+      "Email delivery failed",
+      `A ${input.type} email to ${input.to}${
+        input.refId ? ` (reference ${input.refId})` : ""
+      } failed to send. Check the admin Email Logs for details.`,
+      `failed:${logId}`
+    );
+  } catch {
+    // Ignore alert-wiring failures.
+  }
+}
+
+/**
+ * Re-attempts a previously failed email using its stored subject/body.
+ * Updates the same EmailLog row (increments attempts) instead of creating a
+ * new one, preserving the audit trail. Never throws.
+ */
+export async function retryEmailLog(logId: string): Promise<{ ok: boolean; error?: string }> {
+  try {
+    const log = await prisma.emailLog.findUnique({ where: { id: logId } });
+    if (!log) return { ok: false, error: "Email log not found." };
+
+    const to = String(log.to || "").trim().toLowerCase();
+    if (!EMAIL_RE.test(to)) {
+      return { ok: false, error: "Invalid recipient address." };
+    }
+    if (!resend || !emailConfig.apiKey) {
+      await prisma.emailLog.update({
+        where: { id: log.id },
+        data: { status: "FAILED", error: "RESEND_API_KEY is not configured." },
+      });
+      return { ok: false, error: "RESEND_API_KEY is not configured." };
+    }
+
+    await prisma.emailLog.update({
+      where: { id: log.id },
+      data: { status: "SENDING", error: null, attempts: { increment: 1 } },
+    });
+
+    const result = await resend.emails.send({
+      from: emailConfig.from,
+      to,
+      subject: log.subject,
+      html: log.body ?? "",
+    });
+
+    if (result.error) {
+      await prisma.emailLog.update({
+        where: { id: log.id },
+        data: {
+          status: "FAILED",
+          error: String(result.error.message).slice(0, 500),
+        },
+      });
+      return { ok: false, error: result.error.message };
+    }
+
+    const remoteId = result.data?.id ?? null;
+    await prisma.emailLog.update({
+      where: { id: log.id },
+      data: { status: "SENT", remoteId, sentAt: new Date() },
+    });
+    return { ok: true };
+  } catch (error: any) {
+    return { ok: false, error: error?.message ? String(error.message) : "Unknown error" };
   }
 }
 
@@ -148,10 +250,15 @@ export async function updateEmailStatusByRemoteId(
 ): Promise<boolean> {
   if (!remoteId) return false;
   try {
+    const now = new Date();
     const result = await prisma.emailLog.updateMany({
       where: { remoteId },
       data: {
         status,
+        ...(status === "SENT" ? { sentAt: now } : {}),
+        ...(status === "DELIVERED" || status === "BOUNCED" || status === "COMPLAINED"
+          ? { deliveredAt: now }
+          : {}),
         ...(error ? { error: String(error).slice(0, 500) } : {}),
       },
     });

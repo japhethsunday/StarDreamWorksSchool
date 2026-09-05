@@ -7,6 +7,7 @@ import { logActivity, clientIp } from "@/lib/activity";
 import { permissionResponse } from "@/lib/permissions";
 import { sendEmail } from "@/lib/email/send";
 import { passwordResetTemplate } from "@/lib/email/templates";
+import { sendAccountStatusEmail } from "@/lib/email/notifications";
 
 export async function GET(
   req: Request,
@@ -154,6 +155,7 @@ export async function PUT(
       );
     }
 
+    const wasActive = student.user.isActive;
     const body = await req.json();
     const {
       firstName,
@@ -171,6 +173,7 @@ export async function PUT(
       parentIds,
       isActive,
     } = body;
+    const nextActive = typeof isActive === "boolean" ? isActive : wasActive;
 
     if (email) {
       const existing = await prisma.user.findFirst({
@@ -298,6 +301,16 @@ export async function PUT(
         subject,
         html,
         refId: updatedStudent.id,
+        userId: updatedStudent.userId,
+      });
+    }
+
+    if (wasActive !== nextActive) {
+      await sendAccountStatusEmail({
+        userId: updatedStudent.userId,
+        name: `${updatedStudent.firstName} ${updatedStudent.lastName}`,
+        email: updatedStudent.user.email,
+        activated: nextActive,
       });
     }
 

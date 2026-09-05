@@ -23,6 +23,8 @@ import {
   MessageSquare,
   Globe,
   ShieldCheck,
+  Mail,
+  Bell,
 } from "lucide-react";
 import { Crest } from "@/components/public/Logo";
 
@@ -58,6 +60,7 @@ const adminNav: NavItem[] = [
   { label: "Educational Levels", href: "/dashboard/admin/educational-levels", icon: <Layers className="w-5 h-5" />, permission: "MANAGE_LEVELS" },
   { label: "Site Content", href: "/dashboard/admin/site-content", icon: <Globe className="w-5 h-5" />, permission: "MANAGE_SETTINGS" },
   { label: "Activity", href: "/dashboard/admin/activity", icon: <Activity className="w-5 h-5" />, permission: "VIEW_ACTIVITY" },
+  { label: "Email Logs", href: "/dashboard/admin/emails", icon: <Mail className="w-5 h-5" /> },
   { label: "Settings", href: "/dashboard/admin/settings", icon: <Settings className="w-5 h-5" /> },
 ];
 
@@ -68,6 +71,7 @@ const teacherNav: NavItem[] = [
   { label: "Students", href: "/dashboard/teacher/students", icon: <Users className="w-5 h-5" /> },
   { label: "Materials", href: "/dashboard/teacher/materials", icon: <FolderOpen className="w-5 h-5" /> },
   { label: "Announcements", href: "/dashboard/teacher/announcements", icon: <Megaphone className="w-5 h-5" /> },
+  { label: "Notifications", href: "/dashboard/settings", icon: <Bell className="w-5 h-5" /> },
 ];
 
 const studentNav: NavItem[] = [
@@ -76,6 +80,7 @@ const studentNav: NavItem[] = [
   { label: "Grades", href: "/dashboard/student/grades", icon: <FileText className="w-5 h-5" /> },
   { label: "Materials", href: "/dashboard/student/materials", icon: <FolderOpen className="w-5 h-5" /> },
   { label: "Announcements", href: "/dashboard/student/announcements", icon: <Megaphone className="w-5 h-5" /> },
+  { label: "Notifications", href: "/dashboard/settings", icon: <Bell className="w-5 h-5" /> },
 ];
 
 const parentNav: NavItem[] = [
@@ -83,6 +88,7 @@ const parentNav: NavItem[] = [
   { label: "My Children", href: "/dashboard/parent/children", icon: <Baby className="w-5 h-5" /> },
   { label: "Grades", href: "/dashboard/parent/grades", icon: <FileText className="w-5 h-5" /> },
   { label: "Announcements", href: "/dashboard/parent/announcements", icon: <Megaphone className="w-5 h-5" /> },
+  { label: "Notifications", href: "/dashboard/settings", icon: <Bell className="w-5 h-5" /> },
 ];
 
 function canAccess(item: NavItem, permissions?: string[]): boolean {

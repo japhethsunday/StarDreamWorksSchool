@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
 import { createAssignmentSchema } from "@/lib/validations";
-import { sendAssignmentEmails } from "@/lib/email/notifications";
+import { sendAssignmentEmails, runDuePrompts } from "@/lib/email/notifications";
 
 export async function GET(req: Request) {
   try {
@@ -53,6 +53,10 @@ export async function GET(req: Request) {
         },
       },
     });
+
+    // Opportunistic due-date sweep: sends (idempotent) reminder/overdue emails
+    // to students who haven't submitted. Fire-and-forget — never blocks the list.
+    void runDuePrompts();
 
     return NextResponse.json({ success: true, data: assignments });
   } catch {

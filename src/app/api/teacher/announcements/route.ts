@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
+import { sendClassAnnouncement } from "@/lib/email/notifications";
 
 export async function GET(req: Request) {
   try {
@@ -168,6 +169,19 @@ export async function POST(req: Request) {
         class: { select: { id: true, name: true, level: true } },
       },
     });
+
+    if (announcement.isPublished) {
+      await sendClassAnnouncement(
+        {
+          id: announcement.id,
+          title: announcement.title,
+          content: announcement.content,
+          priority: announcement.priority,
+          classId: announcement.classId,
+        },
+        announcement.class?.name ?? ""
+      );
+    }
 
     return NextResponse.json({ success: true, data: announcement }, { status: 201 });
   } catch {

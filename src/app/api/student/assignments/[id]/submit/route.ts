@@ -2,6 +2,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
+import { sendAssignmentSubmittedEmail } from "@/lib/email/notifications";
 
 export async function POST(
   req: Request,
@@ -107,6 +108,27 @@ export async function POST(
         },
       });
     }
+
+    const resubmitted = Boolean(existingSubmission);
+    const [subject, klass] = await Promise.all([
+      prisma.subject.findUnique({
+        where: { id: assignment.subjectId },
+        select: { name: true },
+      }),
+      prisma.class.findUnique({
+        where: { id: assignment.classId },
+        select: { name: true },
+      }),
+    ]);
+
+    await sendAssignmentSubmittedEmail({
+      assignmentId: assignment.id,
+      title: assignment.title,
+      subjectName: subject?.name ?? "",
+      className: klass?.name ?? "",
+      studentName: `${student.firstName} ${student.lastName}`,
+      resubmitted,
+    });
 
     return NextResponse.json({ success: true, data: submission });
   } catch {

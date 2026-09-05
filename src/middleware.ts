@@ -17,10 +17,10 @@ function isPublicRoute(pathname: string): boolean {
 
 // Role → allowed API prefixes
 const ROLE_PREFIXES: Record<string, string[]> = {
-  ADMIN: ["/api/admin/"],
-  TEACHER: ["/api/teacher/"],
-  STUDENT: ["/api/student/"],
-  PARENT: ["/api/parent/"],
+  ADMIN: ["/api/admin/", "/api/notifications/"],
+  TEACHER: ["/api/teacher/", "/api/notifications/"],
+  STUDENT: ["/api/student/", "/api/notifications/"],
+  PARENT: ["/api/parent/", "/api/notifications/"],
 };
 
 // Simple in-memory rate limit for login (POST only)

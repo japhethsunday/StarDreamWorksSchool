@@ -2,6 +2,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
+import { sendSubmissionGradedEmail } from "@/lib/email/notifications";
 
 export async function PUT(
   req: Request,
@@ -99,6 +100,20 @@ export async function PUT(
           },
         },
       },
+    });
+
+    const subject = await prisma.subject.findUnique({
+      where: { id: assignment.subjectId },
+      select: { name: true },
+    });
+
+    await sendSubmissionGradedEmail({
+      submissionId: submission.id,
+      assignmentTitle: assignment.title,
+      subjectName: subject?.name ?? "",
+      score: updated.grade ?? 0,
+      maxScore: assignment.maxScore,
+      feedback: updated.feedback ?? null,
     });
 
     return NextResponse.json({ success: true, data: updated });
