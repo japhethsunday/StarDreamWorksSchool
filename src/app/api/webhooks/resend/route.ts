@@ -13,7 +13,8 @@ const EVENT_STATUS_MAP: Record<string, string> = {
 };
 
 function verifySignature(payloadRaw: string, signature: string | null): boolean {
-  if (!signature || !emailConfig.webhookSecret) return true;
+  if (!emailConfig.webhookSecret) return true;
+  if (!signature) return false;
   const parts = new Map<string, string>();
   for (const pair of signature.split(",")) {
     const [key, ...rest] = pair.split("=");
