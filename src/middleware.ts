@@ -67,6 +67,7 @@ export function middleware(request: NextRequest) {
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: blob: https://res.cloudinary.com https://placehold.co https://*.cloudinary.com",
+      "frame-src https://www.openstreetmap.org",
       "connect-src 'self' https://api.cloudinary.com https://*.supabase.co wss://ws-us1.pusher.com",
       "frame-ancestors 'none'",
       "base-uri 'self'",
