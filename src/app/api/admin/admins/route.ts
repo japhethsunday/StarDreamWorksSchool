@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { logActivity, clientIp } from "@/lib/activity";
 import { requireSuperAdmin, SUPER_ADMIN_EMAIL } from "@/lib/super-admin";
 import { ALL_PERMISSION_KEYS } from "@/lib/permissions";
+import { sendEmail } from "@/lib/email/send";
+import { accountCreatedTemplate } from "@/lib/email/templates";
 
 const PASSWORD_MIN = 8;
 
@@ -134,6 +136,21 @@ export async function POST(req: Request) {
       `Created admin account for ${admin.email}`,
       clientIp(req)
     );
+
+    // Notify the new administrator with their portal login credentials.
+    const { subject, html } = accountCreatedTemplate({
+      name: admin.name,
+      role: "Admin",
+      email: admin.email,
+      password: String(password),
+    });
+    await sendEmail({
+      type: "ACCOUNT_CREATED",
+      to: admin.email,
+      subject,
+      html,
+      refId: admin.id,
+    });
 
     return NextResponse.json({ success: true, data: admin }, { status: 201 });
   } catch {

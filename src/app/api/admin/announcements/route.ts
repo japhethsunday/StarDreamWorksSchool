@@ -5,6 +5,10 @@ import { prisma } from "@/lib/prisma";
 import { logActivity, clientIp } from "@/lib/activity";
 import { createAnnouncementSchema } from "@/lib/validations";
 import { permissionResponse } from "@/lib/permissions";
+import {
+  sendSchoolAnnouncement,
+  sendClassAnnouncement,
+} from "@/lib/email/notifications";
 
 export async function GET() {
   try {
@@ -124,6 +128,15 @@ export async function POST(req: Request) {
       `${isPublished ? "Published" : "Created"} announcement "${announcement.title}"`,
       clientIp(req)
     );
+
+    // Email the announcement to the intended audience when published.
+    if (isPublished) {
+      if (targetType === "CLASS" && announcement.class) {
+        await sendClassAnnouncement(announcement, announcement.class.name);
+      } else {
+        await sendSchoolAnnouncement(announcement);
+      }
+    }
 
     return NextResponse.json({ success: true, data: announcement }, { status: 201 });
   } catch {

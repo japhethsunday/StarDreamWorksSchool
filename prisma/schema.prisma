@@ -402,6 +402,30 @@ model SiteSetting {
   @@map("site_settings")
 }
 
+// Audit log for every transactional email sent via Resend. Enables delivery
+// status tracking (webhook), error/attempt history, and duplicate prevention
+// (dedupHash is unique).
+model EmailLog {
+  id         String   @id @default(cuid())
+  type       String
+  to         String
+  from       String
+  subject    String
+  status     String   @default("SENDING") // SENDING | SENT | FAILED | DELIVERED | BOUNCED | COMPLAINED | REJECTED
+  error      String?
+  remoteId   String? // Resend message id, used to correlate webhook events
+  refId      String? // business reference (studentId, teacherId, enquiryId, announcementId, gradeId, userId)
+  dedupHash  String   @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([type])
+  @@index([refId])
+  @@index([remoteId])
+  @@index([createdAt])
+  @@map("email_logs")
+}
+
 // Public admission enquiries submitted from the website. Admin can review them.
 model AdmissionEnquiry {
   id            String   @id @default(cuid())

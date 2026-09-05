@@ -6,6 +6,8 @@ import { prisma } from "@/lib/prisma";
 import { logActivity, clientIp } from "@/lib/activity";
 import { createParentSchema } from "@/lib/validations";
 import { permissionResponse } from "@/lib/permissions";
+import { sendEmail } from "@/lib/email/send";
+import { accountCreatedTemplate } from "@/lib/email/templates";
 
 export async function GET() {
   try {
@@ -205,6 +207,21 @@ export async function POST(req: Request) {
       `Created parent ${firstName} ${lastName}`,
       clientIp(req)
     );
+
+    // Notify the parent (portal login credentials are never shown again).
+    const { subject, html } = accountCreatedTemplate({
+      name: `${firstName} ${lastName}`,
+      role: "Parent",
+      email: email.toLowerCase().trim(),
+      password,
+    });
+    await sendEmail({
+      type: "ACCOUNT_CREATED",
+      to: email.toLowerCase().trim(),
+      subject,
+      html,
+      refId: parent.id,
+    });
 
     return NextResponse.json({ success: true, data: fullParent }, { status: 201 });
   } catch {

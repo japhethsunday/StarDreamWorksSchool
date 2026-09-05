@@ -7,6 +7,8 @@ import { logActivity, clientIp } from "@/lib/activity";
 import { createTeacherSchema } from "@/lib/validations";
 import { generateTeacherId } from "@/lib/utils";
 import { permissionResponse } from "@/lib/permissions";
+import { sendEmail } from "@/lib/email/send";
+import { accountCreatedTemplate } from "@/lib/email/templates";
 
 export async function GET() {
   try {
@@ -166,6 +168,22 @@ export async function POST(req: Request) {
       `Created teacher ${teacher.firstName} ${teacher.lastName} (${teacher.teacherId})`,
       clientIp(req)
     );
+
+    // Notify the teacher (portal login credentials are never shown again).
+    const { subject, html } = accountCreatedTemplate({
+      name: `${teacher.firstName} ${teacher.lastName}`,
+      role: "Teacher",
+      email: validated.data.email,
+      password: validated.data.password,
+      teacherId: teacher.teacherId,
+    });
+    await sendEmail({
+      type: "ACCOUNT_CREATED",
+      to: validated.data.email,
+      subject,
+      html,
+      refId: teacher.id,
+    });
 
     return NextResponse.json({ success: true, data: teacher }, { status: 201 });
   } catch {

@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
 import { logActivity, clientIp } from "@/lib/activity";
 import { permissionResponse } from "@/lib/permissions";
+import { sendAssignmentEmails } from "@/lib/email/notifications";
 
 export async function GET() {
   try {
@@ -119,6 +120,9 @@ export async function POST(req: Request) {
         teacher: { select: { id: true, firstName: true, lastName: true } },
       },
     });
+
+    // Notify students in the class (and their parents) about the new assignment.
+    await sendAssignmentEmails(assignment);
 
     const data = {
       id: assignment.id,

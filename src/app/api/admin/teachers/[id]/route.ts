@@ -5,6 +5,8 @@ import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
 import { logActivity, clientIp } from "@/lib/activity";
 import { permissionResponse } from "@/lib/permissions";
+import { sendEmail } from "@/lib/email/send";
+import { passwordResetTemplate } from "@/lib/email/templates";
 
 export async function GET(
   req: Request,
@@ -235,6 +237,22 @@ export async function PUT(
       `Updated teacher ${updatedTeacher.firstName} ${updatedTeacher.lastName}`,
       clientIp(req)
     );
+
+    if (password) {
+      const { subject, html } = passwordResetTemplate({
+        name: `${updatedTeacher.firstName} ${updatedTeacher.lastName}`,
+        email: updatedTeacher.user.email,
+        password,
+        actor: "by the school administration",
+      });
+      await sendEmail({
+        type: "PASSWORD_RESET",
+        to: updatedTeacher.user.email,
+        subject,
+        html,
+        refId: updatedTeacher.id,
+      });
+    }
 
     return NextResponse.json({ success: true, data: updatedTeacher });
   } catch {

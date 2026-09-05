@@ -3,6 +3,8 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { logActivity, clientIp } from "@/lib/activity";
 import { requireSuperAdmin, SUPER_ADMIN_EMAIL } from "@/lib/super-admin";
+import { sendEmail } from "@/lib/email/send";
+import { passwordResetTemplate } from "@/lib/email/templates";
 
 const PASSWORD_MIN = 8;
 
@@ -16,7 +18,7 @@ export async function PATCH(
   try {
     const target = await prisma.user.findUnique({
       where: { id: params.id },
-      select: { id: true, email: true, role: true, isSuperAdmin: true },
+      select: { id: true, email: true, name: true, role: true, isSuperAdmin: true },
     });
 
     if (!target || target.role !== "ADMIN") {
@@ -56,6 +58,21 @@ export async function PATCH(
       `Reset password for admin account ${updated.email}`,
       clientIp(req)
     );
+
+    // Email the new password to the administrator only.
+    const { subject, html } = passwordResetTemplate({
+      name: target.name,
+      email: target.email,
+      password: newPassword,
+      actor: "by the school administration",
+    });
+    await sendEmail({
+      type: "PASSWORD_RESET",
+      to: target.email,
+      subject,
+      html,
+      refId: target.id,
+    });
 
     return NextResponse.json({
       success: true,

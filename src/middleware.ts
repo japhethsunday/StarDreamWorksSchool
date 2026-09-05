@@ -8,6 +8,7 @@ const PUBLIC_ROUTES = [
   "/api/site-settings",
   "/api/educational-levels",
   "/api/auth/",
+  "/api/webhooks/resend",
 ];
 
 function isPublicRoute(pathname: string): boolean {

@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
 import { calculateGrade } from "@/lib/utils";
+import { sendGradeEmails } from "@/lib/email/notifications";
 
 export async function GET(req: Request) {
   try {
@@ -230,6 +231,11 @@ export async function POST(req: Request) {
         class: { select: { id: true, name: true } },
       },
     });
+
+    // Notify the student (and their parents) that the result is published.
+    if (fullGrade) {
+      await sendGradeEmails(fullGrade);
+    }
 
     return NextResponse.json(
       { success: true, data: fullGrade },

@@ -4,6 +4,8 @@ import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
 import { logActivity, clientIp } from "@/lib/activity";
 import { permissionResponse } from "@/lib/permissions";
+import { sendEmail } from "@/lib/email/send";
+import { enquiryStatusTemplate } from "@/lib/email/templates";
 
 const VALID_STATUS = ["NEW", "CONTACTED", "APPROVED", "REJECTED"];
 
@@ -82,6 +84,26 @@ export async function PATCH(request: Request) {
       `Set admission enquiry for ${enquiry.childFirstName} to ${enquiry.status}`,
       clientIp(request)
     );
+
+    // Notify the parent when their enquiry status changes.
+    if (enquiry.email) {
+      const childName = `${enquiry.childFirstName}${
+        enquiry.childLastName ? ` ${enquiry.childLastName}` : ""
+      }`;
+      const { subject, html } = enquiryStatusTemplate({
+        parentName: enquiry.parentName,
+        childName,
+        status: enquiry.status,
+        level: enquiry.level,
+      });
+      await sendEmail({
+        type: "ADMISSION_STATUS_CHANGED",
+        to: enquiry.email,
+        subject,
+        html,
+        refId: enquiry.id,
+      });
+    }
 
     return NextResponse.json({ success: true, data: enquiry });
   } catch {

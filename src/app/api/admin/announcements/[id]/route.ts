@@ -4,6 +4,10 @@ import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
 import { logActivity, clientIp } from "@/lib/activity";
 import { permissionResponse } from "@/lib/permissions";
+import {
+  sendSchoolAnnouncement,
+  sendClassAnnouncement,
+} from "@/lib/email/notifications";
 
 export async function PUT(
   req: Request,
@@ -91,6 +95,15 @@ export async function PUT(
       `${updated.isPublished ? "Published" : "Updated"} announcement "${updated.title}"`,
       clientIp(req)
     );
+
+    // Email the announcement when it transitions from draft to published.
+    if (updated.isPublished && !announcement.isPublished) {
+      if (updated.targetType === "CLASS" && updated.class) {
+        await sendClassAnnouncement(updated, updated.class.name);
+      } else {
+        await sendSchoolAnnouncement(updated);
+      }
+    }
 
     return NextResponse.json({ success: true, data: updated });
   } catch {

@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
 import { createAssignmentSchema } from "@/lib/validations";
+import { sendAssignmentEmails } from "@/lib/email/notifications";
 
 export async function GET(req: Request) {
   try {
@@ -173,6 +174,9 @@ export async function POST(req: Request) {
         _count: { select: { submissions: true } },
       },
     });
+
+    // Notify students in the class (and their parents) about the new assignment.
+    await sendAssignmentEmails(assignment);
 
     return NextResponse.json({ success: true, data: assignment }, { status: 201 });
   } catch {

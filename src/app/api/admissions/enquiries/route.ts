@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { rateLimit } from "@/lib/rate-limit";
+import { sendEmail, notifyAdmins } from "@/lib/email/send";
+import { enquiryReceivedTemplate, adminAlertTemplate } from "@/lib/email/templates";
 
 const VALID_LEVELS = [
   "creche",
@@ -86,6 +88,32 @@ export async function POST(request: Request) {
         status: "NEW",
       },
     });
+
+    const childName = `${childFirstName}${childLastName ? ` ${childLastName}` : ""}`;
+    const levelLabel = level.charAt(0).toUpperCase() + level.slice(1);
+
+    // Send the parent a confirmation (only if they provided an email).
+    if (enquiry.email) {
+      const { subject, html } = enquiryReceivedTemplate({
+        parentName,
+        childName,
+        level: levelLabel,
+      });
+      await sendEmail({
+        type: "ADMISSION_ENQUIRY_RECEIVED",
+        to: enquiry.email,
+        subject,
+        html,
+        refId: enquiry.id,
+      });
+    }
+
+    // Notify the school's administrators of the new enquiry.
+    const { subject: alertSubject, html: alertHtml } = adminAlertTemplate({
+      title: "New admission enquiry received",
+      details: `Child: ${childName}\nLevel: ${levelLabel}\nParent: ${parentName}\nPhone: ${phone}\nEmail: ${enquiry.email || "not provided"}`,
+    });
+    await notifyAdmins("SYSTEM_ALERT", alertSubject, alertHtml, enquiry.id);
 
     return NextResponse.json({ success: true, data: { id: enquiry.id } });
   } catch {

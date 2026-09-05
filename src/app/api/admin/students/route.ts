@@ -7,6 +7,8 @@ import { logActivity, clientIp } from "@/lib/activity";
 import { createStudentSchema } from "@/lib/validations";
 import { generateStudentId } from "@/lib/utils";
 import { permissionResponse } from "@/lib/permissions";
+import { sendEmail } from "@/lib/email/send";
+import { accountCreatedTemplate } from "@/lib/email/templates";
 
 export async function GET() {
   try {
@@ -193,6 +195,22 @@ export async function POST(req: Request) {
       `Created student ${student.firstName} ${student.lastName} (${student.studentId})`,
       clientIp(req)
     );
+
+    // Notify the student (portal login credentials are never shown again).
+    const { subject, html } = accountCreatedTemplate({
+      name: `${student.firstName} ${student.lastName}`,
+      role: "Student",
+      email: validated.data.email,
+      password: validated.data.password,
+      studentId: student.studentId,
+    });
+    await sendEmail({
+      type: "ACCOUNT_CREATED",
+      to: validated.data.email,
+      subject,
+      html,
+      refId: student.id,
+    });
 
     return NextResponse.json({ success: true, data: student }, { status: 201 });
   } catch {
