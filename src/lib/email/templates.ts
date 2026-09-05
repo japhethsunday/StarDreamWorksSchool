@@ -1,16 +1,33 @@
 import { SCHOOL_NAME, APP_URL } from "./config";
 
+// STAR DreamWorks Schools brand palette — same tokens as tailwind.config.ts
+// (brand-navy / brand-red / brand-yellow / brand-green / warm neutrals),
+// so emails match the public website's visual identity exactly.
 const BRAND = {
   navyDeep: "#131a3e",
   navy: "#1f2a5e",
+  red: "#c93720",
+  redDark: "#a82a18",
   green: "#1e7a4c",
   yellow: "#f5b301",
-  paper: "#fdf3d7",
+  yellowSoft: "#fce9b8",
+  paper: "#fff9ec",
+  cream: "#fdf3d7",
   ink: "#1b2340",
   body: "#3f4756",
   muted: "#6b7280",
   line: "#e9e2cf",
 };
+
+// Site typography: Poppins (headings) + Inter (body), with safe stacks for
+// clients that strip webfonts (Gmail falls back to Arial/Helvetica).
+const FONT_HEADING = "Poppins, Inter, Arial, Helvetica, sans-serif";
+const FONT_BODY = "Inter, Arial, Helvetica, sans-serif";
+const FONT_MONO = "Arial, Helvetica, sans-serif";
+
+// The school's actual crest artwork, hosted by the website itself so it is
+// reachable (https) from every email client, including Gmail.
+const LOGO_URL = `${APP_URL}/images/school-crest.jpg`;
 
 const esc = (value: string | number | null | undefined): string =>
   String(value ?? "")
@@ -19,42 +36,98 @@ const esc = (value: string | number | null | undefined): string =>
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
 
+// The real school crest, framed the way the site renders it: rounded badge on
+// white with the red DW ring and a soft shadow. Natural 1080x712 proportions.
+const crestBadge = (): string =>
+  `<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:0 auto;">
+    <tr>
+      <td style="background:#ffffff;padding:6px;border-radius:16px;border:2px solid rgba(201,55,32,0.55);box-shadow:0 8px 20px rgba(19,26,62,0.35);">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td class="sd-crest-td" style="border-radius:11px;overflow:hidden;width:150px;height:99px;font-size:0;line-height:0;">
+              <img class="sd-crest-img" src="${LOGO_URL}" alt="STAR DreamWorks Schools crest" width="150" height="99" style="display:block;width:150px;height:99px;border:0;outline:none;text-decoration:none;" />
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>`;
+
 const wrap = (title: string, bodyHtml: string): string =>
   `<!DOCTYPE html>
-<html lang="en">
-<head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>${esc(title)}</title></head>
-<body style="margin:0;padding:0;background:#f4f6f8;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f6f8;padding:24px 12px;">
+<html lang="en" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="x-apple-disable-message-reformatting" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>${esc(title)}</title>
+<!--[if mso]>
+<noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript>
+<![endif]-->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet" />
+<style>
+  body { margin:0; padding:0; }
+  @media only screen and (max-width:600px) {
+    .sd-wrap { padding:14px 10px !important; }
+    .sd-card { border-radius:12px !important; }
+    .sd-head-pad { padding:30px 20px 26px !important; }
+    .sd-body-pad { padding:26px 22px !important; }
+    .sd-footer-pad { padding:20px 18px !important; }
+    .sd-btn-out { width:100% !important; }
+    .sd-btn-td { width:100% !important; }
+    .sd-btn-a { width:100% !important; box-sizing:border-box; }
+    .sd-crest-td { width:132px !important; height:87px !important; }
+    .sd-crest-img { width:132px !important; height:87px !important; }
+  }
+</style>
+</head>
+<body style="margin:0;padding:0;background:#f5f1e4;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;">
+  <table class="sd-wrap" role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f5f1e4;padding:28px 14px;">
     <tr>
-      <td align="center">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:14px;overflow:hidden;border:1px solid #e3e8ee;">
+      <td align="center" style="padding:0;">
+        <table class="sd-card" role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background:#ffffff;border-radius:16px;overflow:hidden;border:1px solid ${BRAND.line};box-shadow:0 12px 34px rgba(19,26,62,0.10);">
+          <!-- Header: deep navy band + gold keyline + the school crest + wordmark -->
           <tr>
-            <td style="background:linear-gradient(135deg, ${BRAND.navyDeep} 0%, ${BRAND.navy} 55%, ${BRAND.green} 130%);padding:24px 28px;">
-              <div style="color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:20px;font-weight:700;letter-spacing:0.3px;">
-                STAR&nbsp;DreamWorks&nbsp;Schools
-              </div>
-              <div style="color:#f5b301;font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;margin-top:4px;">
-                Caring Nursery, Primary &amp; JSS
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding:28px;font-family:Arial,Helvetica,sans-serif;">
-              ${bodyHtml}
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${BRAND.paper};padding:18px 28px;border-top:1px solid ${BRAND.line};">
+            <td style="background:${BRAND.navyDeep};border-bottom:3px solid ${BRAND.yellow};">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
-                  <td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:${BRAND.muted};line-height:1.7;">
-                    ${SCHOOL_NAME}<br/>
-                    <a href="${APP_URL}" style="color:${BRAND.green};text-decoration:none;font-weight:600;">Visit our website</a> &middot;
-                    <a href="${APP_URL}/contact" style="color:${BRAND.green};text-decoration:none;font-weight:600;">Contact us</a><br/>
-                    <span style="color:${BRAND.muted};">This is an automated message. Please do not reply to this email.</span>
+                  <td class="sd-head-pad" align="center" style="padding:32px 28px 26px;">
+                    ${crestBadge()}
+                    <div style="font-family:${FONT_BODY};font-size:11px;font-weight:600;color:${BRAND.yellow};letter-spacing:0.34em;text-transform:uppercase;margin-top:16px;">STAR</div>
+                    <div style="font-family:${FONT_HEADING};font-size:23px;line-height:1.15;font-weight:700;color:#ffffff;margin-top:2px;">DreamWorks Schools</div>
+                    <div style="font-family:${FONT_BODY};font-size:10.5px;font-weight:500;color:${BRAND.yellow};letter-spacing:0.16em;text-transform:uppercase;margin-top:7px;">Caring Nursery, Primary &amp; JSS</div>
                   </td>
                 </tr>
               </table>
+            </td>
+          </tr>
+          <!-- Body -->
+          <tr>
+            <td class="sd-body-pad" style="padding:30px 30px 34px;font-family:${FONT_BODY};">
+              ${bodyHtml}
+            </td>
+          </tr>
+          <!-- Footer: dark navy matching the site footer -->
+          <tr>
+            <td style="background:${BRAND.navyDeep};padding:24px 30px 8px;border-top:1px solid rgba(245,179,1,0.35);">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td align="center" style="font-family:${FONT_BODY};font-size:11px;color:rgba(255,255,255,0.85);line-height:1.8;">
+                    <strong style="color:${BRAND.yellow};letter-spacing:0.12em;text-transform:uppercase;">STAR&nbsp;DreamWorks&nbsp;Schools</strong><br/>
+                    <span style="color:rgba(255,255,255,0.62);">A caring pre-school, nursery, primary and high school in Ajah, Lagos.</span><br/>
+                    <a href="${APP_URL}" style="color:${BRAND.yellow};text-decoration:none;font-weight:600;">Visit our website</a> &middot;
+                    <a href="${APP_URL}/contact" style="color:${BRAND.yellow};text-decoration:none;font-weight:600;">Contact us</a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td class="sd-footer-pad" align="center" style="background:${BRAND.navyDeep};padding:0 20px 18px;font-family:${FONT_BODY};font-size:10px;color:rgba(255,255,255,0.45);">
+              This is an automated message from ${SCHOOL_NAME}. Please do not reply to this email.
             </td>
           </tr>
         </table>
@@ -65,7 +138,7 @@ const wrap = (title: string, bodyHtml: string): string =>
 </html>`;
 
 const heading = (text: string): string =>
-  `<div style="font-size:18px;font-weight:700;color:${BRAND.ink};margin-bottom:10px;">${esc(text)}</div>`;
+  `<div style="font-family:${FONT_HEADING};font-size:18px;font-weight:700;color:${BRAND.ink};margin-bottom:10px;">${esc(text)}</div>`;
 
 const paragraph = (text: string): string =>
   `<div style="font-size:14px;color:${BRAND.body};line-height:1.75;margin-bottom:14px;">${text}</div>`;
@@ -77,14 +150,28 @@ const infoRow = (label: string, value: string): string =>
   </tr>`;
 
 const infoBlock = (rows: string): string =>
-  `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fbfcfe;border:1px solid #eef1f6;border-radius:10px;padding:10px 16px;margin:16px 0;">
+  `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${BRAND.paper};border:1px solid ${BRAND.line};border-radius:11px;padding:10px 16px;margin:16px 0;">
     ${rows}
   </table>`;
 
+// Bulletproof CTA button styled like the site's .sd-btn-apply (red CTA with
+// the brand-red glow). VML path renders rounded corners in Outlook.
 const button = (label: string, href: string): string =>
-  `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:22px 0;"><tr><td style="background:${BRAND.green};border-radius:8px;">
-    <a href="${esc(href)}" style="display:inline-block;padding:12px 24px;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:700;color:#ffffff;text-decoration:none;border-radius:8px;">${esc(label)}</a>
-  </td></tr></table>`;
+  `<table class="sd-btn-out" role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:24px auto 6px;">
+    <tr>
+      <td class="sd-btn-td" align="center">
+        <!--[if mso]>
+        <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${esc(href)}" style="height:46px;v-text-anchor:middle;" arcsize="22%" strokecolor="${BRAND.red}" fillcolor="${BRAND.red}">
+          <w:anchorlock/>
+          <center style="color:#ffffff;font-family:${FONT_MONO};font-size:14px;font-weight:600;">${esc(label)}</center>
+        </v:roundrect>
+        <![endif]-->
+        <!--[if !mso]><!-->
+        <a class="sd-btn-a" href="${esc(href)}" style="display:inline-block;padding:13px 30px;font-family:${FONT_BODY};font-size:14px;font-weight:600;line-height:20px;color:#ffffff;text-align:center;text-decoration:none;border-radius:10px;background:${BRAND.red};border:1px solid ${BRAND.red};box-shadow:0 6px 18px rgba(201,55,32,0.28);mso-hide:all;">${esc(label)}</a>
+        <!--<![endif]-->
+      </td>
+    </tr>
+  </table>`;
 
 export interface AccountCreatedData {
   name: string;
