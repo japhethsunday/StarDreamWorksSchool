@@ -25,6 +25,7 @@ import {
   ShieldCheck,
   Mail,
   Bell,
+  PenLine,
 } from "lucide-react";
 import { Crest } from "@/components/public/Logo";
 
@@ -51,6 +52,7 @@ const adminNav: NavItem[] = [
   { label: "Classes", href: "/dashboard/admin/classes", icon: <BookOpen className="w-5 h-5" />, permission: "MANAGE_CLASSES" },
   { label: "Subjects", href: "/dashboard/admin/subjects", icon: <FileText className="w-5 h-5" />, permission: "MANAGE_SUBJECTS" },
   { label: "Assignments", href: "/dashboard/admin/assignments", icon: <ClipboardList className="w-5 h-5" />, permission: "MANAGE_ASSIGNMENTS" },
+  { label: "Examinations", href: "/dashboard/admin/exams", icon: <PenLine className="w-5 h-5" />, permission: "MANAGE_EXAMS" },
   { label: "Materials", href: "/dashboard/admin/materials", icon: <FolderOpen className="w-5 h-5" />, permission: "MANAGE_MATERIALS" },
   { label: "Announcements", href: "/dashboard/admin/announcements", icon: <Megaphone className="w-5 h-5" />, permission: "MANAGE_ANNOUNCEMENTS" },
   { label: "News", href: "/dashboard/admin/news", icon: <Newspaper className="w-5 h-5" />, permission: "MANAGE_NEWS" },
@@ -68,6 +70,7 @@ const teacherNav: NavItem[] = [
   { label: "Dashboard", href: "/dashboard/teacher", icon: <LayoutDashboard className="w-5 h-5" /> },
   { label: "My Classes", href: "/dashboard/teacher/classes", icon: <BookOpen className="w-5 h-5" /> },
   { label: "Assignments", href: "/dashboard/teacher/assignments", icon: <ClipboardList className="w-5 h-5" /> },
+  { label: "Examinations", href: "/dashboard/teacher/exams", icon: <PenLine className="w-5 h-5" /> },
   { label: "Students", href: "/dashboard/teacher/students", icon: <Users className="w-5 h-5" /> },
   { label: "Materials", href: "/dashboard/teacher/materials", icon: <FolderOpen className="w-5 h-5" /> },
   { label: "Announcements", href: "/dashboard/teacher/announcements", icon: <Megaphone className="w-5 h-5" /> },
@@ -77,6 +80,7 @@ const teacherNav: NavItem[] = [
 const studentNav: NavItem[] = [
   { label: "Dashboard", href: "/dashboard/student", icon: <LayoutDashboard className="w-5 h-5" /> },
   { label: "Assignments", href: "/dashboard/student/assignments", icon: <ClipboardList className="w-5 h-5" /> },
+  { label: "Examinations", href: "/dashboard/student/exams", icon: <PenLine className="w-5 h-5" /> },
   { label: "Grades", href: "/dashboard/student/grades", icon: <FileText className="w-5 h-5" /> },
   { label: "Materials", href: "/dashboard/student/materials", icon: <FolderOpen className="w-5 h-5" /> },
   { label: "Announcements", href: "/dashboard/student/announcements", icon: <Megaphone className="w-5 h-5" /> },

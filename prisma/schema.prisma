@@ -28,6 +28,7 @@ model User {
   activityLogs   ActivityLog[]
   authoredNews   News[]
   announcements  Announcement[]
+  createdExams   Exam[]
   notificationPreference NotificationPreference?
 
   @@map("users")
@@ -57,6 +58,9 @@ model Student {
   parentLinks         ParentStudent[]
   submissions         Submission[]
   grades              Grade[]
+  examAttempts        ExamAttempt[]
+  examResults         ExamResult[]
+  examAssignments     ExamAssignment[]
 
   @@index([classId])
   @@index([userId])
@@ -84,6 +88,7 @@ model Teacher {
   gradesGiven     Grade[]
   materials       LearningMaterial[]
   classTeacherFor Class[]
+  exams           Exam[]
 
   @@index([userId])
   @@index([teacherId])
@@ -140,6 +145,7 @@ model Class {
   grades           Grade[]
   announcements    Announcement[]
   materials        LearningMaterial[]
+  exams            Exam[]
 
   @@index([classTeacherId])
   @@index([level])
@@ -160,6 +166,7 @@ model Subject {
   assignments      Assignment[]
   grades           Grade[]
   materials        LearningMaterial[]
+  exams            Exam[]
 
   @@map("subjects")
 }
@@ -444,6 +451,7 @@ model NotificationPreference {
   announcements  Boolean  @default(true)
   materials      Boolean  @default(true)
   academicUpdates Boolean @default(true)
+  exams          Boolean  @default(true)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
@@ -471,4 +479,191 @@ model AdmissionEnquiry {
   @@index([status])
   @@index([createdAt])
   @@map("admission_enquiries")
+}
+
+// ============================================================
+// ONLINE EXAMINATIONS MODULE
+// ============================================================
+
+// An examination scheduled against a class + subject. Status is a persisted
+// flag (DRAFT | SCHEDULED | ACTIVE | COMPLETED | ARCHIVED); the effective
+// status is also derived from startAt/endAt by the exam-status helper (so a
+// SCHEDULED exam becomes ACTIVE automatically during its window).
+model Exam {
+  id                   String    @id @default(cuid())
+  title                String
+  description          String?
+  instructions         String?
+  classId              String
+  subjectId            String
+  teacherId            String? // teacher who created it (admin-created exams keep this null)
+  academicSession      String
+  term                 String
+  startAt              DateTime
+  endAt                DateTime
+  durationMinutes      Int
+  totalMarks           Int       @default(100)
+  passMark             Int       @default(0)
+  maxAttempts          Int       @default(1)
+  status               String    @default("DRAFT") // DRAFT | SCHEDULED | ACTIVE | COMPLETED | ARCHIVED
+  restrictToAssigned   Boolean   @default(false) // true = only examAssignments students may take it
+  showResults          Boolean   @default(false) // students may view released results
+  allowAnswerReview    Boolean   @default(false) // students may view correct answers
+  shuffleQuestions     Boolean   @default(true)
+  publishedAt          DateTime?
+  createdById          String? // user who created the exam
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  class         Class             @relation(fields: [classId], references: [id], onDelete: Cascade)
+  subject       Subject           @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  teacher       Teacher?          @relation(fields: [teacherId], references: [id], onDelete: SetNull)
+  createdBy     User?             @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  questions     ExamQuestion[]
+  assignments   ExamAssignment[]
+  attempts      ExamAttempt[]
+  results       ExamResult[]
+
+  @@index([classId])
+  @@index([subjectId])
+  @@index([teacherId])
+  @@index([status])
+  @@index([academicSession, term])
+  @@index([startAt])
+  @@map("exams")
+}
+
+// Question types are stored as strings so additional types (e.g. MATCHING,
+// FILL_BLANK) can be added later without a schema change. Multiple choice and
+// true/false questions are auto-graded against a snapshot of the correct
+// value; written questions are graded manually using `guidance`.
+model ExamQuestion {
+  id            String   @id @default(cuid())
+  examId        String
+  type          String // MULTIPLE_CHOICE | TRUE_FALSE | SHORT_ANSWER | LONG_ANSWER
+  question      String
+  marks         Int
+  correctAnswer String? // MC = option key (A/B/C/D), TF = "true" | "false"
+  guidance      String? // optional marking guidance for written questions
+  position      Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  exam    Exam                  @relation(fields: [examId], references: [id], onDelete: Cascade)
+  options ExamQuestionOption[]
+  answers ExamAnswer[]
+
+  @@index([examId])
+  @@map("exam_questions")
+}
+
+model ExamQuestionOption {
+  id         String @id @default(cuid())
+  questionId String
+  key        String // A, B, C, D...
+  text       String
+  isCorrect  Boolean @default(false)
+
+  question ExamQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([questionId])
+  @@map("exam_question_options")
+}
+
+// Optional allow-list used when an exam is restricted to specific students.
+model ExamAssignment {
+  examId    String
+  studentId String
+  createdAt DateTime @default(now())
+
+  exam    Exam    @relation(fields: [examId], references: [id], onDelete: Cascade)
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@id([examId, studentId])
+  @@index([studentId])
+  @@map("exam_assignments")
+}
+
+// One student's run of an exam. A student may hold multiple attempts only up to
+// Exam.maxAttempts; each attempt is identified by (exam, student, attemptNumber).
+model ExamAttempt {
+  id            String    @id @default(cuid())
+  examId        String
+  studentId     String
+  attemptNumber Int       @default(1)
+  startedAt     DateTime  @default(now())
+  expiresAt     DateTime
+  submittedAt   DateTime?
+  status        String    @default("IN_PROGRESS") // IN_PROGRESS | SUBMITTED | TIMED_OUT | ABANDONED
+  autoScore     Float     @default(0)
+  manualScore   Float     @default(0)
+  totalScore    Float?
+  percentage    Float?
+  passed        Boolean?
+  gradedAt      DateTime?
+  gradedBy      String? // user id of the teacher who finished manual grading
+  lastSavedAt   DateTime?
+
+  exam    Exam          @relation(fields: [examId], references: [id], onDelete: Cascade)
+  student Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  answers ExamAnswer[]
+  result  ExamResult?
+
+  @@unique([examId, studentId, attemptNumber])
+  @@index([studentId])
+  @@index([status])
+  @@index([examId])
+  @@map("exam_attempts")
+}
+
+// A student answer. Snapshot fields preserve the type/marks/correct value at
+// submission time so grading is stable even if the question is edited later.
+model ExamAnswer {
+  id            String   @id @default(cuid())
+  attemptId     String
+  questionId    String
+  questionType  String // snapshot of question type at submission
+  questionMarks Int // snapshot of question marks at submission
+  selectedKey   String? // MC/TF answer selected by the student
+  textValue     String? // written answer
+  isCorrect     Boolean?
+  awardedMarks  Float?
+  feedback      String?
+  gradedBy      String?
+  gradedAt      DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  attempt  ExamAttempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question ExamQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([attemptId, questionId])
+  @@index([attemptId])
+  @@map("exam_answers")
+}
+
+// Released result for a completed attempt. Only shown to students when
+// Exam.showResults is enabled and releasedAt is set.
+model ExamResult {
+  id              String    @id @default(cuid())
+  examId          String
+  attemptId       String    @unique
+  studentId       String
+  score           Float
+  totalMarks      Int
+  percentage      Float
+  grade           String?
+  passed          Boolean
+  teacherFeedback String?
+  releasedAt      DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  exam    Exam         @relation(fields: [examId], references: [id], onDelete: Cascade)
+  attempt ExamAttempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  student Student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([examId])
+  @@index([studentId])
+  @@map("exam_results")
 }

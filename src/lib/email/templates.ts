@@ -564,6 +564,88 @@ export const adminAlertTemplate = ({ title, details }: AdminAlertData): { subjec
   };
 };
 
+// ============================================================
+// EXAMINATION TEMPLATES
+// ============================================================
+
+export interface ExamPublishedData {
+  recipientName: string;
+  title: string;
+  subjectName: string;
+  className: string;
+  startAt: string;
+  endAt: string;
+  durationMinutes: number;
+}
+
+export const examPublishedTemplate = ({ recipientName, title, subjectName, className, startAt, endAt, durationMinutes }: ExamPublishedData): { subject: string; html: string } => ({
+  subject: `New examination: ${title} — STAR DreamWorks Schools`,
+  html: wrap(
+    `Examination: ${title}`,
+    `${heading(`New examination scheduled: ${title}`)}
+    ${paragraph(`Dear ${recipientName},`)}
+    ${paragraph(`An examination has been scheduled for your class. Please review the details below and prepare accordingly.`)}
+    ${infoBlock(
+      `${infoRow("Subject", subjectName)}
+       ${infoRow("Class", className)}
+       ${infoRow("Starts", startAt)}
+       ${infoRow("Ends", endAt)}
+       ${infoRow("Duration", `${durationMinutes} minutes`)}`)}
+    ${button("Open portal", `${APP_URL}/login`)}`
+  ),
+});
+
+export interface ExamSubmittedData {
+  recipientName: string;
+  title: string;
+  subjectName: string;
+  autoScore: number;
+  totalMarks: number;
+}
+
+export const examSubmittedTemplate = ({ recipientName, title, subjectName, autoScore, totalMarks }: ExamSubmittedData): { subject: string; html: string } => ({
+  subject: `Examination submitted: ${title} — STAR DreamWorks Schools`,
+  html: wrap(
+    `Submission: ${title}`,
+    `${heading(`Examination submitted: ${title}`)}
+    ${paragraph(`Dear ${recipientName},`)}
+    ${paragraph(`Your examination for <strong>${esc(subjectName)}</strong> has been submitted successfully. Your response has been recorded and graded where applicable.`)}
+    ${infoBlock(
+      `${infoRow("Subject", subjectName)}
+       ${infoRow("Auto-graded score", `${autoScore} / ${totalMarks}`)}
+       ${infoRow("Status", "Awaiting full grading")}`)}
+    ${button("View portal", `${APP_URL}/login`)}`
+  ),
+});
+
+export interface ExamResultData {
+  recipientName: string;
+  title: string;
+  subjectName: string;
+  score: number;
+  totalMarks: number;
+  percentage: number;
+  grade?: string | null;
+  passed: boolean;
+}
+
+export const examResultTemplate = ({ recipientName, title, subjectName, score, totalMarks, percentage, grade, passed }: ExamResultData): { subject: string; html: string } => ({
+  subject: `Examination result: ${title} — STAR DreamWorks Schools`,
+  html: wrap(
+    `Result: ${title}`,
+    `${heading(`Your examination result is available: ${title}`)}
+    ${paragraph(`Dear ${recipientName},`)}
+    ${paragraph(grade ? `Your result for <strong>${esc(subjectName)}</strong> has been released. You scored <strong>${grade}</strong>.` : `Your result for <strong>${esc(subjectName)}</strong> has been released. You scored <strong>${Math.round(percentage)}%</strong>.`)}
+    ${infoBlock(
+      `${infoRow("Subject", subjectName)}
+       ${infoRow("Score", `${score} / ${totalMarks}`)}
+       ${infoRow("Percentage", `${Math.round(percentage)}%`)}
+       ${grade ? infoRow("Grade", grade) : ""}
+       ${infoRow("Status", passed ? "Passed" : "Did not pass")}`)}
+    ${button("View result in portal", `${APP_URL}/login`)}`
+  ),
+});
+
 export const sendTestTemplate = (): { subject: string; html: string } => ({
   subject: "STAR DreamWorks Schools — email service test",
   html: wrap(

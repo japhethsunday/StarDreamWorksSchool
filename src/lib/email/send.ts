@@ -22,6 +22,9 @@ export type EmailType =
   | "LEARNING_MATERIAL"
   | "ACADEMIC_UPDATE"
   | "GRADE_PUBLISHED"
+  | "EXAM_PUBLISHED"
+  | "EXAM_SUBMITTED"
+  | "EXAM_RESULT_RELEASED"
   | "SYSTEM_ALERT";
 
 export interface SendEmailInput {

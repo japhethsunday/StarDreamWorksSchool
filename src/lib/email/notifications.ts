@@ -10,6 +10,9 @@ import {
   learningMaterialTemplate,
   passwordChangedTemplate,
   submissionGradedTemplate,
+  examPublishedTemplate,
+  examSubmittedTemplate,
+  examResultTemplate,
 } from "./templates";
 
 interface EmailRecipient {
@@ -35,7 +38,7 @@ const uniqueRecipients = (list: EmailRecipient[]): EmailRecipient[] => {
  * Preference field associated with each gated EmailType. Types not listed here
  * are always delivered (account, security, admissions, system alerts).
  */
-const PREF_FIELD: Partial<Record<EmailType, "assignment" | "grade" | "feedback" | "announcements" | "materials" | "academicUpdates">> = {
+const PREF_FIELD: Partial<Record<EmailType, "assignment" | "grade" | "feedback" | "announcements" | "materials" | "academicUpdates" | "exams">> = {
   ASSIGNMENT_PUBLISHED: "assignment",
   ASSIGNMENT_SUBMITTED: "assignment",
   ASSIGNMENT_REMINDER: "assignment",
@@ -45,6 +48,9 @@ const PREF_FIELD: Partial<Record<EmailType, "assignment" | "grade" | "feedback" 
   ANNOUNCEMENT: "announcements",
   LEARNING_MATERIAL: "materials",
   ACADEMIC_UPDATE: "academicUpdates",
+  EXAM_PUBLISHED: "exams",
+  EXAM_SUBMITTED: "exams",
+  EXAM_RESULT_RELEASED: "exams",
 };
 
 /** Filters recipients by their notification preferences. Users without a
@@ -674,4 +680,167 @@ export async function sendPasswordChangedEmail(input: {
     refId: input.userId,
     userId: input.userId,
   });
+}
+
+// ============================================================
+// EXAMINATION NOTIFICATIONS
+// ============================================================
+
+/** A new examination was scheduled → notify the target class (students + parents). */
+export async function sendExamPublishedEmails(exam: {
+  id: string;
+  title: string;
+  subjectName: string;
+  className: string;
+  startAt: string;
+  endAt: string;
+  durationMinutes: number;
+}): Promise<void> {
+  const resolve = await prisma.exam.findUnique({
+    where: { id: exam.id },
+    select: { classId: true },
+  });
+  if (!resolve) return;
+  const classRecips = await applyPreferences(
+    await classRecipients(resolve.classId),
+    "EXAM_PUBLISHED"
+  );
+
+  for (const recipient of classRecips) {
+    const { subject, html } = examPublishedTemplate({
+      recipientName: recipient.name,
+      title: exam.title,
+      subjectName: exam.subjectName,
+      className: exam.className,
+      startAt: new Date(exam.startAt).toLocaleString("en-GB", {
+        day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit",
+      }),
+      endAt: new Date(exam.endAt).toLocaleString("en-GB", {
+        day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit",
+      }),
+      durationMinutes: exam.durationMinutes,
+    });
+    await sendEmail({
+      type: "EXAM_PUBLISHED",
+      to: recipient.email,
+      subject,
+      html,
+      refId: exam.id,
+      userId: recipient.userId,
+    });
+  }
+}
+
+/** A student submitted an examination → confirmation to the student. */
+export async function sendExamSubmittedEmail(input: {
+  examId: string;
+  attemptId: string;
+  title: string;
+  subjectName: string;
+  studentId: string;
+  autoScore: number;
+  totalMarks: number;
+}): Promise<void> {
+  const attempt = await prisma.examAttempt.findUnique({
+    where: { id: input.attemptId },
+    select: {
+      student: {
+        select: {
+          userId: true,
+          user: { select: { name: true, email: true, isActive: true } },
+        },
+      },
+    },
+  });
+  if (!attempt?.student?.userId) return;
+  const recipients = await applyPreferences(
+    [{ name: attempt.student.user.name, email: attempt.student.user.email, userId: attempt.student.userId }],
+    "EXAM_SUBMITTED"
+  );
+  for (const recipient of recipients) {
+    const { subject, html } = examSubmittedTemplate({
+      recipientName: recipient.name,
+      title: input.title,
+      subjectName: input.subjectName,
+      autoScore: input.autoScore,
+      totalMarks: input.totalMarks,
+    });
+    await sendEmail({
+      type: "EXAM_SUBMITTED",
+      to: recipient.email,
+      subject,
+      html,
+      refId: input.attemptId,
+      userId: recipient.userId,
+    });
+  }
+}
+
+/** A result was released → notify the student (and parents via their pref). */
+export async function sendExamResultEmail(input: {
+  examId: string;
+  title: string;
+  subjectName: string;
+  studentId: string;
+  score: number;
+  totalMarks: number;
+  percentage: number;
+  grade?: string | null;
+  passed: boolean;
+}): Promise<void> {
+  const student = await prisma.student.findUnique({
+    where: { id: input.studentId },
+    select: {
+      firstName: true,
+      lastName: true,
+      userId: true,
+      user: { select: { name: true, email: true, isActive: true } },
+      parentLinks: {
+        select: {
+          parent: {
+            select: {
+              firstName: true,
+              lastName: true,
+              userId: true,
+              user: { select: { name: true, email: true, isActive: true } },
+            },
+          },
+        },
+      },
+    },
+  });
+  if (!student) return;
+
+  const recipients: EmailRecipient[] = [
+    ...(student.user.isActive && student.user.email
+      ? [{ name: student.user.name || `${student.firstName} ${student.lastName}`, email: student.user.email, userId: student.userId }]
+      : []),
+  ];
+  for (const link of student.parentLinks) {
+    const parent = link.parent;
+    if (parent.user.isActive && parent.user.email) {
+      recipients.push({ name: parent.user.name || `${parent.firstName} ${parent.lastName}`, email: parent.user.email, userId: parent.userId });
+    }
+  }
+
+  for (const recipient of await applyPreferences(uniqueRecipients(recipients), "EXAM_RESULT_RELEASED")) {
+    const { subject, html } = examResultTemplate({
+      recipientName: recipient.name,
+      title: input.title,
+      subjectName: input.subjectName,
+      score: input.score,
+      totalMarks: input.totalMarks,
+      percentage: input.percentage,
+      grade: input.grade,
+      passed: input.passed,
+    });
+    await sendEmail({
+      type: "EXAM_RESULT_RELEASED",
+      to: recipient.email,
+      subject,
+      html,
+      refId: `${input.examId}:${input.studentId}`,
+      userId: recipient.userId,
+    });
+  }
 }

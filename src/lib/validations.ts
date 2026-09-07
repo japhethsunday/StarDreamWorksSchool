@@ -101,6 +101,61 @@ export const createEventSchema = z.object({
   isPublished: z.boolean().default(false),
 });
 
+export const QUESTION_TYPES = [
+  "MULTIPLE_CHOICE",
+  "TRUE_FALSE",
+  "SHORT_ANSWER",
+  "LONG_ANSWER",
+] as const;
+
+export type QuestionType = (typeof QUESTION_TYPES)[number];
+
+export const examStatusSchema = z.enum(["DRAFT", "SCHEDULED", "ACTIVE", "COMPLETED", "ARCHIVED"]);
+
+export const createExamSchema = z.object({
+  title: z.string().min(1, "Exam title is required"),
+  description: z.string().optional(),
+  instructions: z.string().optional(),
+  classId: z.string().min(1, "Class is required"),
+  subjectId: z.string().min(1, "Subject is required"),
+  teacherId: z.string().optional(),
+  academicSession: z.string().min(1, "Academic session is required"),
+  term: z.enum(["FIRST", "SECOND", "THIRD"], { required_error: "Term is required" }),
+  startAt: z.string().min(1, "Start time is required"),
+  endAt: z.string().min(1, "End time is required"),
+  durationMinutes: z.number().int().min(1, "Duration must be at least 1 minute"),
+  passMark: z.number().int().min(0).default(0),
+  maxAttempts: z.number().int().min(1).max(10).default(1),
+  status: examStatusSchema.default("DRAFT"),
+  restrictToAssigned: z.boolean().default(false),
+  assignedStudentIds: z.array(z.string()).optional(),
+  showResults: z.boolean().default(false),
+  allowAnswerReview: z.boolean().default(false),
+  shuffleQuestions: z.boolean().default(true),
+});
+
+export const examQuestionSchema = z.object({
+  id: z.string().optional(),
+  type: z.enum(QUESTION_TYPES),
+  question: z.string().min(1, "Question text is required"),
+  marks: z.number().int().min(1, "Marks must be at least 1"),
+  correctAnswer: z.string().nullable().optional(),
+  guidance: z.string().optional(),
+  options: z
+    .array(
+      z.object({
+        key: z.string().min(1),
+        text: z.string().min(1, "Option text is required"),
+        isCorrect: z.boolean().default(false),
+      })
+    )
+    .optional(),
+  position: z.number().int().min(0).optional(),
+});
+
+export type CreateExamInput = z.infer<typeof createExamSchema>;
+export type CreateExamQuestionInput = z.infer<typeof examQuestionSchema>;
+
 export type LoginInput = z.infer<typeof loginSchema>;
 export type CreateStudentInput = z.infer<typeof createStudentSchema>;
 export type CreateTeacherInput = z.infer<typeof createTeacherSchema>;

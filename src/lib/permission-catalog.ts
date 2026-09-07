@@ -5,6 +5,7 @@ export const PERMISSION_CATALOG = [
   { key: "MANAGE_CLASSES", label: "Manage Classes", description: "Create, edit, and delete classes" },
   { key: "MANAGE_SUBJECTS", label: "Manage Subjects", description: "Create, edit, and delete subjects" },
   { key: "MANAGE_ASSIGNMENTS", label: "Manage Assignments", description: "Create, edit, and delete assignments" },
+  { key: "MANAGE_EXAMS", label: "Manage Examinations", description: "Create, edit, schedule, publish, and grade examinations" },
   { key: "MANAGE_MATERIALS", label: "Manage Materials", description: "Create, edit, and delete learning materials" },
   { key: "MANAGE_ANNOUNCEMENTS", label: "Manage Announcements", description: "Create, edit, publish, and delete announcements" },
   { key: "MANAGE_NEWS", label: "Manage News", description: "Create, edit, publish, and delete news" },
