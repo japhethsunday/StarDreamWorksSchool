@@ -258,7 +258,7 @@ export default function AdminExams() {
 
   const loadStudents = async (classId: string) => {
     try {
-      const res = await fetch(`/api/teacher/classes/${classId}/students`);
+      const res = await fetch(`/api/admin/classes/${classId}/students`);
       if (res.ok) {
         const j = await res.json();
         setStudents(Array.isArray(j.data) ? j.data : []);
