@@ -158,53 +158,51 @@ export async function PUT(
       }
       const existing = await prisma.examQuestion.findMany({ where: { examId: params.id }, select: { id: true } });
       const existingIds = new Set(existing.map((e) => e.id));
-      const total = await prisma.$transaction(async (tx) => {
-        let position = 0;
-        for (const q of parsed) {
-          const payload: any = {
-            type: q.type,
-            question: q.question,
-            marks: q.marks,
-            guidance: q.guidance ?? null,
-            correctAnswer:
-              q.type === "MULTIPLE_CHOICE"
-                ? (q.correctAnswer ?? q.options?.find((o) => o.isCorrect)?.key ?? null)
-                : q.type === "TRUE_FALSE"
-                ? q.correctAnswer
-                : null,
-            position,
-          };
-          if (q.id && existingIds.has(q.id)) {
-            const qid = q.id;
-            // eslint-disable-next-line no-await-in-loop
-            await tx.examQuestion.update({ where: { id: qid }, data: payload });
-            // eslint-disable-next-line no-await-in-loop
-            await tx.examQuestionOption.deleteMany({ where: { questionId: qid } });
-            if (q.type === "MULTIPLE_CHOICE" && q.options) {
-              // eslint-disable-next-line no-await-in-loop
-              await tx.examQuestionOption.createMany({ data: q.options.map((o) => ({ questionId: qid, key: o.key, text: o.text, isCorrect: o.isCorrect })) });
-            }
-            existingIds.delete(qid);
-          } else {
-            // eslint-disable-next-line no-await-in-loop
-            await tx.examQuestion.create({
-              data: {
-                examId: params.id,
-                ...payload,
-                ...(q.type === "MULTIPLE_CHOICE" && q.options
-                  ? { options: { create: q.options.map((o) => ({ key: o.key, text: o.text, isCorrect: o.isCorrect })) } }
-                  : {}),
-              },
-            });
+
+      // NOTE: interactive $transaction(async tx => ...) is NOT used here because
+      // Supabase's pgbouncer (transaction-mode pooling) routes each statement to a
+      // different backend connection, which makes interactive transactions fail
+      // intermittently with "Transaction not found." Sequence the writes instead.
+      let position = 0;
+      for (const q of parsed) {
+        const payload: any = {
+          type: q.type,
+          question: q.question,
+          marks: q.marks,
+          guidance: q.guidance ?? null,
+          correctAnswer:
+            q.type === "MULTIPLE_CHOICE"
+              ? (q.correctAnswer ?? q.options?.find((o) => o.isCorrect)?.key ?? null)
+              : q.type === "TRUE_FALSE"
+              ? q.correctAnswer
+              : null,
+          position,
+        };
+        if (q.id && existingIds.has(q.id)) {
+          const qid = q.id;
+          await prisma.examQuestion.update({ where: { id: qid }, data: payload });
+          await prisma.examQuestionOption.deleteMany({ where: { questionId: qid } });
+          if (q.type === "MULTIPLE_CHOICE" && q.options) {
+            await prisma.examQuestionOption.createMany({ data: q.options.map((o) => ({ questionId: qid, key: o.key, text: o.text, isCorrect: o.isCorrect })) });
           }
-          position += 1;
+          existingIds.delete(qid);
+        } else {
+          await prisma.examQuestion.create({
+            data: {
+              examId: params.id,
+              ...payload,
+              ...(q.type === "MULTIPLE_CHOICE" && q.options
+                ? { options: { create: q.options.map((o) => ({ key: o.key, text: o.text, isCorrect: o.isCorrect })) } }
+                : {}),
+            },
+          });
         }
-        if (existingIds.size) await tx.examQuestion.deleteMany({ where: { id: { in: [...existingIds] } } });
-        const questions = await tx.examQuestion.findMany({ where: { examId: params.id }, select: { marks: true } });
-        const t = totalMarksFromQuestions(questions);
-        await tx.exam.update({ where: { id: params.id }, data: { totalMarks: t } });
-        return t;
-      });
+        position += 1;
+      }
+      if (existingIds.size) await prisma.examQuestion.deleteMany({ where: { id: { in: [...existingIds] } } });
+      const questions = await prisma.examQuestion.findMany({ where: { examId: params.id }, select: { marks: true } });
+      const total = totalMarksFromQuestions(questions);
+      await prisma.exam.update({ where: { id: params.id }, data: { totalMarks: total } });
       await logActivity((session.user as any).id, "UPDATE_EXAM_QUESTIONS", `Updated questions for "${exam.title}"`, clientIp(req));
       return NextResponse.json({ success: true, data: { totalMarks: total } });
     }
