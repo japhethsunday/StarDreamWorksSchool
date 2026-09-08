@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import {
   Bold,
   Italic,
@@ -29,21 +29,81 @@ interface RichTextEditorProps {
 const TOOL_BTN =
   "flex h-8 w-8 items-center justify-center rounded-md text-brand-navy transition-colors hover:bg-brand-paper disabled:opacity-40 disabled:pointer-events-none";
 
+/** Character offsets of the current selection inside `el` (null when unfocused). */
+function saveSelection(el: HTMLElement): { start: number; end: number } | null {
+  const sel = window.getSelection();
+  if (!sel || sel.rangeCount === 0) return null;
+  const range = sel.getRangeAt(0);
+  if (!el.contains(range.startContainer) || !el.contains(range.endContainer)) return null;
+  const pre = range.cloneRange();
+  pre.selectNodeContents(el);
+  pre.setEnd(range.startContainer, range.startOffset);
+  const start = pre.toString().length;
+  const end = start + range.toString().length;
+  return { start, end };
+}
+
+/** Restores a saved selection by character offset across all text nodes of `el`. */
+function restoreSelection(el: HTMLElement, saved: { start: number; end: number } | null) {
+  if (!saved) return;
+  const sel = window.getSelection();
+  if (!sel) return;
+  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+  const textNodes: Text[] = [];
+  let n = walker.nextNode();
+  while (n) {
+    if ((n as Text).nodeValue) textNodes.push(n as Text);
+    n = walker.nextNode();
+  }
+  if (textNodes.length === 0) return;
+  const locate = (target: number): { node: Text; offset: number } => {
+    let acc = 0;
+    for (const node of textNodes) {
+      const len = node.nodeValue?.length ?? 0;
+      if (acc + len >= target) return { node, offset: Math.min(target - acc, len) };
+      acc += len;
+    }
+    const last = textNodes[textNodes.length - 1];
+    return { node: last, offset: last.nodeValue?.length ?? 0 };
+  };
+  try {
+    const startPos = locate(saved.start);
+    const endPos = locate(saved.end);
+    const range = document.createRange();
+    range.setStart(startPos.node, startPos.offset);
+    range.setEnd(endPos.node, endPos.offset);
+    sel.removeAllRanges();
+    sel.addRange(range);
+  } catch {
+    el.focus();
+  }
+}
+
 export default function RichTextEditor({ value, onChange, placeholder }: RichTextEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
+  /** Last HTML string this editor forwarded via onChange — used to tell our own
+   * echoes apart from genuine external value changes so we never rewrite the
+   * DOM (and lose the caret) after every keystroke. */
+  const emittedRef = useRef<string | null>(null);
   const [history, setHistory] = useState<string[]>([]);
   const [future, setFuture] = useState<string[]>([]);
 
-  const exec = useCallback((command: string, arg?: string) => {
-    editorRef.current?.focus();
-    document.execCommand(command, false, arg);
-    syncState();
-  }, []);
-
   const syncState = useCallback(() => {
-    const html = editorRef.current?.innerHTML ?? "";
+    const el = editorRef.current;
+    if (!el) return;
+    const html = el.innerHTML;
+    emittedRef.current = html;
     onChange(html);
   }, [onChange]);
+
+  const exec = useCallback(
+    (command: string, arg?: string) => {
+      editorRef.current?.focus();
+      document.execCommand(command, false, arg);
+      syncState();
+    },
+    [syncState]
+  );
 
   const pushHistory = useCallback(() => {
     const current = editorRef.current?.innerHTML ?? "";
@@ -85,37 +145,54 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
     [history, future, syncState]
   );
 
+  /* On every render, only scribe the DOM when the value genuinely changed
+   * OUTSIDE our own typing (e.g. an external reset). Echoes from onChange are
+   * skipped so the browser's selection inside the contenteditable stays put. */
+  useEffect(() => {
+    const el = editorRef.current;
+    if (!el) return;
+    const incoming = value ?? "";
+    if (incoming === emittedRef.current) return;
+    const saved = saveSelection(el);
+    el.innerHTML = incoming;
+    emittedRef.current = incoming;
+    restoreSelection(el, saved);
+  }, [value]);
+
   const insertLink = useCallback(() => {
     const url = window.prompt("Enter the link URL", "https://");
     if (!url) return;
     exec("createLink", url);
   }, [exec]);
 
-  const addHeading = useCallback((tag: string) => {
-    editorRef.current?.focus();
-    const selection = window.getSelection();
-    let range: Range | null = null;
-    if (selection && selection.rangeCount > 0) {
-      range = selection.getRangeAt(0);
-    }
-    // Wrap the current block (or selection) in the heading tag.
-    try {
-      if (range && !range.collapsed) {
-        const block = document.createElement(tag);
-        try {
-          range.surroundContents(block);
-        } catch {
-          // Complex selections can't be surrounded — fall back to execCommand.
+  const addHeading = useCallback(
+    (tag: string) => {
+      editorRef.current?.focus();
+      const selection = window.getSelection();
+      let range: Range | null = null;
+      if (selection && selection.rangeCount > 0) {
+        range = selection.getRangeAt(0);
+      }
+      // Wrap the current block (or selection) in the heading tag.
+      try {
+        if (range && !range.collapsed) {
+          const block = document.createElement(tag);
+          try {
+            range.surroundContents(block);
+          } catch {
+            // Complex selections can't be surrounded — fall back to execCommand.
+            document.execCommand("formatBlock", false, tag);
+          }
+        } else {
           document.execCommand("formatBlock", false, tag);
         }
-      } else {
+      } catch {
         document.execCommand("formatBlock", false, tag);
       }
-    } catch {
-      document.execCommand("formatBlock", false, tag);
-    }
-    syncState();
-  }, [syncState]);
+      syncState();
+    },
+    [syncState]
+  );
 
   return (
     <div className="rounded-xl border border-brand-line bg-white overflow-hidden focus-within:border-brand-green focus-within:ring-2 focus-within:ring-brand-green/20 transition-shadow">
@@ -181,7 +258,6 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
         data-placeholder={placeholder || "Write your email content here…"}
         onInput={handleInput}
         onKeyDown={handleKeyDown}
-        dangerouslySetInnerHTML={{ __html: value }}
       />
       <style jsx global>{`
         [data-placeholder]:empty:before {
