@@ -20,7 +20,7 @@ async function authorizedStudent() {
 // Which exams a student may write: exams for their class, optionally restricted
 // via ExamAssignment to an allow-list. Also show archived ones? No — students
 // only see DRAFT(->SCHEDULED), SCHEDULED, ACTIVE, COMPLETED (never DRAFT/ARCHIVED).
-export async function GET(req: Request) {
+export async function GET() {
   try {
     const auth = await authorizedStudent();
     if (auth.error || !auth.session || !auth.student) return auth.error!;

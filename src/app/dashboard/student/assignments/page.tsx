@@ -8,7 +8,6 @@ import {
   Send,
   Eye,
   CheckCircle2,
-  X,
   BookOpen,
   Link2,
 } from "lucide-react";

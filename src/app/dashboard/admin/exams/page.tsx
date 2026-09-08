@@ -148,7 +148,7 @@ export default function AdminExams() {
   const [filter, setFilter] = useState({ classId: "", subjectId: "", status: "" });
 
   const [createOpen, setCreateOpen] = useState(false);
-  const [editing, setEditing] = useState<AdminExamRow | null>(null);
+  const [, setEditing] = useState<AdminExamRow | null>(null);
   const [submittingCreate, setSubmittingCreate] = useState(false);
   const [createError, setCreateError] = useState("");
   const [form, setForm] = useState({
@@ -652,7 +652,7 @@ export default function AdminExams() {
           <div>
             <label className="block text-[13px] font-medium text-gray-600 mb-1">Status</label>
             <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })} className="w-full rounded-lg border border-brand-line px-3.5 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-red/40">
-              <option value="DRAFT">Draft (save, don't notify)</option>
+              <option value="DRAFT">Draft (save, don&apos;t notify)</option>
               <option value="SCHEDULED">Publish now (notify students)</option>
             </select>
           </div>
@@ -713,7 +713,7 @@ export default function AdminExams() {
                 <DataTable
                   columns={[
                     { key: "studentName", label: "Student" },
-                    { key: "score", label: "Score", render: (v, row: AdminDetail["results"][number]) => `${v} / ${detail.exam.totalMarks}` },
+                    { key: "score", label: "Score", render: (v) => `${v} / ${detail.exam.totalMarks}` },
                     { key: "percentage", label: "%", render: (v) => `${Math.round(v)}%` },
                     { key: "grade", label: "Grade", render: (v) => <span className="font-bold text-brand-navy">{v ?? "—"}</span> },
                     { key: "passed", label: "Passed", render: (v) => v ? <span className="text-green-600 font-bold">Yes</span> : <span className="text-red-600 font-bold">No</span> },

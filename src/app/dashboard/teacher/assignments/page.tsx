@@ -9,7 +9,6 @@ import {
   Eye,
   BookOpen,
   Users,
-  X,
   Save,
 } from "lucide-react";
 import { isSafeUrl } from "@/lib/utils";

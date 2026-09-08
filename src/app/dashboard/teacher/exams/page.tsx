@@ -673,7 +673,7 @@ export default function TeacherExams() {
           <div>
             <label className="block text-[13px] font-medium text-gray-600 mb-1">Status</label>
             <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })} className="w-full rounded-lg border border-brand-line px-3.5 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-red/40">
-              <option value="DRAFT">Draft (save, don't notify)</option>
+              <option value="DRAFT">Draft (save, don&apos;t notify)</option>
               <option value="SCHEDULED">Publish now (notify students)</option>
             </select>
           </div>
@@ -700,7 +700,7 @@ export default function TeacherExams() {
               { key: "studentName", label: "Student", render: (_v, row: AttemptRow) => `${row.student.firstName} ${row.student.lastName} (${row.student.studentId})` },
               { key: "attemptNumber", label: "Attempt" },
               { key: "status", label: "Status", render: (v) => <StatusBadge status={v} /> },
-              { key: "totalScore", label: "Score", render: (v, row: AttemptRow) => (v !== null ? `${v}` : "—") },
+              { key: "totalScore", label: "Score", render: (v) => (v !== null ? `${v}` : "—") },
               { key: "percentage", label: "%", render: (v) => (v !== null ? `${Math.round(v)}%` : "—") },
               { key: "passed", label: "Passed", render: (v) => v === null ? "—" : v ? <span className="text-green-600 font-bold">Yes</span> : <span className="text-red-600 font-bold">No</span> },
               {
@@ -864,7 +864,7 @@ export default function TeacherExams() {
                   ) : (
                     <>
                       <div className="rounded-lg bg-brand-paper border border-brand-line px-3.5 py-2.5">
-                        <p className="text-[11px] font-bold uppercase tracking-widest text-gray-400 mb-1">Student's answer</p>
+                        <p className="text-[11px] font-bold uppercase tracking-widest text-gray-400 mb-1">Student&apos;s answer</p>
                         <p className="text-[13px] text-gray-700 whitespace-pre-line">{answer?.textValue || "— no answer given —"}</p>
                       </div>
                       <div className="grid grid-cols-2 gap-3">

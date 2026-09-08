@@ -105,7 +105,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { title, content, classId, priority, isPublished, targetType } = body;
+    const { title, content, classId, priority, isPublished } = body;
 
     if (!title || !title.trim()) {
       return NextResponse.json(

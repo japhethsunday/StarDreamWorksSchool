@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from "react";
 import {
   Image as ImageIcon,
-  Plus,
   Trash2,
   Loader2,
   AlertCircle,

@@ -398,6 +398,17 @@ model EducationalLevel {
   @@map("educational_levels")
 }
 
+// Persistent, serverless-safe fixed-window rate limiter (shared store across
+// Vercel instances). Keys are request identifiers (e.g. "login:<ip>").
+model RateLimit {
+  key       String   @id
+  count     Int      @default(1)
+  expiresAt DateTime
+
+  @@index([expiresAt])
+  @@map("rate_limits")
+}
+
 // Key/value store for admin-editable website content and school information.
 model SiteSetting {
   id        String   @id @default(cuid())

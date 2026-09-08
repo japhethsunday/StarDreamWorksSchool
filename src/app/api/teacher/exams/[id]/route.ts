@@ -5,7 +5,6 @@ import { prisma } from "@/lib/prisma";
 import { examQuestionSchema, type CreateExamQuestionInput } from "@/lib/validations";
 import { totalMarksFromQuestions } from "@/lib/exams";
 import { logActivity, clientIp } from "@/lib/activity";
-import { sendExamSubmittedEmail } from "@/lib/email/notifications";
 
 async function authorizedTeacher() {
   const session = await getServerSession(authOptions);

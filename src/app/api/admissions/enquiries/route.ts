@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
       || request.headers.get("x-real-ip")
       || "unknown";
-    const rl = rateLimit(`admissions:${ip}`, 5, 15 * 60 * 1000);
+    const rl = await rateLimit(`admissions:${ip}`, 5, 15 * 60 * 1000);
     if (!rl.ok) {
       return NextResponse.json(
         { success: false, error: "Too many requests. Please try again later." },

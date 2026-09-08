@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Loader2, Mail, PenSquare, RotateCcw, Search, AlertCircle, Users, Eye, CheckCircle2, XCircle, Clock3 } from "lucide-react";
+import { Mail, PenSquare, RotateCcw, Search, AlertCircle, Users, Eye, CheckCircle2, XCircle, Clock3 } from "lucide-react";
 import DataTable from "@/components/dashboard/DataTable";
 import Modal from "@/components/dashboard/Modal";
 import EmptyState from "@/components/dashboard/EmptyState";
@@ -174,7 +174,6 @@ export default function AdminEmailsPage() {
   const [campaignsTotal, setCampaignsTotal] = useState(0);
   const [campaignsPage, setCampaignsPage] = useState(1);
   const [campaignsStatus, setCampaignsStatus] = useState("");
-  const [campaignsSearch, setCampaignsSearch] = useState("");
   const [campaignsQ, setCampaignsQ] = useState("");
   const [campaignsLoading, setCampaignsLoading] = useState(true);
   const [campaignsError, setCampaignsError] = useState("");
@@ -292,7 +291,7 @@ export default function AdminEmailsPage() {
     {
       key: "subject",
       label: "Subject",
-      render: (v: string, row: CampaignRow) => (
+      render: (v: string) => (
         <span className="block max-w-[280px] truncate font-medium text-brand-navy">{v}</span>
       ),
     },

@@ -4,10 +4,12 @@ import { prisma } from "./prisma";
 import { NextResponse } from "next/server";
 
 /**
- * The platform's highest-level administrative account. The hard-coded email
- * is part of the authorization rule: Admin Management is reserved for this
- * exact account, and no other account can gain these permissions through the
- * application — there is no endpoint that can set isSuperAdmin.
+ * The platform's highest-level administrative account. The designated email
+ * is configured via SUPER_ADMIN_EMAIL (falling back to the historical value
+ * for local development). It is part of the authorization rule: Admin
+ * Management is reserved for this exact account, and no other account can
+ * gain these permissions through the application — there is no endpoint that
+ * can set isSuperAdmin.
  *
  * The rule is enforced with BOTH checks:
  *  1. The signed-in session must belong to this exact email.
@@ -16,7 +18,11 @@ import { NextResponse } from "next/server";
  * Even a JWT crafted with this email is useless without the database flag,
  * and the database flag can never be enabled through the API.
  */
-export const SUPER_ADMIN_EMAIL = "japhethsunday5@gmail.com";
+const SUPER_ADMIN_EMAIL_RAW: string =
+  (process.env.SUPER_ADMIN_EMAIL || "japhethsunday5@gmail.com").trim();
+
+/** Normalized (lowercase, trimmed) super admin email. Never sent to the client. */
+export const SUPER_ADMIN_EMAIL: string = SUPER_ADMIN_EMAIL_RAW.toLowerCase();
 
 type SuperAdminResult =
   | { ok: true; userId: string }
@@ -39,8 +45,12 @@ export async function requireSuperAdmin(): Promise<SuperAdminResult> {
     };
   }
 
-  const sessionUser = session.user as any;
-  if (sessionUser.role !== "ADMIN" || sessionUser.email !== SUPER_ADMIN_EMAIL) {
+  const sessionUser = session.user as {
+    role?: string;
+    email?: string | null;
+    id?: string;
+  };
+  if (sessionUser.role !== "ADMIN" || !isSuperAdminEmail(sessionUser.email)) {
     return {
       ok: false,
       response: NextResponse.json(
@@ -65,7 +75,7 @@ export async function requireSuperAdmin(): Promise<SuperAdminResult> {
     };
   }
 
-  return { ok: true, userId: sessionUser.id };
+  return { ok: true, userId: sessionUser.id ?? user.id };
 }
 
 export function isSuperAdminEmail(email: string | undefined | null): boolean {

@@ -14,7 +14,6 @@ import {
   Image as ImageIcon,
   File,
   FileType,
-  Save,
   Loader2,
 } from "lucide-react";
 import { isSafeUrl } from "@/lib/utils";

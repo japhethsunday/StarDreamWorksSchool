@@ -136,6 +136,13 @@ export async function PUT(
     } = body;
     const nextActive = typeof isActive === "boolean" ? isActive : wasActive;
 
+    if (password && String(password).length < 8) {
+      return NextResponse.json(
+        { success: false, error: "Password must be at least 8 characters." },
+        { status: 400 }
+      );
+    }
+
     if (email) {
       const existing = await prisma.user.findFirst({
         where: {

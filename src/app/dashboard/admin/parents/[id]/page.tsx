@@ -384,7 +384,7 @@ export default function ParentProfilePage() {
               <ActivityTimeline userId={parent.userId} limit={40} />
             ) : (
               <p className="text-sm text-brand-muted text-center py-8">
-                You need the "View Activity Log" permission to view activity for this parent.
+                You need the &quot;View Activity Log&quot; permission to view activity for this parent.
               </p>
             )
           )}

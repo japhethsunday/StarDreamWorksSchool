@@ -67,7 +67,7 @@ function StudentTakeExam({ examId }: { examId: string }) {
   const [phase, setPhase] = useState<"loading" | "start" | "running" | "error">("loading");
   const [failed, setFailed] = useState("");
   const [exam, setExam] = useState<ExamDTO | null>(null);
-  const [questions, setQuestions] = useState<QuestionDTO[]>([]);
+  const [, setQuestions] = useState<QuestionDTO[]>([]);
   const [order, setOrder] = useState<QuestionDTO[]>([]);
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState<Answers>({});

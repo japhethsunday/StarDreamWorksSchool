@@ -23,20 +23,6 @@ const ROLE_PREFIXES: Record<string, string[]> = {
   PARENT: ["/api/parent/", "/api/notifications/"],
 };
 
-// Simple in-memory rate limit for login (POST only)
-const LOGIN_ATTEMPTS = new Map<string, { count: number; resetAt: number }>();
-
-function checkLoginRateLimit(key: string, limit: number, windowMs: number): boolean {
-  const now = Date.now();
-  const entry = LOGIN_ATTEMPTS.get(key);
-  if (!entry || now > entry.resetAt) {
-    LOGIN_ATTEMPTS.set(key, { count: 1, resetAt: now + windowMs });
-    return true;
-  }
-  entry.count++;
-  return entry.count <= limit;
-}
-
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const response = NextResponse.next();
@@ -59,12 +45,12 @@ export function middleware(request: NextRequest) {
   response.headers.delete("X-Powered-By");
   response.headers.delete("Server");
 
-  // Content-Security-Policy — restrictive baseline
+  // Content-Security-Policy — restrictive baseline. No unsafe-eval.
   response.headers.set(
     "Content-Security-Policy",
     [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live https://va.vercel-scripts.com",
+      "script-src 'self' 'unsafe-inline' https://vercel.live https://va.vercel-scripts.com",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: blob: https://res.cloudinary.com https://placehold.co https://*.cloudinary.com",
@@ -75,19 +61,6 @@ export function middleware(request: NextRequest) {
       "form-action 'self'",
     ].join("; ")
   );
-
-  // ── Login Rate Limiting ──────────────────────────────────────────
-  if (pathname === "/api/auth/callback/credentials" && request.method === "POST") {
-    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
-      || request.headers.get("x-real-ip")
-      || "unknown";
-    if (!checkLoginRateLimit(`login:${ip}`, 10, 15 * 60 * 1000)) {
-      return NextResponse.json(
-        { success: false, error: "Too many login attempts. Please try again later." },
-        { status: 429 }
-      );
-    }
-  }
 
   // ── API Auth Guard ────────────────────────────────────────────────
   if (pathname.startsWith("/api/") && !isPublicRoute(pathname)) {

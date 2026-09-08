@@ -123,7 +123,6 @@ export function gradeAuto(
  */
 export async function refreshExamStatuses(): Promise<void> {
   try {
-    const now = new Date();
     const exams = await prisma.exam.findMany({
       where: { status: { in: ["SCHEDULED", "ACTIVE"] } },
       select: { id: true, status: true, startAt: true, endAt: true },

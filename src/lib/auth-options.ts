@@ -3,9 +3,34 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "./prisma";
 import { logActivity } from "./activity";
+import { rateLimit } from "./rate-limit";
+
+/** 10 login attempts per client IP per 15-minute window. */
+const LOGIN_LIMIT = 10;
+const LOGIN_WINDOW_MS = 15 * 60 * 1000;
+
+/** Reads a header from either a WHATWG Headers instance or a plain object. */
+function headerValue(
+  headers: Record<string, unknown> | Headers | undefined,
+  key: string
+): string | undefined {
+  if (!headers) return undefined;
+  if (headers instanceof Headers) return headers.get(key) ?? undefined;
+  const value = headers[key] as string | string[] | undefined;
+  return Array.isArray(value) ? value[0] : value;
+}
+
+/** Resolves the best-effort client IP from the request headers. */
+function loginIp(req: { headers?: Record<string, unknown> | Headers } | undefined): string {
+  if (!req) return "unknown";
+  return (
+    headerValue(req.headers, "x-forwarded-for")?.split(",")[0]?.trim() ||
+    headerValue(req.headers, "x-real-ip") ||
+    "unknown"
+  );
+}
 
 export const authOptions: NextAuthOptions = {
-  trustHost: true,
   providers: [
     CredentialsProvider({
       name: "credentials",
@@ -13,9 +38,17 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Invalid email or password");
+        }
+
+        // Distributed brute-force protection. Runs BEFORE the user lookup and
+        // password verification so attackers cannot force expensive bcrypt
+        // work against the database-backed limiter.
+        const rl = await rateLimit(`login:${loginIp(req)}`, LOGIN_LIMIT, LOGIN_WINDOW_MS);
+        if (!rl.ok) {
+          throw new Error("Too many login attempts. Please try again later.");
         }
 
         const user = await prisma.user.findUnique({

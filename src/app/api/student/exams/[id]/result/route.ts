@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
-import { effectiveStatus } from "@/lib/exams";
 
 async function authorizedStudent() {
   const session = await getServerSession(authOptions);
@@ -47,7 +46,7 @@ export async function GET(
     }
 
     const answerReview = exam.allowAnswerReview;
-    let details: any[] = [
+    const details: any[] = [
       { label: "Examination", value: exam.title },
       { label: "Subject", value: exam.subject.name },
       { label: "Score", value: `${result.score} / ${result.totalMarks}` },

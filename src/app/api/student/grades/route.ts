@@ -70,7 +70,7 @@ export async function GET(req: Request) {
       _count: true,
     });
 
-    let highest = await prisma.grade.groupBy({
+    const highest = await prisma.grade.groupBy({
       by: ["subjectId"],
       where: { studentId: student.id, academicSession },
       _max: { score: true },

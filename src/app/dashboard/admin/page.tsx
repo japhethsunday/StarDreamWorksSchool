@@ -81,7 +81,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const [statsRes, announcementsRes] = await Promise.allSettled([
+        const [statsRes] = await Promise.allSettled([
           fetch("/api/admin/stats"),
           fetch("/api/admin/announcements?limit=5"),
         ]);

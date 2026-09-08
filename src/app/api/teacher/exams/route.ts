@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
 import { createExamSchema } from "@/lib/validations";
-import { refreshExamStatuses, totalMarksFromQuestions } from "@/lib/exams";
+import { refreshExamStatuses } from "@/lib/exams";
 import { logActivity, clientIp } from "@/lib/activity";
 import { sendExamPublishedEmails, sendExamResultEmail } from "@/lib/email/notifications";
 

@@ -549,7 +549,7 @@ export default function StudentProfilePage() {
               <ActivityTimeline userId={student.userId} limit={40} />
             ) : (
               <p className="text-sm text-brand-muted text-center py-8">
-                You need the "View Activity Log" permission to view activity for this student.
+                You need the &quot;View Activity Log&quot; permission to view activity for this student.
               </p>
             )
           )}
@@ -785,7 +785,6 @@ const inputCls =
 function computeGrades(grades: StudentDetail["grades"]) {
   const sessions: Record<string, Record<string, { count: number; totalScore: number; maxTotal: number }>> = {};
   for (const g of grades) {
-    const key = `${g.academicSession}__${g.term}`;
     sessions[g.academicSession] = sessions[g.academicSession] || {};
     sessions[g.academicSession][g.term] = sessions[g.academicSession][g.term] || {
       count: 0,

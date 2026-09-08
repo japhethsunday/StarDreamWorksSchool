@@ -10,7 +10,7 @@ const validateLevel = (body: any): string | null => {
   return null;
 };
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     const isAdmin = session?.user && (session.user as any).role === "ADMIN";

@@ -41,7 +41,6 @@ export const metadata: Metadata = {
   authors: [{ name: "STAR DreamWorks Schools" }],
   creator: "STAR DreamWorks Schools",
   publisher: "STAR DreamWorks Schools",
-  metadataBase: new URL("https://www.stardreamworksschools.com"),
   alternates: {
     canonical: "https://www.stardreamworksschools.com",
   },

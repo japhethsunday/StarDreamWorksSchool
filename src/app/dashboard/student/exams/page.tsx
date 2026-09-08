@@ -149,7 +149,6 @@ export default function StudentExams() {
 
       <div className="grid gap-4">
         {exams.map((exam) => {
-          const live = exam.resumable || exam.canStart;
           return (
             <div
               key={exam.id}

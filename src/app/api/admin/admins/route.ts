@@ -35,7 +35,7 @@ type AdminRow = {
   updatedAt: Date;
 };
 
-export async function GET(req: Request) {
+export async function GET() {
   const guard = await requireSuperAdmin();
   if (!guard.ok) return guard.response;
 

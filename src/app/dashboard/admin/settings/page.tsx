@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { Settings, Save, Loader2, User, Shield } from "lucide-react";
+import { Save, Loader2, User, Shield } from "lucide-react";
 import LoadingSpinner from "@/components/dashboard/LoadingSpinner";
 
 export default function SettingsPage() {

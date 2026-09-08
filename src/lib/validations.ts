@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
 export const createStudentSchema = z.object({
@@ -10,7 +10,7 @@ export const createStudentSchema = z.object({
   lastName: z.string().min(1, "Last name is required"),
   middleName: z.string().optional(),
   email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
   dateOfBirth: z.string().min(1, "Date of birth is required"),
   gender: z.enum(["MALE", "FEMALE"], { required_error: "Gender is required" }),
   classId: z.string().optional(),
@@ -23,7 +23,7 @@ export const createTeacherSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
   phone: z.string().optional(),
   qualification: z.string().optional(),
   specialization: z.string().optional(),
@@ -33,7 +33,7 @@ export const createParentSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
   phone: z.string().optional(),
   address: z.string().optional(),
   occupation: z.string().optional(),
