@@ -13,6 +13,7 @@ export const PERMISSION_CATALOG = [
   { key: "MANAGE_GALLERY", label: "Manage Gallery", description: "Create, edit, publish, and delete gallery items" },
   { key: "MANAGE_ADMISSIONS", label: "Manage Admissions", description: "Create, edit, and process admission applications" },
   { key: "MANAGE_LEVELS", label: "Manage Educational Levels", description: "Create, edit, and delete educational levels" },
+  { key: "MANAGE_EMAILS", label: "Manage Email Communications", description: "Compose and send bulk emails to students, parents, teachers, and admins" },
   { key: "MANAGE_SETTINGS", label: "Manage Settings", description: "Update site settings and content" },
   { key: "VIEW_ACTIVITY", label: "View Activity Log", description: "View the audit and activity log" },
 ] as const;

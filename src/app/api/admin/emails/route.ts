@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
-import { sendEmail } from "@/lib/email/send";
-import { sendTestTemplate } from "@/lib/email/templates";
 
 const PAGE_SIZE_DEFAULT = 25;
 const PAGE_SIZE_MAX = 100;
@@ -91,40 +89,14 @@ export async function GET(req: Request) {
   }
 }
 
-export async function POST(req: Request) {
-  try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
-      return NextResponse.json({ success: false, error: "Unauthorized. Please login." }, { status: 401 });
-    }
-    if ((session.user as any).role !== "ADMIN") {
-      return NextResponse.json({ success: false, error: "Forbidden. Admin access required." }, { status: 403 });
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { id: (session.user as any).id },
-      select: { id: true, email: true, name: true },
-    });
-    if (!user) {
-      return NextResponse.json({ success: false, error: "Account not found." }, { status: 404 });
-    }
-
-    const { subject, html } = sendTestTemplate();
-    const result = await sendEmail({
-      type: "SYSTEM_ALERT",
-      to: user.email,
-      subject,
-      html,
-      refId: `email-test:${user.email}:${Date.now()}`,
-      userId: user.id,
-    });
-
-    return NextResponse.json({
-      success: true,
-      data: { logId: result.logId, remoteId: result.remoteId, skipped: result.skipped },
-      message: result.ok ? "Test email queued." : "Test email could not be sent. See email logs.",
-    });
-  } catch {
-    return NextResponse.json({ success: false, error: "Failed to send test email. Please try again." }, { status: 500 });
-  }
+/**
+ * Bulk sends now live at POST /api/admin/emails/campaigns (the production
+ * Compose Email flow). This route is reserved for improving the individual
+ * log queries above.
+ */
+export async function POST() {
+  return NextResponse.json(
+    { success: false, error: "Use the Compose Email flow to send emails." },
+    { status: 410 }
+  );
 }

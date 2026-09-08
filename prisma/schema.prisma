@@ -429,15 +429,49 @@ model EmailLog {
   sentAt     DateTime?
   deliveredAt DateTime?
   dedupHash  String   @unique
+  campaignId String? // bulk email campaign this log belongs to
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+
+  campaign EmailCampaign? @relation(fields: [campaignId], references: [id], onDelete: SetNull)
 
   @@index([type])
   @@index([refId])
   @@index([userId])
   @@index([remoteId])
+  @@index([campaignId])
   @@index([createdAt])
   @@map("email_logs")
+}
+
+// A bulk email campaign composed by an administrator. Aggregates an arbitrary
+// dynamic audience (students / parents / teachers / admins) into individual
+// BCC-hidden messages, tracking aggregate status across all recipients.
+model EmailCampaign {
+  id             String   @id @default(cuid())
+  subject        String
+  sender         String
+  categories     String[] // e.g. ["STUDENTS", "PARENTS", "TEACHERS", "ADMINS"]
+  recipientCount Int      @default(0)
+  status         String   @default("QUEUED") // QUEUED | SENDING | SENT | FAILED | PARTIALLY_FAILED
+  sentCount      Int      @default(0)
+  deliveredCount Int      @default(0)
+  failedCount    Int      @default(0)
+  error          String?
+  body           String? // full rendered HTML, retained for auditing and retries
+  requestId      String   @unique // client-generated idempotency key
+  sentById       String?
+  sentByEmail    String?
+  sentAt         DateTime?
+  completedAt    DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  logs EmailLog[]
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("email_campaigns")
 }
 
 // Per-user email notification preferences. Security-critical emails (password

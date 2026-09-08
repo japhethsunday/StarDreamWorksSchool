@@ -655,3 +655,15 @@ export const sendTestTemplate = (): { subject: string; html: string } => ({
     ${button("Open the school portal", `${APP_URL}/login`)}`
   ),
 });
+
+/**
+ * Wraps admin-authored rich content (from the bulk email composer) in the same
+ * branded school layout used by every transactional email.
+ */
+export const bulkMessageTemplate = (subject: string, contentHtml: string): { subject: string; html: string } => ({
+  subject: subject.slice(0, 200),
+  html: wrap(
+    subject.slice(0, 120),
+    `<div style="font-family:${FONT_BODY};font-size:14px;color:${BRAND.body};line-height:1.75;">${contentHtml}</div>`
+  ),
+});

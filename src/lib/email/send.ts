@@ -25,7 +25,8 @@ export type EmailType =
   | "EXAM_PUBLISHED"
   | "EXAM_SUBMITTED"
   | "EXAM_RESULT_RELEASED"
-  | "SYSTEM_ALERT";
+  | "SYSTEM_ALERT"
+  | "BULK_EMAIL";
 
 export interface SendEmailInput {
   type: EmailType;
@@ -244,7 +245,8 @@ export async function notifyAdmins(
 
 /**
  * Applies a Resend webhook event to the matching EmailLog row using the
- * remote message id. Returns true when a row was updated.
+ * remote message id. Returns true when a row was updated. Bulk campaign
+ * delivered-counts are kept in sync on the linked EmailCampaign.
  */
 export async function updateEmailStatusByRemoteId(
   remoteId: string,
@@ -265,6 +267,26 @@ export async function updateEmailStatusByRemoteId(
         ...(error ? { error: String(error).slice(0, 500) } : {}),
       },
     });
+    if (result.count > 0) {
+      // Keep the aggregate delivered count accurate on the linked campaign.
+      const updated = await prisma.emailLog.findFirst({
+        where: { remoteId },
+        select: { campaignId: true },
+      });
+      if (updated?.campaignId) {
+        try {
+          const delivered = await prisma.emailLog.count({
+            where: { campaignId: updated.campaignId, status: { in: ["DELIVERED", "BOUNCED", "COMPLAINED"] } },
+          });
+          await prisma.emailCampaign.update({
+            where: { id: updated.campaignId },
+            data: { deliveredCount: delivered },
+          });
+        } catch {
+          // Swallow campaign-count sync failures; webhook still succeeded.
+        }
+      }
+    }
     return result.count > 0;
   } catch {
     return false;
