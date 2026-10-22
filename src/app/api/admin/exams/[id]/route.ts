@@ -335,3 +335,27 @@ export async function PATCH(
     return NextResponse.json({ success: false, error: "Failed to update examination." }, { status: 500 });
   }
 }
+export async function DELETE(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) return NextResponse.json({ success: false, error: "Unauthorized. Please login." }, { status: 401 });
+    if ((session.user as any).role !== "ADMIN") return NextResponse.json({ success: false, error: "Forbidden. Admin access required." }, { status: 403 });
+    const perm = await permissionResponse("MANAGE_EXAMS");
+    if (perm) return perm;
+
+    const exam = await prisma.exam.findUnique({ where: { id: params.id } });
+    if (!exam) return NextResponse.json({ success: false, error: "Examination not found." }, { status: 404 });
+
+    // Questions, options, assignments, attempts, answers and results cascade.
+    await prisma.exam.delete({ where: { id: params.id } });
+
+    await logActivity((session.user as any).id, "DELETE_EXAM", `Deleted examination "${exam.title}"`, clientIp(req));
+    return NextResponse.json({ success: true, data: { id: params.id } });
+  } catch (e) {
+    console.error("ADMIN_EXAM_DELETE_ERR", (e as Error)?.message);
+    return NextResponse.json({ success: false, error: "Failed to delete examination." }, { status: 500 });
+  }
+}
