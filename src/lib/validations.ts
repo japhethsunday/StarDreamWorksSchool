@@ -132,6 +132,9 @@ export const createExamSchema = z.object({
   showResults: z.boolean().default(false),
   allowAnswerReview: z.boolean().default(false),
   shuffleQuestions: z.boolean().default(true),
+}).refine((d) => new Date(d.endAt).getTime() > new Date(d.startAt).getTime(), {
+  message: "End time must be after the start time.",
+  path: ["endAt"],
 });
 
 export const examQuestionSchema = z.object({

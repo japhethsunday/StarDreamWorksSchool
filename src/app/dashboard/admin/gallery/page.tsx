@@ -47,7 +47,7 @@ export default function GalleryPage() {
     try {
       setLoading(true);
       const res = await fetch("/api/admin/gallery");
-      if (!res.ok) throw new Error("Failed");
+      if (!res.ok) { const body = await res.json().catch(() => ({})); throw new Error(body.error || "Failed"); }
       const data = await res.json();
       setImages(data.data || data.images || []);
     } catch {
@@ -131,7 +131,7 @@ export default function GalleryPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isPublished: !img.isPublished }),
       });
-      if (!res.ok) throw new Error("Failed");
+      if (!res.ok) { const body = await res.json().catch(() => ({})); throw new Error(body.error || "Failed"); }
       fetchData();
     } catch {
       alert("Failed to update visibility");
@@ -143,10 +143,10 @@ export default function GalleryPage() {
     setDeleting(true);
     try {
       const res = await fetch(`/api/admin/gallery/${confirmDelete}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Failed");
+      if (!res.ok) { const body = await res.json().catch(() => ({})); throw new Error(body.error || "Failed"); }
       setConfirmDelete(null);
       fetchData();
-    } catch { alert("Failed to delete"); } finally { setDeleting(false); }
+    } catch (e: any) { alert(e?.message || "Failed to delete"); } finally { setDeleting(false); }
   };
 
   if (loading) return <LoadingSpinner text="Loading gallery..." fullScreen />;

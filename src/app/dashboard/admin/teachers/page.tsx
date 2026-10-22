@@ -198,11 +198,11 @@ export default function TeachersPage() {
       const res = await fetch(`/api/admin/teachers/${confirmDelete}`, {
         method: "DELETE",
       });
-      if (!res.ok) throw new Error("Failed to delete teacher");
+      if (!res.ok) { const body = await res.json().catch(() => ({})); throw new Error(body.error || "Failed to delete teacher"); }
       setConfirmDelete(null);
       fetchTeachers();
-    } catch {
-      alert("Failed to delete teacher");
+    } catch (e: any) {
+      alert(e?.message || "Failed to delete teacher");
     } finally {
       setDeleting(false);
     }

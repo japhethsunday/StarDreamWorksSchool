@@ -123,10 +123,10 @@ export default function AdminAssignmentsPage() {
     setDeleting(true);
     try {
       const res = await fetch(`/api/admin/assignments/${confirmDelete}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Failed");
+      if (!res.ok) { const body = await res.json().catch(() => ({})); throw new Error(body.error || "Failed"); }
       setConfirmDelete(null);
       fetchData();
-    } catch { alert("Failed to delete"); } finally { setDeleting(false); }
+    } catch (e: any) { alert(e?.message || "Failed to delete"); } finally { setDeleting(false); }
   };
 
   const columns = [

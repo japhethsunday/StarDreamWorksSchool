@@ -101,7 +101,10 @@ function StudentTakeExam({ examId }: { examId: string }) {
       const json = await res.json();
       const d = json.data;
       setExam(d.exam as ExamDTO);
-      const qs = (d.questions || []) as QuestionDTO[];
+      const qs = ((d.questions || []) as QuestionDTO[]).map((q) => ({ ...q, options: q.options ?? [] }));
+      if (qs.length === 0) {
+        throw new Error("This examination has no questions yet. Please contact your teacher.");
+      }
       setQuestions(qs);
       setOrder(d.exam.shuffleQuestions ? shuffleArr(qs) : qs);
 
@@ -318,9 +321,9 @@ function StudentTakeExam({ examId }: { examId: string }) {
     );
   }
 
-  if (phase !== "running" || !exam) return null;
+  if (phase !== "running" || !exam || order.length === 0) return null;
 
-  const q = order[current];
+  const q = order[Math.min(current, order.length - 1)];
   const answeredCount = order.filter((o) => {
     const a = answers[o.id];
     if (!a) return false;

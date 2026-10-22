@@ -54,7 +54,7 @@ export default function EventsPage() {
     try {
       setLoading(true);
       const res = await fetch("/api/admin/events");
-      if (!res.ok) throw new Error("Failed");
+      if (!res.ok) { const body = await res.json().catch(() => ({})); throw new Error(body.error || "Failed"); }
       const data = await res.json();
       setEvents(data.data || data.events || []);
     } catch {
@@ -100,10 +100,10 @@ export default function EventsPage() {
     setDeleting(true);
     try {
       const res = await fetch(`/api/admin/events/${confirmDelete}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Failed");
+      if (!res.ok) { const body = await res.json().catch(() => ({})); throw new Error(body.error || "Failed"); }
       setConfirmDelete(null);
       fetchData();
-    } catch { alert("Failed to delete"); } finally { setDeleting(false); }
+    } catch (e: any) { alert(e?.message || "Failed to delete"); } finally { setDeleting(false); }
   };
 
   const columns = [

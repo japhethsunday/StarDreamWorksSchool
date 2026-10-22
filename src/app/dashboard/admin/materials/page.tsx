@@ -188,11 +188,11 @@ export default function AdminMaterialsPage() {
     setDeleting(true);
     try {
       const res = await fetch(`/api/admin/materials/${confirmDelete}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Failed");
+      if (!res.ok) { const body = await res.json().catch(() => ({})); throw new Error(body.error || "Failed"); }
       setConfirmDelete(null);
       fetchData();
-    } catch {
-      alert("Failed to delete material");
+    } catch (e: any) {
+      alert(e?.message || "Failed to delete material");
     } finally {
       setDeleting(false);
     }

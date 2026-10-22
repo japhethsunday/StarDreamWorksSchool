@@ -67,7 +67,7 @@ export default function EducationalLevelsPage() {
     try {
       setLoading(true);
       const res = await fetch("/api/educational-levels");
-      if (!res.ok) throw new Error("Failed");
+      if (!res.ok) { const body = await res.json().catch(() => ({})); throw new Error(body.error || "Failed"); }
       const data = await res.json();
       setLevels(data.data || []);
     } catch {

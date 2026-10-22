@@ -235,6 +235,18 @@ export async function PUT(
       if (meta.status === "DRAFT") patch.publishedAt = null;
     }
 
+    const nextStart = patch.startAt ?? exam.startAt;
+    const nextEnd = patch.endAt ?? exam.endAt;
+    if (new Date(nextEnd).getTime() <= new Date(nextStart).getTime()) {
+      return NextResponse.json({ success: false, error: "End time must be after the start time." }, { status: 400 });
+    }
+    if (patch.status === "SCHEDULED" || patch.status === "ACTIVE") {
+      const questionCount = await prisma.examQuestion.count({ where: { examId: params.id } });
+      if (questionCount === 0) {
+        return NextResponse.json({ success: false, error: "Add at least one question before publishing this examination." }, { status: 400 });
+      }
+    }
+
     const updated = await prisma.exam.update({ where: { id: params.id }, data: patch });
 
     if (Array.isArray(meta.assignedStudentIds)) {

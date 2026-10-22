@@ -132,7 +132,7 @@ export default function StudentProfilePage() {
         setError("Student not found.");
         return;
       }
-      if (!res.ok) throw new Error("Failed to load student");
+      if (!res.ok) { const body = await res.json().catch(() => ({})); throw new Error(body.error || "Failed to load student"); }
       const json = await res.json();
       setStudent(json.data);
     } catch (e: any) {
@@ -245,7 +245,7 @@ export default function StudentProfilePage() {
           status: !student.user.isActive ? "ACTIVE" : student.status,
         }),
       });
-      if (!res.ok) throw new Error("Failed to update student status");
+      if (!res.ok) { const body = await res.json().catch(() => ({})); throw new Error(body.error || "Failed to update student status"); }
       setConfirmOpen(null);
       fetchStudent();
     } catch (e: any) {
@@ -262,7 +262,7 @@ export default function StudentProfilePage() {
       const res = await fetch(`/api/admin/students/${student.id}`, {
         method: "DELETE",
       });
-      if (!res.ok) throw new Error("Failed to delete student");
+      if (!res.ok) { const body = await res.json().catch(() => ({})); throw new Error(body.error || "Failed to delete student"); }
       router.push("/dashboard/admin/students");
     } catch (e: any) {
       alert(e.message || "Failed to delete student");

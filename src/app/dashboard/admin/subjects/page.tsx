@@ -49,7 +49,7 @@ export default function SubjectsPage() {
     try {
       setLoading(true);
       const res = await fetch("/api/admin/subjects");
-      if (!res.ok) throw new Error("Failed");
+      if (!res.ok) { const body = await res.json().catch(() => ({})); throw new Error(body.error || "Failed"); }
       const data = await res.json();
       setSubjects(data.data || data.subjects || []);
     } catch {
@@ -92,10 +92,10 @@ export default function SubjectsPage() {
     setDeleting(true);
     try {
       const res = await fetch(`/api/admin/subjects/${confirmDelete}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Failed");
+      if (!res.ok) { const body = await res.json().catch(() => ({})); throw new Error(body.error || "Failed"); }
       setConfirmDelete(null);
       fetchData();
-    } catch { alert("Failed to delete"); } finally { setDeleting(false); }
+    } catch (e: any) { alert(e?.message || "Failed to delete"); } finally { setDeleting(false); }
   };
 
   const levelColor: Record<string, string> = {

@@ -79,7 +79,7 @@ export default function AdminManagementPage() {
         setAccessDenied(true);
         return;
       }
-      if (!res.ok) throw new Error("Failed");
+      if (!res.ok) { const body = await res.json().catch(() => ({})); throw new Error(body.error || "Failed"); }
       const data = await res.json();
       setAdmins(data.data || []);
     } catch {

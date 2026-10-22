@@ -56,7 +56,7 @@ export default function NewsPage() {
     try {
       setLoading(true);
       const res = await fetch("/api/admin/news");
-      if (!res.ok) throw new Error("Failed");
+      if (!res.ok) { const body = await res.json().catch(() => ({})); throw new Error(body.error || "Failed"); }
       const data = await res.json();
       setNews(data.data || data.news || []);
     } catch {
@@ -96,10 +96,10 @@ export default function NewsPage() {
     setDeleting(true);
     try {
       const res = await fetch(`/api/admin/news/${confirmDelete}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Failed");
+      if (!res.ok) { const body = await res.json().catch(() => ({})); throw new Error(body.error || "Failed"); }
       setConfirmDelete(null);
       fetchData();
-    } catch { alert("Failed to delete"); } finally { setDeleting(false); }
+    } catch (e: any) { alert(e?.message || "Failed to delete"); } finally { setDeleting(false); }
   };
 
   const columns = [

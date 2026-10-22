@@ -151,6 +151,10 @@ export async function POST(
 
     // ---- START ----
     if (action === "start") {
+      const questionCount = await prisma.examQuestion.count({ where: { examId: params.id } });
+      if (questionCount === 0) {
+        return NextResponse.json({ success: false, error: "This examination has no questions yet. Please contact your teacher." }, { status: 400 });
+      }
       const count = await attemptCount(params.id, student.id);
       if (count >= exam.maxAttempts) {
         return NextResponse.json({ success: false, error: "You have no attempts remaining for this examination." }, { status: 400 });

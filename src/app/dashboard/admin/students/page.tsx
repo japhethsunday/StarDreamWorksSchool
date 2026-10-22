@@ -181,11 +181,11 @@ export default function StudentsPage() {
       const res = await fetch(`/api/admin/students/${confirmDelete}`, {
         method: "DELETE",
       });
-      if (!res.ok) throw new Error("Failed to delete student");
+      if (!res.ok) { const body = await res.json().catch(() => ({})); throw new Error(body.error || "Failed to delete student"); }
       setConfirmDelete(null);
       fetchData();
-    } catch {
-      alert("Failed to delete student");
+    } catch (e: any) {
+      alert(e?.message || "Failed to delete student");
     } finally {
       setDeleting(false);
     }

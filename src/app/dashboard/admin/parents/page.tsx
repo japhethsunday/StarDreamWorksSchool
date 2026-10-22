@@ -172,11 +172,11 @@ export default function ParentsPage() {
     setDeleting(true);
     try {
       const res = await fetch(`/api/admin/parents/${confirmDelete}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Failed to delete");
+      if (!res.ok) { const body = await res.json().catch(() => ({})); throw new Error(body.error || "Failed to delete"); }
       setConfirmDelete(null);
       fetchData();
-    } catch {
-      alert("Failed to delete parent");
+    } catch (e: any) {
+      alert(e?.message || "Failed to delete parent");
     } finally {
       setDeleting(false);
     }

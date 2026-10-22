@@ -58,7 +58,7 @@ export default function AnnouncementsPage() {
     try {
       setLoading(true);
       const res = await fetch("/api/admin/announcements");
-      if (!res.ok) throw new Error("Failed");
+      if (!res.ok) { const body = await res.json().catch(() => ({})); throw new Error(body.error || "Failed"); }
       const data = await res.json();
       setAnnouncements(data.data || data.announcements || []);
     } catch {
@@ -124,10 +124,10 @@ export default function AnnouncementsPage() {
     setDeleting(true);
     try {
       const res = await fetch(`/api/admin/announcements/${confirmDelete}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Failed");
+      if (!res.ok) { const body = await res.json().catch(() => ({})); throw new Error(body.error || "Failed"); }
       setConfirmDelete(null);
       fetchData();
-    } catch { alert("Failed to delete"); } finally { setDeleting(false); }
+    } catch (e: any) { alert(e?.message || "Failed to delete"); } finally { setDeleting(false); }
   };
 
   const priorityColor: Record<string, string> = {

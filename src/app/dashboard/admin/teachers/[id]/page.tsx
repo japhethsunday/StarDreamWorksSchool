@@ -102,7 +102,7 @@ export default function TeacherProfilePage() {
         setError("Teacher not found.");
         return;
       }
-      if (!res.ok) throw new Error("Failed to load teacher");
+      if (!res.ok) { const body = await res.json().catch(() => ({})); throw new Error(body.error || "Failed to load teacher"); }
       const json = await res.json();
       setTeacher(json.data);
     } catch (e: any) {
@@ -205,7 +205,7 @@ export default function TeacherProfilePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isActive: !teacher.user.isActive }),
       });
-      if (!res.ok) throw new Error("Failed to update teacher status");
+      if (!res.ok) { const body = await res.json().catch(() => ({})); throw new Error(body.error || "Failed to update teacher status"); }
       setConfirmOpen(null);
       fetchTeacher();
     } catch (e: any) {
@@ -222,7 +222,7 @@ export default function TeacherProfilePage() {
       const res = await fetch(`/api/admin/teachers/${teacher.id}`, {
         method: "DELETE",
       });
-      if (!res.ok) throw new Error("Failed to delete teacher");
+      if (!res.ok) { const body = await res.json().catch(() => ({})); throw new Error(body.error || "Failed to delete teacher"); }
       router.push("/dashboard/admin/teachers");
     } catch (e: any) {
       alert(e.message || "Failed to delete teacher");

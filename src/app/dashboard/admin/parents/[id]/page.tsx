@@ -88,7 +88,7 @@ export default function ParentProfilePage() {
         setError("Parent not found.");
         return;
       }
-      if (!res.ok) throw new Error("Failed to load parent");
+      if (!res.ok) { const body = await res.json().catch(() => ({})); throw new Error(body.error || "Failed to load parent"); }
       const json = await res.json();
       setParent(json.data);
     } catch (e: any) {
@@ -191,7 +191,7 @@ export default function ParentProfilePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isActive: !parent.user.isActive }),
       });
-      if (!res.ok) throw new Error("Failed to update parent status");
+      if (!res.ok) { const body = await res.json().catch(() => ({})); throw new Error(body.error || "Failed to update parent status"); }
       setConfirmOpen(null);
       fetchParent();
     } catch (e: any) {
@@ -208,7 +208,7 @@ export default function ParentProfilePage() {
       const res = await fetch(`/api/admin/parents/${parent.id}`, {
         method: "DELETE",
       });
-      if (!res.ok) throw new Error("Failed to delete parent");
+      if (!res.ok) { const body = await res.json().catch(() => ({})); throw new Error(body.error || "Failed to delete parent"); }
       router.push("/dashboard/admin/parents");
     } catch (e: any) {
       alert(e.message || "Failed to delete parent");
