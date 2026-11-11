@@ -1,78 +1,187 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import {
-  FileText,
-  AlertCircle,
-  Baby,
-  TrendingUp,
-} from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { AlertCircle, Baby, FileText, Printer } from "lucide-react";
 import LoadingSpinner from "@/components/dashboard/LoadingSpinner";
 import EmptyState from "@/components/dashboard/EmptyState";
+import { CA_MAX, EXAM_MAX, GRADE_SCALE, ordinal } from "@/lib/results";
 
-interface ChildGradeRow {
-  id: string;
-  student?: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    studentId?: string;
-  };
-  class?: { name: string } | null;
-  subject: { name: string } | string;
-  score: number;
+interface SubjectResult {
+  subject: string;
+  caScore: number | null;
+  examScore: number | null;
+  total: number;
   grade: string;
+  remark: string;
+}
+
+interface Report {
+  academicSession: string;
   term: string;
+  className: string;
+  subjects: SubjectResult[];
+  totalScore: number;
+  average: number;
+  overallGrade: string;
+  position: number | null;
+  outOf: number | null;
 }
 
-interface GradeSummary {
-  studentId: string;
-  studentName: string;
-  averageScore: number | null;
-  totalGrades: number;
-  bestScore: number | null;
+interface Child {
+  id: string;
+  admissionNo: string;
+  name: string;
+  className: string | null;
+  reports: Report[];
 }
 
-interface GradesData {
-  grades?: ChildGradeRow[];
-  summary?: GradeSummary[];
-}
+const TERM_LABEL: Record<string, string> = { FIRST: "First Term", SECOND: "Second Term", THIRD: "Third Term" };
 
-interface ChildGrades {
-  childId: string;
-  childName: string;
-  className?: string;
-  grades: ChildGradeRow[];
+function ReportCard({ child }: { child: Child }) {
+  const [index, setIndex] = useState(0);
+  const report = child.reports[index];
+
+  const print = () => {
+    document.body.setAttribute("data-print-child", child.id);
+    window.print();
+    document.body.removeAttribute("data-print-child");
+  };
+
+  return (
+    <div className="report-card bg-white rounded-xl border border-brand-line overflow-hidden" data-child={child.id}>
+      <div className="bg-brand-navy-deep px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+          <p className="text-[11px] font-bold uppercase tracking-widest text-brand-yellow">
+            {report ? `${report.className} · ${TERM_LABEL[report.term] ?? report.term} · ${report.academicSession}` : child.className ?? ""}
+          </p>
+          <h3 className="font-heading text-lg font-bold text-white">{child.name}</h3>
+          <p className="text-[12px] text-white/60">Admission no. {child.admissionNo}</p>
+        </div>
+        {child.reports.length > 0 && (
+          <div className="flex items-center gap-2 no-print">
+            {child.reports.length > 1 && (
+              <select
+                value={index}
+                onChange={(e) => setIndex(Number(e.target.value))}
+                className="rounded-lg border border-white/20 bg-white px-3 py-2 text-[13px] text-brand-navy-deep focus:outline-none"
+                aria-label="Choose term"
+              >
+                {child.reports.map((r, i) => (
+                  <option key={`${r.academicSession}-${r.term}`} value={i}>
+                    {TERM_LABEL[r.term] ?? r.term} {r.academicSession}
+                  </option>
+                ))}
+              </select>
+            )}
+            <button
+              onClick={print}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white text-brand-navy-deep text-[13px] font-bold hover:bg-brand-paper"
+            >
+              <Printer className="w-4 h-4" /> Print
+            </button>
+          </div>
+        )}
+      </div>
+
+      {!report ? (
+        <div className="py-10 text-center">
+          <FileText className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+          <p className="text-sm text-gray-500">No results have been published yet.</p>
+        </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-5 border-b border-brand-line">
+            {[
+              { label: "Subjects", value: report.subjects.length },
+              { label: "Average", value: `${report.average}%` },
+              { label: "Overall grade", value: report.overallGrade },
+              { label: "Position", value: report.position ? `${ordinal(report.position)} of ${report.outOf}` : "—" },
+            ].map((s) => (
+              <div key={s.label} className="rounded-lg bg-brand-paper border border-brand-line px-3 py-2.5">
+                <p className="text-[11px] text-gray-500 font-medium">{s.label}</p>
+                <p className="text-lg font-bold text-brand-navy-deep">{s.value}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-[13px] min-w-[560px]">
+              <thead className="bg-brand-paper text-gray-500">
+                <tr>
+                  <th className="text-left font-medium px-5 py-2.5">Subject</th>
+                  <th className="text-left font-medium px-3 py-2.5">CA ({CA_MAX})</th>
+                  <th className="text-left font-medium px-3 py-2.5">Exam ({EXAM_MAX})</th>
+                  <th className="text-left font-medium px-3 py-2.5">Total (100)</th>
+                  <th className="text-left font-medium px-3 py-2.5">Grade</th>
+                  <th className="text-left font-medium px-3 py-2.5">Remark</th>
+                </tr>
+              </thead>
+              <tbody>
+                {report.subjects.map((s) => (
+                  <tr key={s.subject} className="border-t border-brand-line">
+                    <td className="px-5 py-2.5 font-medium text-brand-navy-deep">{s.subject}</td>
+                    <td className="px-3 py-2.5 text-gray-700">{s.caScore ?? "—"}</td>
+                    <td className="px-3 py-2.5 text-gray-700">{s.examScore ?? "—"}</td>
+                    <td className="px-3 py-2.5 font-bold text-brand-navy-deep">{s.total}</td>
+                    <td className="px-3 py-2.5 font-bold text-brand-navy-deep">{s.grade}</td>
+                    <td className="px-3 py-2.5 text-gray-600">{s.remark}</td>
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot>
+                <tr className="border-t-2 border-brand-line bg-brand-paper/60">
+                  <td className="px-5 py-2.5 font-bold text-brand-navy-deep">Total</td>
+                  <td />
+                  <td />
+                  <td className="px-3 py-2.5 font-bold text-brand-navy-deep">
+                    {report.totalScore} / {report.subjects.length * 100}
+                  </td>
+                  <td className="px-3 py-2.5 font-bold text-brand-navy-deep">{report.overallGrade}</td>
+                  <td />
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <div className="px-5 py-3 border-t border-brand-line flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-gray-500">
+            {GRADE_SCALE.map((b, i) => (
+              <span key={b.grade}>
+                <span className="font-bold text-brand-navy-deep">{b.grade}</span> {b.min}
+                {i === 0 ? "–100" : `–${GRADE_SCALE[i - 1].min - 1}`} {b.remark}
+              </span>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
 }
 
 export default function ParentGrades() {
-  const [data, setData] = useState<GradesData | null>(null);
+  const [children, setChildren] = useState<Child[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const fetchGrades = useCallback(async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch("/api/parent/grades");
-      if (!res.ok) {
-        const j = await res.json().catch(() => ({}));
-        throw new Error(j.error || "Failed to load grades.");
-      }
-      const json = await res.json();
-      setData(json.data || json);
-    } catch (err: any) {
-      setError(err.message || "Failed to load grades.");
+      const res = await fetch("/api/parent/report");
+      const j = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(j.error || "Failed to load results.");
+      setChildren(j.data?.children || []);
+    } catch (e: any) {
+      setError(e.message || "Failed to load results.");
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    fetchGrades();
-  }, [fetchGrades]);
+    load();
+  }, [load]);
 
-  if (loading) return <LoadingSpinner text="Loading grades..." fullScreen />;
+  if (loading) return <LoadingSpinner text="Loading results..." fullScreen />;
 
   if (error) {
     return (
@@ -81,144 +190,46 @@ export default function ParentGrades() {
           <AlertCircle className="w-8 h-8 text-red-500" />
         </div>
         <p className="text-gray-600 font-medium">{error}</p>
-        <button
-          onClick={fetchGrades}
-          className="px-4 py-2 bg-school-blue text-white text-sm font-medium rounded-xl hover:bg-primary transition-colors"
-        >
+        <button onClick={load} className="px-4 py-2 bg-school-blue text-white text-sm font-medium rounded-xl hover:bg-primary transition-colors">
           Retry
         </button>
       </div>
     );
   }
 
-  const rows: ChildGradeRow[] = data?.grades || [];
-  const summary = data?.summary || [];
-
-  const children: ChildGrades[] = summary.map((s) => {
-    const childRows = rows.filter((r) => r.student?.id === s.studentId);
-    const firstRow = childRows[0];
-    return {
-      childId: s.studentId,
-      childName: s.studentName || firstRow?.student ? `${firstRow?.student?.firstName} ${firstRow?.student?.lastName}` : "Student",
-      className: firstRow?.class?.name,
-      grades: childRows,
-    };
-  });
-
-  const fallbackRows = rows.filter(
-    (r) => !summary.some((s) => s.studentId === r.student?.id)
-  );
-  if (fallbackRows.length) {
-    const byStudent: Record<string, ChildGrades> = {};
-    fallbackRows.forEach((r) => {
-      const id = r.student?.id ?? "unknown";
-      if (!byStudent[id]) {
-        byStudent[id] = {
-          childId: id,
-          childName:
-            r.student?.firstName && r.student?.lastName
-              ? `${r.student.firstName} ${r.student.lastName}`
-              : "Student",
-          className: r.class?.name,
-          grades: [],
-        };
-      }
-      byStudent[id].grades.push(r);
-    });
-    Object.values(byStudent).forEach((c) => children.push(c));
-  }
-
   return (
     <div className="space-y-6">
+      {/* When printing, show only the chosen child's report card. */}
+      <style>{`
+        @media print {
+          body * { visibility: hidden !important; }
+          body[data-print-child] .report-card[data-child] { display: none; }
+          ${children.map((c) => `body[data-print-child="${c.id}"] .report-card[data-child="${c.id}"]`).join(", ") || ".none"} {
+            display: block !important; visibility: visible !important;
+            position: absolute; left: 0; top: 0; width: 100%; border: none;
+          }
+          ${children.map((c) => `body[data-print-child="${c.id}"] .report-card[data-child="${c.id}"] *`).join(", ") || ".none"} {
+            visibility: visible !important;
+          }
+          .no-print { display: none !important; }
+        }
+      `}</style>
+
       <div>
-        <h2 className="font-[family-name:var(--font-poppins)] text-2xl font-bold text-school-dark">
-          Children&apos;s Grades
-        </h2>
-        <p className="text-sm text-gray-500 mt-1">
-          Academic performance for all your linked children.
-        </p>
+        <h2 className="font-heading text-2xl font-bold text-brand-navy-deep">Results</h2>
+        <p className="text-sm text-gray-500 mt-1">Termly report cards for your children: CA, exam, total and grade in every subject.</p>
       </div>
 
       {children.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-soft-sm">
+        <div className="bg-white rounded-xl border border-brand-line">
           <EmptyState
             icon={<Baby className="w-9 h-9 text-gray-400" />}
             title="No children linked"
-            description="Link your children to your account to view their grades."
+            description="Ask the school to link your children to your account to view their results."
           />
         </div>
       ) : (
-        children.map((child) => {
-          const avg = child.grades.length
-            ? (
-                child.grades.reduce((s, g) => s + g.score, 0) /
-                child.grades.length
-              ).toFixed(1)
-            : "—";
-          return (
-            <div
-              key={child.childId}
-              className="bg-white rounded-2xl border border-gray-100 shadow-soft-sm overflow-hidden"
-            >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-6 py-5 border-b border-gray-100">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-school-blue to-primary rounded-xl flex items-center justify-center text-sm font-bold text-white">
-                    {child.childName?.split(" ").map((n) => n[0]).join("").slice(0, 2) || "?"}
-                  </div>
-                  <div>
-                    <h3 className="font-[family-name:var(--font-poppins)] font-bold text-school-dark">
-                      {child.childName}
-                    </h3>
-                    {child.className && (
-                      <p className="text-xs text-gray-400">{child.className}</p>
-                    )}
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-500">
-                  <TrendingUp className="w-4 h-4 text-school-green" />
-                  Average:{" "}
-                  <span className="font-bold text-school-dark">{avg}</span>
-                </div>
-              </div>
-
-              {child.grades.length === 0 ? (
-                <div className="py-10 text-center">
-                  <FileText className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-                  <p className="text-sm text-gray-400">No grades recorded yet.</p>
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b border-gray-100 bg-gray-50/50">
-                        <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-4">Subject</th>
-                        <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-4">Term</th>
-                        <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-4">Score</th>
-                        <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-4">Grade</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-50">
-                      {child.grades.map((g) => (
-                        <tr key={g.id} className="hover:bg-gray-50/50 transition-colors">
-                          <td className="px-6 py-4 font-medium text-gray-800">
-                            {typeof g.subject === "string" ? g.subject : g.subject?.name}
-                          </td>
-                          <td className="px-6 py-4 text-gray-600 capitalize">{g.term?.toLowerCase()}</td>
-                          <td className="px-6 py-4 font-bold text-school-dark">{g.score}</td>
-                          <td className="px-6 py-4">
-                            <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-school-blue/10 text-school-blue font-bold text-sm">
-                              {g.grade}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          );
-        })
+        children.map((c) => <ReportCard key={c.id} child={c} />)
       )}
     </div>
   );

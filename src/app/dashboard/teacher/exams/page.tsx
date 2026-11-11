@@ -17,6 +17,7 @@ import {
 import LoadingSpinner from "@/components/dashboard/LoadingSpinner";
 import EmptyState from "@/components/dashboard/EmptyState";
 import Modal from "@/components/dashboard/Modal";
+import PasteQuestions from "@/components/dashboard/PasteQuestions";
 import ConfirmDialog from "@/components/dashboard/ConfirmDialog";
 import DataTable from "@/components/dashboard/DataTable";
 
@@ -728,6 +729,21 @@ export default function TeacherExams() {
             <div className="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-[13px] text-red-700">{createError}</div>
           )}
           <div className="flex flex-wrap gap-2">
+            <PasteQuestions
+              existingCount={questions.length}
+              onAdd={(pasted) =>
+                setQuestions((prev) => [
+                  ...prev,
+                  ...pasted.map((q) => ({
+                    type: q.type,
+                    question: q.question,
+                    marks: q.marks,
+                    correctAnswer: q.correctAnswer,
+                    options: q.options,
+                  })),
+                ])
+              }
+            />
             {["MULTIPLE_CHOICE", "TRUE_FALSE", "SHORT_ANSWER", "LONG_ANSWER"].map((t) => (
               <button key={t} onClick={() => addQuestion(t)} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-brand-line text-[12px] font-medium text-brand-navy hover:bg-brand-paper transition-colors">
                 <Plus className="w-3.5 h-3.5" /> {t.replace(/_/g, " ").toLowerCase()}

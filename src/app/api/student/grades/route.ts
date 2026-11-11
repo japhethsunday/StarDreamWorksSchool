@@ -40,7 +40,7 @@ export async function GET(req: Request) {
       new Date().getFullYear().toString();
 
     const grades = await prisma.grade.findMany({
-      where: {
+      where: { publishedAt: { not: null },
         studentId: student.id,
         academicSession,
         ...(term ? { term } : {}),
@@ -61,7 +61,7 @@ export async function GET(req: Request) {
     });
 
     const summary = await prisma.grade.aggregate({
-      where: {
+      where: { publishedAt: { not: null },
         studentId: student.id,
         academicSession,
         ...(term ? { term } : {}),
@@ -72,7 +72,7 @@ export async function GET(req: Request) {
 
     const highest = await prisma.grade.groupBy({
       by: ["subjectId"],
-      where: { studentId: student.id, academicSession },
+      where: { publishedAt: { not: null }, studentId: student.id, academicSession },
       _max: { score: true },
     });
 

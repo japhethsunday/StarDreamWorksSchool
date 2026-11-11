@@ -69,7 +69,7 @@ export async function GET() {
 
     const averageRows = await prisma.grade.groupBy({
       by: ["studentId"],
-      where: { studentId: { in: studentIds } },
+      where: { publishedAt: { not: null }, studentId: { in: studentIds } },
       _avg: { score: true },
     });
     const avgMap: Record<string, number | null> = {};

@@ -72,7 +72,7 @@ export async function GET(
 
     const [grades, assignments, avgRows] = await Promise.all([
       prisma.grade.findMany({
-        where: { studentId: student.id },
+        where: { publishedAt: { not: null }, studentId: student.id },
         orderBy: { createdAt: "desc" },
         include: { subject: { select: { name: true } } },
       }),
@@ -87,7 +87,7 @@ export async function GET(
         },
       }),
       prisma.grade.aggregate({
-        where: { studentId: student.id },
+        where: { publishedAt: { not: null }, studentId: student.id },
         _avg: { score: true },
       }),
     ]);

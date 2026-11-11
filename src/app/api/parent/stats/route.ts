@@ -61,7 +61,7 @@ export async function GET() {
         },
       }),
       prisma.grade.count({
-        where: { studentId: { in: childIds } },
+        where: { publishedAt: { not: null }, studentId: { in: childIds } },
       }),
       prisma.assignment.count({
         where: classIds.length > 0 ? { classId: { in: classIds } } : undefined,
@@ -70,7 +70,7 @@ export async function GET() {
 
     const averageScores = await prisma.grade.groupBy({
       by: ["studentId"],
-      where: { studentId: { in: childIds } },
+      where: { publishedAt: { not: null }, studentId: { in: childIds } },
       _avg: { score: true },
     });
     const avgMap: Record<string, number | null> = {};
@@ -109,7 +109,7 @@ export async function GET() {
     });
 
     const recentGrades = await prisma.grade.findMany({
-      where: { studentId: { in: childIds } },
+      where: { publishedAt: { not: null }, studentId: { in: childIds } },
       orderBy: { createdAt: "desc" },
       take: 5,
       include: {

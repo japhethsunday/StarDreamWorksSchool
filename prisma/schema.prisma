@@ -260,6 +260,9 @@ model Grade {
   score           Float
   grade           String
   remarks         String?
+  caScore         Float? // continuous assessment, out of 40
+  examScore       Float? // examination, out of 60
+  publishedAt     DateTime? // null = draft, hidden from students and parents
   teacherId       String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -273,6 +276,7 @@ model Grade {
   @@index([subjectId])
   @@index([classId])
   @@index([academicSession, term])
+  @@index([classId, academicSession, term])
   @@map("grades")
 }
 

@@ -232,8 +232,9 @@ export async function POST(req: Request) {
       },
     });
 
-    // Notify the student (and their parents) that the result is published.
-    if (fullGrade) {
+    // New grades are drafts until an admin publishes the term's results, so
+    // only notify when this updates a result that is already published.
+    if (fullGrade && fullGrade.publishedAt) {
       await sendGradeEmails(fullGrade);
     }
 
